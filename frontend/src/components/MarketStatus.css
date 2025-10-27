@@ -1,0 +1,86 @@
+.market-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.status-indicator.open {
+  background: rgba(46, 213, 115, 0.15);
+}
+
+.status-indicator.closed {
+  background: rgba(255, 71, 87, 0.15);
+}
+
+.status-light {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.status-indicator.open .status-light {
+  background: #2ed573;
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+.status-indicator.closed .status-light {
+  background: #ff4757;
+  animation: pulse-red 2s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 8px #2ed573, 0 0 16px #2ed573;
+  }
+  50% {
+    box-shadow: 0 0 12px #2ed573, 0 0 24px #2ed573;
+  }
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 8px #ff4757, 0 0 16px #ff4757;
+  }
+  50% {
+    box-shadow: 0 0 12px #ff4757, 0 0 24px #ff4757;
+  }
+}
+
+.status-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.status-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+}
+
+.status-indicator.open .status-label {
+  color: #2ed573;
+}
+
+.status-indicator.closed .status-label {
+  color: #ff4757;
+}
+
+.status-time {
+  font-size: 11px;
+  color: rgb(0 0 0);
+  font-weight: 500;
+}
+
+

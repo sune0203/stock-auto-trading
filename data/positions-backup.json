@@ -1,0 +1,425 @@
+[
+  {
+    "ticker": "APPN",
+    "quantity": 34,
+    "buyPrice": 28.85,
+    "currentPrice": 29.78,
+    "profitLoss": 31.61999999999999,
+    "profitLossPercent": 3.2235701906412464,
+    "buyTime": "2025-10-20T15:04:41.722Z"
+  },
+  {
+    "ticker": "ERIC",
+    "quantity": 105,
+    "buyPrice": 9.485,
+    "currentPrice": 9.58,
+    "profitLoss": 9.975000000000067,
+    "profitLossPercent": 1.0015814443858793,
+    "buyTime": "2025-10-20T18:02:58.694Z"
+  },
+  {
+    "ticker": "ADAML",
+    "quantity": 442,
+    "buyPrice": 22.2,
+    "currentPrice": 22.245,
+    "profitLoss": 19.890000000000754,
+    "profitLossPercent": 0.2027027027027104,
+    "buyTime": "2025-10-21T14:30:34.840Z"
+  },
+  {
+    "ticker": "DVLT",
+    "quantity": 4051,
+    "buyPrice": 2.305,
+    "currentPrice": 2.53,
+    "profitLoss": 911.4749999999985,
+    "profitLossPercent": 9.76138828633404,
+    "buyTime": "2025-10-21T14:30:35.199Z"
+  },
+  {
+    "ticker": "FMAO",
+    "quantity": 394,
+    "buyPrice": 25.1596,
+    "currentPrice": 24.48,
+    "profitLoss": -267.76240000000024,
+    "profitLossPercent": -2.701155821237224,
+    "buyTime": "2025-10-21T14:30:35.543Z"
+  },
+  {
+    "ticker": "CMND",
+    "quantity": 9162,
+    "buyPrice": 1.005,
+    "currentPrice": 1.03,
+    "profitLoss": 229.05000000000123,
+    "profitLossPercent": 2.48756218905474,
+    "buyTime": "2025-10-21T14:30:36.162Z"
+  },
+  {
+    "ticker": "NDAQ",
+    "quantity": 110,
+    "buyPrice": 92.014,
+    "currentPrice": 90.33,
+    "profitLoss": -185.23999999999972,
+    "profitLossPercent": -1.8301562805659983,
+    "buyTime": "2025-10-21T14:30:36.531Z"
+  },
+  {
+    "ticker": "BCPC",
+    "quantity": 65,
+    "buyPrice": 157.8163,
+    "currentPrice": 156.89,
+    "profitLoss": -60.2095000000017,
+    "profitLossPercent": -0.5869482429888586,
+    "buyTime": "2025-10-21T14:30:37.174Z"
+  },
+  {
+    "ticker": "PLUG",
+    "quantity": 2883,
+    "buyPrice": 3.2656,
+    "currentPrice": 3.12,
+    "profitLoss": -419.76479999999987,
+    "profitLossPercent": -4.458598726114648,
+    "buyTime": "2025-10-21T14:30:37.494Z"
+  },
+  {
+    "ticker": "MCW",
+    "quantity": 1918,
+    "buyPrice": 5.215,
+    "currentPrice": 5.29,
+    "profitLoss": 143.85000000000034,
+    "profitLossPercent": 1.4381591562799652,
+    "buyTime": "2025-10-21T14:30:38.111Z"
+  },
+  {
+    "ticker": "AEC",
+    "quantity": 1231,
+    "buyPrice": 7.4,
+    "currentPrice": 7.32,
+    "profitLoss": -98.48000000000009,
+    "profitLossPercent": -1.081081081081082,
+    "buyTime": "2025-10-21T14:30:38.443Z"
+  },
+  {
+    "ticker": "VGSH",
+    "quantity": 166,
+    "buyPrice": 58.955,
+    "currentPrice": 58.93,
+    "profitLoss": -4.149999999999764,
+    "profitLossPercent": -0.042405224323634264,
+    "buyTime": "2025-10-21T14:30:39.423Z"
+  },
+  {
+    "ticker": "DFLI",
+    "quantity": 7780,
+    "buyPrice": 1.2,
+    "currentPrice": 1.21,
+    "profitLoss": 77.80000000000007,
+    "profitLossPercent": 0.8333333333333341,
+    "buyTime": "2025-10-21T14:30:40.335Z"
+  },
+  {
+    "ticker": "PSTV",
+    "quantity": 16923,
+    "buyPrice": 0.6135,
+    "currentPrice": 0.6195,
+    "profitLoss": 101.5380000000001,
+    "profitLossPercent": 0.9779951100244507,
+    "buyTime": "2025-10-21T14:30:40.648Z"
+  },
+  {
+    "ticker": "ZENA",
+    "quantity": 1818,
+    "buyPrice": 5.2312,
+    "currentPrice": 5.17,
+    "profitLoss": -111.26160000000067,
+    "profitLossPercent": -1.1699036549931252,
+    "buyTime": "2025-10-21T14:30:41.337Z"
+  },
+  {
+    "ticker": "ARDX",
+    "quantity": 1922,
+    "buyPrice": 5.235,
+    "currentPrice": 5.29,
+    "profitLoss": 105.70999999999945,
+    "profitLossPercent": 1.050620821394455,
+    "buyTime": "2025-10-21T14:30:41.701Z"
+  },
+  {
+    "ticker": "NVYY",
+    "quantity": 419,
+    "buyPrice": 23.15,
+    "currentPrice": 23.25,
+    "profitLoss": 41.900000000000595,
+    "profitLossPercent": 0.43196544276458504,
+    "buyTime": "2025-10-21T14:30:42.344Z"
+  },
+  {
+    "ticker": "NWTG",
+    "quantity": 5357,
+    "buyPrice": 1.79,
+    "currentPrice": 1.78,
+    "profitLoss": -53.57000000000005,
+    "profitLossPercent": -0.5586592178770954,
+    "buyTime": "2025-10-21T14:30:42.669Z"
+  },
+  {
+    "ticker": "VAPE",
+    "quantity": 551,
+    "buyPrice": 17.77,
+    "currentPrice": 17.77,
+    "profitLoss": 0,
+    "profitLossPercent": 0,
+    "buyTime": "2025-10-21T14:30:43.361Z"
+  },
+  {
+    "ticker": "AUID",
+    "quantity": 3875,
+    "buyPrice": 2.4997,
+    "currentPrice": 2.49,
+    "profitLoss": -37.58749999999844,
+    "profitLossPercent": -0.38804656558785444,
+    "buyTime": "2025-10-21T14:30:43.734Z"
+  },
+  {
+    "ticker": "CDTX",
+    "quantity": 97,
+    "buyPrice": 102.7,
+    "currentPrice": 103.22,
+    "profitLoss": 50.439999999999614,
+    "profitLossPercent": 0.5063291139240468,
+    "buyTime": "2025-10-21T14:30:44.076Z"
+  },
+  {
+    "ticker": "MLYS",
+    "quantity": 222,
+    "buyPrice": 44.19,
+    "currentPrice": 43.37,
+    "profitLoss": -182.04000000000008,
+    "profitLossPercent": -1.8556234442181498,
+    "buyTime": "2025-10-21T14:30:44.427Z"
+  },
+  {
+    "ticker": "EOSE",
+    "quantity": 653,
+    "buyPrice": 17.077,
+    "currentPrice": 16.3,
+    "profitLoss": -507.38100000000065,
+    "profitLossPercent": -4.549979504596831,
+    "buyTime": "2025-10-21T14:30:45.336Z"
+  },
+  {
+    "ticker": "EOSE",
+    "quantity": 653,
+    "buyPrice": 17.077,
+    "currentPrice": 16.3,
+    "profitLoss": -507.38100000000065,
+    "profitLossPercent": -4.549979504596831,
+    "buyTime": "2025-10-21T14:30:45.650Z"
+  },
+  {
+    "ticker": "BKYI",
+    "quantity": 13286,
+    "buyPrice": 0.785,
+    "currentPrice": 0.795,
+    "profitLoss": 132.86000000000013,
+    "profitLossPercent": 1.2738853503184724,
+    "buyTime": "2025-10-21T14:30:46.339Z"
+  },
+  {
+    "ticker": "OESX",
+    "quantity": 1011,
+    "buyPrice": 9.22,
+    "currentPrice": 9.43,
+    "profitLoss": 212.30999999999906,
+    "profitLossPercent": 2.2776572668112696,
+    "buyTime": "2025-10-21T14:30:46.714Z"
+  },
+  {
+    "ticker": "VERX",
+    "quantity": 382,
+    "buyPrice": 26.46,
+    "currentPrice": 25.94,
+    "profitLoss": -198.63999999999984,
+    "profitLossPercent": -1.9652305366591065,
+    "buyTime": "2025-10-21T14:30:47.338Z"
+  },
+  {
+    "ticker": "VERX",
+    "quantity": 382,
+    "buyPrice": 26.46,
+    "currentPrice": 25.94,
+    "profitLoss": -198.63999999999984,
+    "profitLossPercent": -1.9652305366591065,
+    "buyTime": "2025-10-21T14:30:47.639Z"
+  },
+  {
+    "ticker": "LAES",
+    "quantity": 1512,
+    "buyPrice": 6.01,
+    "currentPrice": 6.1,
+    "profitLoss": 136.07999999999979,
+    "profitLossPercent": 1.4975041597337746,
+    "buyTime": "2025-10-21T14:30:48.324Z"
+  },
+  {
+    "ticker": "AMPG",
+    "quantity": 2579,
+    "buyPrice": 3.895,
+    "currentPrice": 3.79,
+    "profitLoss": -270.79499999999996,
+    "profitLossPercent": -2.69576379974326,
+    "buyTime": "2025-10-21T14:30:48.708Z"
+  },
+  {
+    "ticker": "SSII",
+    "quantity": 982,
+    "buyPrice": 9.85,
+    "currentPrice": 9.91,
+    "profitLoss": 58.920000000000485,
+    "profitLossPercent": 0.6091370558375686,
+    "buyTime": "2025-10-21T14:30:49.396Z"
+  },
+  {
+    "ticker": "IQST",
+    "quantity": 1612,
+    "buyPrice": 5.92,
+    "currentPrice": 5.96,
+    "profitLoss": 64.48000000000006,
+    "profitLossPercent": 0.6756756756756763,
+    "buyTime": "2025-10-21T14:30:49.703Z"
+  },
+  {
+    "ticker": "AACIU",
+    "quantity": 915,
+    "buyPrice": 11.47,
+    "currentPrice": 10.9,
+    "profitLoss": -521.5500000000003,
+    "profitLossPercent": -4.969485614646906,
+    "buyTime": "2025-10-21T14:30:50.308Z"
+  },
+  {
+    "ticker": "WOK",
+    "quantity": 273089,
+    "buyPrice": 3.73,
+    "currentPrice": 3.92,
+    "profitLoss": 51886.90999999999,
+    "profitLossPercent": 5.093833780160857,
+    "buyTime": "2025-10-21T14:30:50.642Z"
+  },
+  {
+    "ticker": "AIP",
+    "quantity": 715,
+    "buyPrice": 13.595,
+    "currentPrice": 13.59,
+    "profitLoss": -3.575000000000559,
+    "profitLossPercent": -0.0367782272894504,
+    "buyTime": "2025-10-21T14:30:51.355Z"
+  },
+  {
+    "ticker": "PDYN",
+    "quantity": 1105,
+    "buyPrice": 8.61,
+    "currentPrice": 8.64,
+    "profitLoss": 33.150000000001256,
+    "profitLossPercent": 0.34843205574914216,
+    "buyTime": "2025-10-21T14:30:51.662Z"
+  },
+  {
+    "ticker": "NXL",
+    "quantity": 5835,
+    "buyPrice": 1.6148,
+    "currentPrice": 1.54,
+    "profitLoss": -436.45799999999986,
+    "profitLossPercent": -4.632152588555857,
+    "buyTime": "2025-10-21T14:30:52.263Z"
+  },
+  {
+    "ticker": "MU",
+    "quantity": 47,
+    "buyPrice": 201.726,
+    "currentPrice": 202.29,
+    "profitLoss": 26.50799999999967,
+    "profitLossPercent": 0.27958716278516055,
+    "buyTime": "2025-10-21T14:30:52.578Z"
+  },
+  {
+    "ticker": "EPOW",
+    "quantity": 9077,
+    "buyPrice": 1.06,
+    "currentPrice": 1.04,
+    "profitLoss": -181.54000000000016,
+    "profitLossPercent": -1.8867924528301903,
+    "buyTime": "2025-10-21T14:30:54.315Z"
+  },
+  {
+    "ticker": "GCBC",
+    "quantity": 437,
+    "buyPrice": 22.1,
+    "currentPrice": 22.19,
+    "profitLoss": 39.32999999999994,
+    "profitLossPercent": 0.4072398190045242,
+    "buyTime": "2025-10-21T14:30:54.641Z"
+  },
+  {
+    "ticker": "LKQ",
+    "quantity": 325,
+    "buyPrice": 30.5,
+    "currentPrice": 30.58,
+    "profitLoss": 25.999999999999446,
+    "profitLossPercent": 0.2622950819672075,
+    "buyTime": "2025-10-21T14:30:55.297Z"
+  },
+  {
+    "ticker": "EXPI",
+    "quantity": 888,
+    "buyPrice": 11.09,
+    "currentPrice": 10.97,
+    "profitLoss": -106.5599999999993,
+    "profitLossPercent": -1.0820559062218145,
+    "buyTime": "2025-10-21T14:30:55.664Z"
+  },
+  {
+    "ticker": "COSM",
+    "quantity": 113,
+    "buyPrice": 1.0801,
+    "currentPrice": 1.05,
+    "profitLoss": -3.4013000000000018,
+    "profitLossPercent": -2.7867790019442658,
+    "buyTime": "2025-10-21T16:12:13.066Z"
+  },
+  {
+    "ticker": "ROVR",
+    "quantity": 11,
+    "buyPrice": 10.995,
+    "currentPrice": 10.995,
+    "profitLoss": 0,
+    "profitLossPercent": 0,
+    "buyTime": "2025-10-21T17:43:32.067Z"
+  },
+  {
+    "ticker": "TRST",
+    "quantity": 3,
+    "buyPrice": 36.21,
+    "currentPrice": 36.21,
+    "profitLoss": 0,
+    "profitLossPercent": 0,
+    "buyTime": "2025-10-21T20:02:24.146Z"
+  },
+  {
+    "ticker": "MCRI",
+    "quantity": 1,
+    "buyPrice": 97.215,
+    "currentPrice": 97.215,
+    "profitLoss": 0,
+    "profitLossPercent": 0,
+    "buyTime": "2025-10-21T20:04:59.209Z"
+  },
+  {
+    "ticker": "ORRF",
+    "quantity": 3,
+    "buyPrice": 33.38,
+    "currentPrice": 33.38,
+    "profitLoss": 0,
+    "profitLossPercent": 0,
+    "buyTime": "2025-10-21T20:07:46.222Z"
+  }
+]

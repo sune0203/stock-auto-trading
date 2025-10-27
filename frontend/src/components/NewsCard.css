@@ -1,0 +1,465 @@
+.news-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.news-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.news-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.news-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* 메타 정보 상단 */
+.news-meta-top {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+}
+
+.meta-label {
+  color: #666;
+  font-weight: 500;
+}
+
+.meta-value {
+  color: #333;
+  font-weight: 600;
+}
+
+.meta-separator {
+  color: #ccc;
+  margin: 0 0.25rem;
+}
+
+.nasdaq-yes {
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.nasdaq-no {
+  color: #c62828;
+  background: #ffebee;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.ticker-value {
+  color: #ff5722;
+  background: #fff3e0;
+  padding: 0.15rem 0.6rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.ticker-link {
+  color: #ff5722;
+  background: #fff3e0;
+  padding: 0.15rem 0.6rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.ticker-link:hover {
+  background: #ffe0b2;
+  color: #e64a19;
+  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+.price-value {
+  color: #1976d2;
+  background: #e3f2fd;
+  padding: 0.15rem 0.6rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* 나스닥 배지 */
+.nasdaq-badge {
+  padding: 0.25rem 0.6rem !important;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.nasdaq-badge.yes {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+
+.nasdaq-badge.no {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+  color: white;
+}
+
+/* 가격 표시 행 */
+.price-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 시간 정보 행 */
+/* 분석 배지 (GPT 티커, 본문 티커, 상승확률, 호재) */
+.analysis-badges {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge.gpt-ticker {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #7dd3fc;
+}
+
+.badge.validated-ticker {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.badge.rise-score {
+  border: 1px solid;
+}
+
+.badge.rise-score.high {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.badge.rise-score.medium {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #fcd34d;
+}
+
+.badge.rise-score.low {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+.badge.positive-score {
+  border: 1px solid;
+}
+
+.badge.positive-score.high {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #93c5fd;
+}
+
+.badge.positive-score.medium {
+  background: #e0e7ff;
+  color: #4338ca;
+  border-color: #a5b4fc;
+}
+
+.badge.positive-score.low {
+  background: #f3f4f6;
+  color: #6b7280;
+  border-color: #d1d5db;
+}
+
+.time-info-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 12px;
+  padding: 12px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  flex-wrap: wrap;
+  border: 1px solid #e5e7eb;
+}
+
+.time-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.time-label {
+  font-size: 0.85rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.time-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.time-value.realtime {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #ffffff;
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.time-value.db-time {
+  background: linear-gradient(135deg, #a855f7, #9333ea);
+  color: #ffffff;
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(168, 85, 247, 0.3);
+}
+
+.time-value.publish-time {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  border: 1px solid rgba(34, 197, 94, 0.5);
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+}
+
+.time-value.publish-time-ko {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+}
+
+.time-value.buy-time {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #ffffff;
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.time-value.sell-time {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* 출처 태그 */
+.source-tag {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+
+.news-content {
+  margin-top: 1rem;
+}
+
+.news-image {
+  width: 60px;
+  height: 60px;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.news-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.news-title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.news-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.news-title-link:hover .news-title {
+  color: #1976d2;
+}
+
+
+.news-description {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.news-analysis {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.sentiment-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  margin-bottom: 0.5rem;
+}
+
+.sentiment-positive {
+  background-color: #66bb6a;
+}
+
+.sentiment-negative {
+  background-color: #ef5350;
+}
+
+.sentiment-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.analysis-summary {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.analysis-summary strong {
+  color: #333;
+}
+
+/* 매매 액션 버튼 */
+.trading-actions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.buy-button {
+  background: linear-gradient(135deg, #4caf50, #66bb6a);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+}
+
+.buy-button:hover {
+  background: linear-gradient(135deg, #45a049, #5cb85c);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4);
+}
+
+.buy-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+}
+
+/* 테스트 시장가 매수 버튼 */
+.test-buy-button {
+  background: linear-gradient(135deg, #2196f3, #42a5f5);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(33, 150, 243, 0.3);
+}
+
+.test-buy-button:hover {
+  background: linear-gradient(135deg, #1976d2, #2196f3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.4);
+}
+
+.test-buy-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(33, 150, 243, 0.3);
+}
+
+.auto-trade-indicator {
+  background: linear-gradient(135deg, #ff9800, #ffb74d);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(255, 152, 0, 0.3);
+}
+

@@ -1,0 +1,407 @@
+.position-panel {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  overflow: hidden;
+}
+
+.position-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.position-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #191f28;
+  margin: 0;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.sync-btn {
+  padding: 6px 12px;
+  border: 1px solid #4c6ef5;
+  background: #4c6ef5;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sync-btn:hover:not(:disabled) {
+  background: #3b5bdb;
+  border-color: #3b5bdb;
+}
+
+.sync-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.refresh-btn {
+  padding: 6px 12px;
+  border: 1px solid #dee2e6;
+  background: white;
+  color: #495057;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+  background: #f8f9fa;
+  border-color: #4c6ef5;
+  color: #4c6ef5;
+}
+
+.position-summary {
+  padding: 20px 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.summary-item:last-child {
+  margin-bottom: 0;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: #868e96;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #191f28;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.summary-value.profit {
+  color: #f03e3e;
+}
+
+.summary-value.loss {
+  color: #1971c2;
+}
+
+.value-krw {
+  font-size: 12px;
+  color: #868e96;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.profit-percent {
+  font-size: 14px;
+  margin-left: 6px;
+}
+
+.position-list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.empty-positions {
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.empty-positions p {
+  margin: 0;
+  font-size: 14px;
+  color: #868e96;
+}
+
+.empty-desc {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #adb5bd;
+}
+
+/* 탭 */
+.position-tabs {
+  display: flex;
+  border-bottom: 1px solid #e9ecef;
+  flex-shrink: 0;
+}
+
+.position-tab {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: none;
+  color: #868e96;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.position-tab:hover {
+  color: #495057;
+  background: #f8f9fa;
+}
+
+.position-tab.active {
+  color: #4c6ef5;
+  border-bottom-color: #4c6ef5;
+}
+
+/* 추가 구매/판매 버튼 */
+.position-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f3f5;
+}
+
+.position-action-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.position-action-btn.buy {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.position-action-btn.buy:hover {
+  background: #1976d2;
+  color: white;
+}
+
+.position-action-btn.sell {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.position-action-btn.sell:hover {
+  background: #d32f2f;
+  color: white;
+}
+
+/* 예약 주문 취소 버튼 */
+.cancel-order-btn {
+  padding: 6px 12px;
+  margin-left: 8px;
+  background: #ff5252;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-order-btn:hover {
+  background: #ff1744;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 82, 82, 0.3);
+}
+
+.cancel-order-btn:active {
+  transform: translateY(0);
+}
+
+.pending-order-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.order-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.order-status.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.order-time {
+  font-size: 11px;
+  color: #6c757d;
+}
+
+.position-item {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f1f3f5;
+  transition: background 0.2s;
+}
+
+.position-item:hover {
+  background: #f8f9fa;
+}
+
+.position-item:last-child {
+  border-bottom: none;
+}
+
+.position-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.position-ticker {
+  font-size: 16px;
+  font-weight: 700;
+  color: #191f28;
+}
+
+.position-quantity {
+  font-size: 13px;
+  color: #868e96;
+  font-weight: 500;
+}
+
+.position-prices {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.price-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.price-label {
+  font-size: 11px;
+  color: #868e96;
+}
+
+.price-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.position-profit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.position-profit.profit {
+  background: #fff5f5;
+  color: #f03e3e;
+}
+
+.position-profit.loss {
+  background: #e7f5ff;
+  color: #1971c2;
+}
+
+.profit-amount {
+  font-size: 15px;
+}
+
+.profit-percent {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* 예약 주문 (대기 탭) */
+.pending-order {
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+  border-left: 3px solid #ffa500;
+}
+
+.order-type-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.order-type-badge.buy {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.order-type-badge.sell {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.pending-order-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.order-status {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.order-status.pending {
+  background: rgba(255, 165, 0, 0.2);
+  color: #ffa500;
+}
+
+.order-time {
+  font-size: 11px;
+  color: #888;
+}
+
+/* 거래내역 탭 */
+.trading-history {
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  border-left: 3px solid #4c6ef5;
+}
+
+.history-time {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f1f3f5;
+  font-size: 11px;
+  color: #868e96;
+  text-align: right;
+}

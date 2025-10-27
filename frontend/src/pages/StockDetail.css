@@ -1,0 +1,248 @@
+.stock-detail {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.loading-screen,
+.error-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.detail-header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateX(-4px);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.header-left h1 {
+  margin: 0;
+  font-size: 48px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.company-name {
+  margin: 8px 0 16px 0;
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+}
+
+.tag {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-size: 14px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.header-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.watchlist-button {
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.watchlist-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.watchlist-button.active {
+  background: rgba(255, 215, 0, 0.3);
+  border-color: rgba(255, 215, 0, 0.5);
+  color: #ffd700;
+}
+
+.buy-button {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.buy-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+.chart-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.chart-tabs button {
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chart-tabs button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.chart-tabs button.active {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+.chart-placeholder {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 60px 24px;
+  margin: 20px 0;
+  text-align: center;
+  color: #fff;
+}
+
+.chart-placeholder p {
+  font-size: 16px;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+.chart-placeholder code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #4ade80;
+  display: inline-block;
+}
+
+.company-info {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.company-info h2 {
+  margin: 0 0 20px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.info-label {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 18px;
+  color: #fff;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+  }
+  
+  .header-right {
+    width: 100%;
+    align-items: stretch;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .chart-tabs {
+    flex-direction: column;
+  }
+}
+

@@ -1,0 +1,160 @@
+.app {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.app-header {
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-title .icon {
+  font-size: 1.5rem;
+}
+
+.header-title h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.trading-link {
+  margin-left: 20px;
+  padding: 8px 16px;
+  background: #4c6ef5;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.trading-link:hover {
+  background: #4263eb;
+  transform: translateY(-1px);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.language-selector {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.language-selector:hover {
+  border-color: #999;
+}
+
+.status-indicator {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-indicator.connected {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-indicator.disconnected {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.app-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.nasdaq-filter-info {
+  background: #e3f2fd;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #1565c0;
+  font-weight: 500;
+}
+
+.page-info {
+  font-size: 0.9rem;
+  color: #1976d2;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem 0;
+  padding: 1rem;
+}
+
+.page-btn {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  background: white;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  min-width: 40px;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-btn.active {
+  background: #1976d2;
+  color: white;
+  border-color: #1976d2;
+  font-weight: 600;
+}
+
+.page-btn.active:hover {
+  background: #1565c0;
+  border-color: #1565c0;
+}
+

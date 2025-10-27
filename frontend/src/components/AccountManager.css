@@ -1,0 +1,176 @@
+.account-manager {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.manager-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.btn-add {
+  padding: 10px 20px;
+  background: #4c6ef5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add:hover {
+  background: #5c7cfa;
+}
+
+/* 계정 추가 폼 */
+.add-account-form {
+  background: #1a1d29;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: #0f1117;
+  border: 1px solid #2a2d3a;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4c6ef5;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background: #4c6ef5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-submit:hover {
+  background: #5c7cfa;
+}
+
+/* 계정 목록 */
+.accounts-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.account-card {
+  background: #1a1d29;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #2a2d3a;
+}
+
+.account-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.account-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.type-badge {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.type-badge.real {
+  background: #fa5252;
+  color: #fff;
+}
+
+.type-badge.virtual {
+  background: #4c6ef5;
+  color: #fff;
+}
+
+.account-info {
+  margin-bottom: 16px;
+}
+
+.account-info p {
+  font-size: 13px;
+  color: #8b92a7;
+  margin: 4px 0;
+}
+
+.account-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-set-default {
+  padding: 8px 16px;
+  background: #2a2d3a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-set-default:hover {
+  background: #4c6ef5;
+}
+
+.default-label {
+  padding: 8px 16px;
+  background: #4c6ef5;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+

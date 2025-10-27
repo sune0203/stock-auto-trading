@@ -1,0 +1,543 @@
+[
+  {
+    "type": "SIGNAL",
+    "ticker": "AVAH",
+    "quantity": 0,
+    "price": 10.23,
+    "amount": 0,
+    "reason": "수동매매 신호 - 호재 80%",
+    "news": "아베아나 헬스케어 홀딩스, 3분기 잠정 재무 실적 발표",
+    "timestamp": "2025-10-21T20:16:45.660Z"
+  },
+  {
+    "type": "SIGNAL",
+    "ticker": "VICR",
+    "quantity": 0,
+    "price": 65.8,
+    "amount": 0,
+    "reason": "수동매매 신호 - 호재 85%",
+    "news": "Vicor Corporation, 2025년 9월 30일 마감 3분기 실적 발표",
+    "timestamp": "2025-10-21T20:07:51.337Z"
+  },
+  {
+    "type": "SIGNAL",
+    "ticker": "NOTV",
+    "quantity": 0,
+    "price": 1.35,
+    "amount": 0,
+    "reason": "수동매매 신호 - 호재 80%",
+    "news": "이노티브(Inotiv, Inc.), 2025년 11월 세 곳의 투자자 컨퍼런스 참가 예정",
+    "timestamp": "2025-10-21T20:07:50.577Z"
+  },
+  {
+    "type": "BUY",
+    "ticker": "ORRF",
+    "quantity": 3,
+    "price": 33.38,
+    "amount": 100.14000000000001,
+    "reason": "자동매매 - 호재 90%",
+    "news": "오스턴 파이낸셜 서비스, 2025년 3분기 실적 발표",
+    "timestamp": "2025-10-21T20:07:46.222Z"
+  },
+  {
+    "type": "BUY",
+    "ticker": "MCRI",
+    "quantity": 1,
+    "price": 97.215,
+    "amount": 97.215,
+    "reason": "자동매매 - 호재 95%",
+    "news": "Monarch Casino & Resort, 사상 최고 분기 재무 실적 발표",
+    "timestamp": "2025-10-21T20:04:59.209Z"
+  },
+  {
+    "type": "BUY",
+    "ticker": "TRST",
+    "quantity": 3,
+    "price": 36.21,
+    "amount": 108.63,
+    "reason": "자동매매 - 호재 95%",
+    "news": "트러스트코, 순이익 26.3% 증가 발표; 순이자이익 11.5% 증가; 전략적 비전과 효과적인 전술의 결실",
+    "timestamp": "2025-10-21T20:02:24.146Z"
+  },
+  {
+    "type": "SELL",
+    "ticker": "IBIO",
+    "quantity": 10978,
+    "price": 1.1011,
+    "amount": 12087.8758,
+    "profitLoss": -1524.8442000000002,
+    "profitLossPercent": -11.20161290322581,
+    "reason": "손절",
+    "timestamp": "2025-10-21T19:20:41.888Z"
+  },
+  {
+    "type": "BUY",
+    "ticker": "ROVR",
+    "quantity": 11,
+    "price": 10.995,
+    "amount": 120.945,
+    "reason": "자동매매 - 호재 90%",
+    "news": "로버, 반려동물 개성과 고유한 필요를 기념하는 대담한 새 크리에이티브 캠페인 시작",
+    "timestamp": "2025-10-21T17:43:32.067Z"
+  },
+  {
+    "type": "BUY",
+    "ticker": "COSM",
+    "quantity": 113,
+    "price": 1.0801,
+    "amount": 122.05130000000001,
+    "reason": "자동매매 - 호재 90%",
+    "news": "코스모스 헬스, 3억 달러 규모 디지털 자산 시설을 통해 이더리움 보유량 20만 달러 추가 매입으로 확장; 총 투자액 200만 달러 도달",
+    "timestamp": "2025-10-21T16:12:13.066Z"
+  },
+  {
+    "type": "SELL",
+    "ticker": "APLM",
+    "quantity": 325,
+    "price": 29.24,
+    "amount": 9503,
+    "profitLoss": -1057.8749999999998,
+    "profitLossPercent": -10.016925680873978,
+    "reason": "손절",
+    "timestamp": "2025-10-21T15:50:35.160Z"
+  },
+  {
+    "type": "SELL",
+    "ticker": "BYND",
+    "quantity": 6669,
+    "price": 2.28,
+    "amount": 15205.319999999998,
+    "profitLoss": 2231.4473999999987,
+    "profitLossPercent": 17.199547650868706,
+    "reason": "익절",
+    "timestamp": "2025-10-21T15:25:35.317Z"
+  },
+  {
+    "type": "buy",
+    "ticker": "EXPI",
+    "quantity": 888,
+    "price": 11.09,
+    "timestamp": "2025-10-21T14:30:55.664Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "eXp 리얼티, 에이전트 생산성 혁신 위한 독점 AI 비즈니스 비서 '미라' 출시"
+  },
+  {
+    "type": "buy",
+    "ticker": "LKQ",
+    "quantity": 325,
+    "price": 30.5,
+    "timestamp": "2025-10-21T14:30:55.298Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "LKQ 코퍼레이션, 독일 물류 허브 태양광 프로젝트로 재생 에너지 전략 발전"
+  },
+  {
+    "type": "buy",
+    "ticker": "GCBC",
+    "quantity": 437,
+    "price": 22.1,
+    "timestamp": "2025-10-21T14:30:54.641Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "그린 카운티 뱅코프(Greene County Bancorp, Inc.), 2025년 9월 30일 마감 3개월 순이익 890만 달러 기록 및 새러토가 카운티 확장 계획 확정"
+  },
+  {
+    "type": "buy",
+    "ticker": "EPOW",
+    "quantity": 9077,
+    "price": 1.06,
+    "timestamp": "2025-10-21T14:30:54.316Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "Sunrise, AI 기반 양극재 흑연화로 폭발 방지 시스템 특허 취득: 글로벌 선도 안전 제어 혁신"
+  },
+  {
+    "type": "buy",
+    "ticker": "APLM",
+    "quantity": 325,
+    "price": 32.495,
+    "timestamp": "2025-10-21T14:30:53.670Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "아폴로, 버트 크라우치를 부동산 지분 부문 총괄로 임명"
+  },
+  {
+    "type": "buy",
+    "ticker": "BYND",
+    "quantity": 6669,
+    "price": 1.9454,
+    "timestamp": "2025-10-21T14:30:53.215Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "비욘드 미트, 월마트에서 유통망 확장"
+  },
+  {
+    "type": "buy",
+    "ticker": "MU",
+    "quantity": 47,
+    "price": 201.726,
+    "timestamp": "2025-10-21T14:30:52.579Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "Crucial, 역대 가장 강력한 게이밍 메모리 DDR5 Pro OC 6400 CL32 출시"
+  },
+  {
+    "type": "buy",
+    "ticker": "NXL",
+    "quantity": 5835,
+    "price": 1.6148,
+    "timestamp": "2025-10-21T14:30:52.264Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "Nexalin의 DIFS™ 신경 자극, 3개의 동료 심사 연구에서 알츠하이머 및 치매 환자의 인지 및 뇌 네트워크 개선 입증"
+  },
+  {
+    "type": "buy",
+    "ticker": "PDYN",
+    "quantity": 1105,
+    "price": 8.61,
+    "timestamp": "2025-10-21T14:30:51.662Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "팔라다인 AI와 드래곤플라이, 드래곤플라이 UAV 플랫폼에 고급 자율 운영 및 스워밍 기능 구현 협력"
+  },
+  {
+    "type": "buy",
+    "ticker": "AIP",
+    "quantity": 715,
+    "price": 13.595,
+    "timestamp": "2025-10-21T14:30:51.356Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "아르테리스, 2V 시스템즈의 데이터센터 IO 칩렛에 선정"
+  },
+  {
+    "type": "buy",
+    "ticker": "WOK",
+    "quantity": 273089,
+    "price": 3.73,
+    "timestamp": "2025-10-21T14:30:50.643Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "WORK 메디컬 테크놀로지 그룹, Neologics Bioscience에 100만 달러 지분 투자 발표"
+  },
+  {
+    "type": "buy",
+    "ticker": "AACIU",
+    "quantity": 915,
+    "price": 11.47,
+    "timestamp": "2025-10-21T14:30:50.309Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 95%) - 장 마감)",
+    "newsTitle": "아르마다와 이클립스 에너지, 글로벌 산업 과제를 위한 핵심 엣지 기술 상용화 가속화를 위해 협력"
+  },
+  {
+    "type": "buy",
+    "ticker": "IQST",
+    "quantity": 1612,
+    "price": 5.92,
+    "timestamp": "2025-10-21T14:30:49.703Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "IQST - IQSTEL과 Cycurion, 차세대 사이버 방어 롤아웃의 1단계 완료로 AI-사이버 보안의 새로운 시대를 열다"
+  },
+  {
+    "type": "buy",
+    "ticker": "SSII",
+    "quantity": 982,
+    "price": 9.85,
+    "timestamp": "2025-10-21T14:30:49.397Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "SS Innovations, 다가오는 투자자 컨퍼런스 참가 예정"
+  },
+  {
+    "type": "buy",
+    "ticker": "AMPG",
+    "quantity": 2579,
+    "price": 3.895,
+    "timestamp": "2025-10-21T14:30:48.709Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "AmpliTech Group, 2035년까지 ORAN 5G 및 양자 기술 분야에서 강력한 성장을 위한 입지 확보"
+  },
+  {
+    "type": "buy",
+    "ticker": "LAES",
+    "quantity": 1512,
+    "price": 6.01,
+    "timestamp": "2025-10-21T14:30:48.325Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 95%) - 장 마감)",
+    "newsTitle": "SEALSQ, MIT 미디어 랩의 글로벌 회원 기관 커뮤니티에 합류"
+  },
+  {
+    "type": "buy",
+    "ticker": "VERX",
+    "quantity": 382,
+    "price": 26.46,
+    "timestamp": "2025-10-21T14:30:47.639Z",
+    "reason": "예약 주문 실행 (수동매매 (호재 85%) - 장 마감)",
+    "newsTitle": "Vertex, CEO 은퇴 및 승계 계획 발표"
+  },
+  {
+    "type": "buy",
+    "ticker": "VERX",
+    "quantity": 382,
+    "price": 26.46,
+    "timestamp": "2025-10-21T14:30:47.339Z",
+    "reason": "예약 주문 실행 (수동매매 (호재 80%) - 장 마감)",
+    "newsTitle": "Vertex, CEO 은퇴 및 승계 계획 발표"
+  },
+  {
+    "type": "buy",
+    "ticker": "OESX",
+    "quantity": 1011,
+    "price": 9.22,
+    "timestamp": "2025-10-21T14:30:46.715Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 95%) - 장 마감)",
+    "newsTitle": "오리온, 약 2,050개 소매점 대상 4,200만~4,500만 달러 규모 LED 조명 예방 유지보수 3년 계약 갱신 발표"
+  },
+  {
+    "type": "buy",
+    "ticker": "BKYI",
+    "quantity": 13286,
+    "price": 0.785,
+    "timestamp": "2025-10-21T14:30:46.340Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 95%) - 장 마감)",
+    "newsTitle": "BIO-key, FBI FAP 20 인증, 보안, 생체 감지 및 암호화된 장치-호스트 통신을 제공하는 EcoID III USB 지문 스캐너 출시"
+  },
+  {
+    "type": "buy",
+    "ticker": "EOSE",
+    "quantity": 653,
+    "price": 17.077,
+    "timestamp": "2025-10-21T14:30:45.650Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "MN8 에너지, 이오스 에너지와 최대 750MWh 미국산 장기 에너지 저장 시스템 재생에너지 프로젝트 배치를 위한 공급 계약 체결"
+  },
+  {
+    "type": "buy",
+    "ticker": "EOSE",
+    "quantity": 653,
+    "price": 17.077,
+    "timestamp": "2025-10-21T14:30:45.337Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 95%) - 장 마감)",
+    "newsTitle": "이오스 에너지, '프로젝트 어메이즈' 하에 미국 제조 확장 및 신규 소프트웨어 허브 구축으로 다음 성장 전략 단계 실행"
+  },
+  {
+    "type": "buy",
+    "ticker": "MLYS",
+    "quantity": 222,
+    "price": 44.19,
+    "timestamp": "2025-10-21T14:30:44.428Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "미네랄리스 테라퓨틱스, 미국 신장학회(ASN) 키드니 위크 2025에서 로룬드로스타트의 2상 Explore-CKD 임상시험 최신 연구 발표 예정"
+  },
+  {
+    "type": "buy",
+    "ticker": "CDTX",
+    "quantity": 97,
+    "price": 102.7,
+    "timestamp": "2025-10-21T14:30:44.077Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "Cidara Therapeutics, ID Week 2025에서 CD388에 대한 임상 2b상 후기 데이터 발표"
+  },
+  {
+    "type": "buy",
+    "ticker": "AUID",
+    "quantity": 3875,
+    "price": 2.4997,
+    "timestamp": "2025-10-21T14:30:43.735Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 95%) - 장 마감)",
+    "newsTitle": "authID, 선도적인 글로벌 소매업체에 생체 인식 기반 디지털 신원 확인 및 비밀번호 재설정 시스템 구축 업체로 선정"
+  },
+  {
+    "type": "buy",
+    "ticker": "VAPE",
+    "quantity": 551,
+    "price": 17.77,
+    "timestamp": "2025-10-21T14:30:43.361Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "CEA 인더스트리($BNC), BNB 보유량 50만개 돌파"
+  },
+  {
+    "type": "buy",
+    "ticker": "NWTG",
+    "quantity": 5357,
+    "price": 1.79,
+    "timestamp": "2025-10-21T14:30:42.670Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "뉴턴 골프와 월드 롱 드라이브, 파워와 퍼포먼스로 물리학을 현실로 만들다"
+  },
+  {
+    "type": "buy",
+    "ticker": "NVYY",
+    "quantity": 419,
+    "price": 23.15,
+    "timestamp": "2025-10-21T14:30:42.345Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "GraniteShares, META(FBYY) 및 BABA(BBYY) 기반 신규 YieldBOOSTTM ETF 출시"
+  },
+  {
+    "type": "buy",
+    "ticker": "ARDX",
+    "quantity": 1922,
+    "price": 5.235,
+    "timestamp": "2025-10-21T14:30:41.702Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 95%) - 장 마감)",
+    "newsTitle": "아델릭스, 미국 신장학회 신장 주간에서 4개 초록 포스터 발표 승인 발표"
+  },
+  {
+    "type": "buy",
+    "ticker": "ZENA",
+    "quantity": 1818,
+    "price": 5.2312,
+    "timestamp": "2025-10-21T14:30:41.337Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 95%) - 장 마감)",
+    "newsTitle": "ZenaTech, 공공 사업 및 산불 관리를 위한 드론 서비스(DaaS) 확장을 위해 남부 캘리포니아 토지 측량 및 엔지니어링 회사 인수를 제안"
+  },
+  {
+    "type": "buy",
+    "ticker": "PSTV",
+    "quantity": 16923,
+    "price": 0.6135,
+    "timestamp": "2025-10-21T14:30:40.648Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "플러스 테라퓨틱스, CNSide® 진단 플랫폼 출시 업데이트"
+  },
+  {
+    "type": "buy",
+    "ticker": "DFLI",
+    "quantity": 7780,
+    "price": 1.2,
+    "timestamp": "2025-10-21T14:30:40.336Z",
+    "reason": "예약 주문 실행 (수동매매 (호재 80%) - 장 마감)",
+    "newsTitle": "Dragonfly Energy, Nasdaq 상장 유지 요건 완전 준수 재확보"
+  },
+  {
+    "type": "buy",
+    "ticker": "VGSH",
+    "quantity": 166,
+    "price": 58.955,
+    "timestamp": "2025-10-21T14:30:39.424Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "뱅가드, Equip Exposition 2025에서 첨단 배터리 기술 및 향상된 엔진 라인업 공개 예정"
+  },
+  {
+    "type": "buy",
+    "ticker": "IBIO",
+    "quantity": 10978,
+    "price": 1.24,
+    "timestamp": "2025-10-21T14:30:39.079Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 95%) - 장 마감)",
+    "newsTitle": "iBio, 다가오는 두 과학 학회(ObesityWeek® 및 PEGS Europe 2025)에서 액티빈 E 항체에 대한 새로운 전임상 데이터 발표 예정"
+  },
+  {
+    "type": "buy",
+    "ticker": "AEC",
+    "quantity": 1231,
+    "price": 7.4,
+    "timestamp": "2025-10-21T14:30:38.444Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 95%) - 장 마감)",
+    "newsTitle": "Anfield, JD-7 광산 확인 시추 프로그램 완료 및 자원 업데이트 준비"
+  },
+  {
+    "type": "buy",
+    "ticker": "MCW",
+    "quantity": 1918,
+    "price": 5.215,
+    "timestamp": "2025-10-21T14:30:38.112Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "미스터 카 워시, 휘슬 익스프레스 매장 5곳 인수하여 텍사스 러벅에서 입지 확장"
+  },
+  {
+    "type": "buy",
+    "ticker": "PLUG",
+    "quantity": 2883,
+    "price": 3.2656,
+    "timestamp": "2025-10-21T14:30:37.495Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "플러그, 유럽 수소 공급 및 운송 역량 입증; H2CAST 프로젝트에 성공적으로 납품 완료, 추가 35톤 신규 계약 체결"
+  },
+  {
+    "type": "buy",
+    "ticker": "BCPC",
+    "quantity": 65,
+    "price": 157.8163,
+    "timestamp": "2025-10-21T14:30:37.174Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "발켐 코퍼레이션, 2025년 3분기 재무 실적 발표"
+  },
+  {
+    "type": "buy",
+    "ticker": "NDAQ",
+    "quantity": 110,
+    "price": 92.014,
+    "timestamp": "2025-10-21T14:30:36.532Z",
+    "reason": "예약 주문 실행 (수동매매 (호재 80%) - 장 마감)",
+    "newsTitle": "나스닥, 주당 0.27달러 분기 배당 발표"
+  },
+  {
+    "type": "buy",
+    "ticker": "CMND",
+    "quantity": 9162,
+    "price": 1.005,
+    "timestamp": "2025-10-21T14:30:36.163Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "클리어마인드 메디슨, FDA 승인 알코올 사용 장애 임상 1/2a상 첫 코호트 마지막 환자 등록 완료"
+  },
+  {
+    "type": "buy",
+    "ticker": "FMAO",
+    "quantity": 394,
+    "price": 25.1596,
+    "timestamp": "2025-10-21T14:30:35.543Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 100%) - 장 마감)",
+    "newsTitle": "F&M 은행, 마이크 벤슨을 수석 부사장 겸 수석 소기업 뱅킹 매니저로 영입"
+  },
+  {
+    "type": "buy",
+    "ticker": "DVLT",
+    "quantity": 4051,
+    "price": 2.305,
+    "timestamp": "2025-10-21T14:30:35.200Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "Datavault AI, 미 해군 참전용사 Pete Scobell을 글로벌 보안 담당 부사장으로 임명"
+  },
+  {
+    "type": "buy",
+    "ticker": "ADAML",
+    "quantity": 442,
+    "price": 22.2,
+    "timestamp": "2025-10-21T14:30:34.840Z",
+    "reason": "예약 주문 실행 (자동매매 (호재 90%) - 장 마감)",
+    "newsTitle": "빅터 시아델리, 업계 거물 제이슨 스텐거를 Rate의 최고 생산 책임자로 영입"
+  },
+  {
+    "type": "BUY",
+    "ticker": "ERIC",
+    "quantity": 105,
+    "price": 9.485,
+    "amount": 995.925,
+    "reason": "자동매매 - 호재 90%",
+    "news": "HII, 잉걸스 조선소에서 HD현대중공업 경영진 맞이… 전략적 파트너십 강화",
+    "timestamp": "2025-10-20T18:02:58.694Z"
+  },
+  {
+    "type": "SELL",
+    "ticker": "IMTX",
+    "quantity": 98,
+    "price": 10.64,
+    "amount": 1042.72,
+    "profitLoss": 52.77300000000008,
+    "profitLossPercent": 5.330891451764598,
+    "reason": "익절",
+    "timestamp": "2025-10-20T16:09:10.805Z"
+  },
+  {
+    "type": "BUY",
+    "ticker": "APPN",
+    "quantity": 34,
+    "price": 28.85,
+    "amount": 980.9000000000001,
+    "reason": "자동매매 - 호재 90%",
+    "news": "앱폴리오는 팀, 지역 사회, 그리고 나아가 전체 산업을 위한 더 밝은 미래를 만들어가는 기업과 리더들을 기리는 2025년 퓨처리스트 어워드 수상자를 발표했습니다.",
+    "timestamp": "2025-10-20T15:04:41.723Z"
+  },
+  {
+    "type": "BUY",
+    "ticker": "IMTX",
+    "quantity": 98,
+    "price": 10.1015,
+    "amount": 989.947,
+    "reason": "자동매매 - 호재 95%",
+    "news": "이매틱스는 ESMO 2025 프레지덴셜 심포지엄에서 전이성 포도막 흑색종에서 안주셀 PRAME 세포 치료제의 강력한 항종양 활성을 발표했습니다.",
+    "timestamp": "2025-10-20T14:37:57.233Z"
+  }
+]

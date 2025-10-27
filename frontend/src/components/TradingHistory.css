@@ -1,0 +1,179 @@
+.trading-history {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.history-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.history-filters {
+  display: flex;
+  gap: 8px;
+}
+
+.history-filters button {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.history-filters button:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.history-filters button.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.history-empty {
+  text-align: center;
+  padding: 40px;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.history-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s;
+}
+
+.history-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+}
+
+.history-item.buy {
+  border-left: 4px solid #10b981;
+}
+
+.history-item.sell {
+  border-left: 4px solid #ef4444;
+}
+
+.history-item.signal {
+  border-left: 4px solid #f59e0b;
+}
+
+.history-main {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.history-type {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.history-ticker {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  min-width: 80px;
+}
+
+.history-quantity {
+  font-size: 14px;
+  color: #6b7280;
+  min-width: 60px;
+}
+
+.history-price {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.price-usd {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.price-krw {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.history-amount {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.amount-usd {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: right;
+}
+
+.amount-krw {
+  font-size: 13px;
+  color: #6b7280;
+  text-align: right;
+}
+
+.history-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.history-reason {
+  font-size: 13px;
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.history-news {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.history-time {
+  font-size: 12px;
+  color: #9ca3af;
+}
+

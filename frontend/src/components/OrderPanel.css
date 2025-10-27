@@ -1,0 +1,482 @@
+.order-panel {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.order-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-header-left h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #191f28;
+  margin: 0;
+}
+
+/* 계정 타입 배지 */
+.account-type-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.account-type-badge.real {
+  background-color: #fff5f5;
+  color: #c92a2a;
+  border: 1px solid #ffc9c9;
+}
+
+.account-type-badge.virtual {
+  background-color: #f0f9ff;
+  color: #1971c2;
+  border: 1px solid #a5d8ff;
+}
+
+.order-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.order-symbol {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.symbol-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #868e96;
+}
+
+.order-symbol .symbol-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #191f28;
+}
+
+.order-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.order-tab {
+  padding: 16px;
+  border: none;
+  background: #f8f9fa;
+  color: #868e96;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.order-tab.active {
+  background: white;
+  color: #191f28;
+}
+
+.order-tab.active.buy {
+  color: #f03e3e;
+}
+
+.order-tab.active.sell {
+  color: #1971c2;
+}
+
+.price-type-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 16px 24px;
+}
+
+.price-type-tab {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.price-type-tab:hover {
+  background: #f8f9fa;
+}
+
+.price-type-tab.active {
+  background: #228be6;
+  color: #fff;
+  border-color: #228be6;
+}
+
+.price-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.price-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #dee2e6;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.price-btn:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.price-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.order-content {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(100vh - 300px);
+}
+
+.order-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.order-content::-webkit-scrollbar-thumb {
+  background: #dee2e6;
+  border-radius: 3px;
+}
+
+.order-content::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd;
+}
+
+.order-field {
+  margin-bottom: 20px;
+}
+
+.field-label {
+  display: block;
+  font-size: 13px;
+  color: #868e96;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.field-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #191f28;
+}
+
+.symbol-value {
+  font-size: 18px;
+  color: #4c6ef5;
+}
+
+.price-value {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.price-krw {
+  font-size: 13px;
+  color: #868e96;
+  font-weight: 500;
+}
+
+.quantity-input-group {
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  gap: 8px;
+}
+
+.quantity-btn {
+  height: 48px;
+  border: 1px solid #dee2e6;
+  background: white;
+  color: #495057;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quantity-btn:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.quantity-btn:active {
+  transform: scale(0.95);
+}
+
+.quantity-input {
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  color: #191f28;
+}
+
+.quantity-input:focus {
+  outline: none;
+  border-color: #4c6ef5;
+  box-shadow: 0 0 0 3px rgba(76, 110, 245, 0.1);
+}
+
+.quick-amounts {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.quick-amount-btn {
+  padding: 8px 4px;
+  border: 1px solid #dee2e6;
+  background: white;
+  color: #495057;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-amount-btn:hover {
+  background: #f8f9fa;
+  border-color: #4c6ef5;
+  color: #4c6ef5;
+}
+
+/* 익절/손절 설정 */
+.profit-loss-settings {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.pl-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pl-row:last-child {
+  margin-bottom: 0;
+}
+
+.pl-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 80px;
+}
+
+.pl-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.pl-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+  cursor: pointer;
+  margin: 0;
+}
+
+.pl-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: #191f28;
+}
+
+.pl-input:focus {
+  outline: none;
+  border-color: #4c6ef5;
+  box-shadow: 0 0 0 3px rgba(76, 110, 245, 0.1);
+}
+
+.pl-input:disabled {
+  background: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.pl-preview {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.pl-preview.profit {
+  color: #0ca678;
+  background: rgba(12, 166, 120, 0.1);
+}
+
+.pl-preview.loss {
+  color: #f03e3e;
+  background: rgba(240, 62, 62, 0.1);
+}
+
+.order-summary {
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.summary-row:last-child {
+  margin-bottom: 0;
+}
+
+.summary-row.krw {
+  padding-top: 12px;
+  border-top: 1px solid #e9ecef;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: #868e96;
+}
+
+.summary-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #191f28;
+}
+
+.summary-row.max-qty {
+  padding-top: 10px;
+  border-top: 1px dashed #e9ecef;
+  margin-top: 10px;
+}
+
+.max-qty-value {
+  color: #4c6ef5 !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+}
+
+.order-submit-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.order-submit-btn.buy {
+  background: #f03e3e;
+}
+
+.order-submit-btn.buy:hover {
+  background: #e03131;
+}
+
+.order-submit-btn.sell {
+  background: #1971c2;
+}
+
+.order-submit-btn.sell:hover {
+  background: #1864ab;
+}
+
+.order-submit-btn:disabled {
+  background: #adb5bd;
+  cursor: not-allowed;
+}
+
+.order-submit-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.order-notice {
+  margin-top: 16px;
+  padding: 12px;
+  background: #fff5f5;
+  border-radius: 6px;
+}
+
+.order-notice p {
+  margin: 0;
+  font-size: 12px;
+  color: #868e96;
+  line-height: 1.6;
+}
+
+.order-notice p + p {
+  margin-top: 4px;
+}
+
+.notice-warning {
+  color: #f59f00 !important;
+  font-weight: 600;
+}
+
+.notice-info {
+  color: #4c6ef5 !important;
+}
+

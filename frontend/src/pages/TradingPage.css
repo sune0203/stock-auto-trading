@@ -1,0 +1,411 @@
+/* 토스 증권 스타일 트레이딩 페이지 */
+.trading-page {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f8f9fa;
+  overflow: hidden;
+}
+
+/* 헤더 */
+.trading-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #191f28;
+  margin: 0;
+}
+
+.symbol-selector {
+  position: relative;
+}
+
+.symbol-input {
+  width: 200px;
+  padding: 10px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.symbol-input:focus {
+  outline: none;
+  border-color: #4c6ef5;
+  box-shadow: 0 0 0 3px rgba(76, 110, 245, 0.1);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.balance-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.balance-label {
+  font-size: 12px;
+  color: #868e96;
+  font-weight: 500;
+  margin-right: 4px;
+}
+
+.balance-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #191f28;
+}
+
+.balance-krw {
+  font-size: 13px;
+  color: #868e96;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.refresh-balance-btn {
+  background: transparent;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.refresh-balance-btn:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #4c6ef5;
+}
+
+.refresh-balance-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.refresh-balance-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 메인 컨텐츠 - 4분할 가로 레이아웃 */
+.trading-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; /* 4등분 */
+  gap: 12px;
+  padding: 12px;
+  height: calc(100vh - 73px);
+  overflow: hidden;
+}
+
+/* 패널 공통 스타일 */
+.panel {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 각 패널 영역 */
+.panel-orderbook {
+  grid-column: 1;
+}
+
+.panel-order {
+  grid-column: 2;
+}
+
+.panel-position {
+  grid-column: 3;
+}
+
+.panel-news {
+  grid-column: 4;
+}
+
+.stock-info {
+  background: white;
+  padding: 20px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stock-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stock-name h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #191f28;
+  margin: 0;
+}
+
+.stock-name-ko {
+  font-size: 14px;
+  font-weight: 600;
+  color: #868e96;
+  margin-right: 12px;
+}
+
+.stock-exchange {
+  padding: 4px 8px;
+  background: #e7f5ff;
+  color: #1971c2;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.stock-price {
+  text-align: right;
+}
+
+.current-price {
+  font-size: 32px;
+  font-weight: 700;
+  color: #191f28;
+  line-height: 1;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-krw {
+  font-size: 14px;
+  color: #868e96;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.price-source {
+  font-size: 11px;
+  color: #868e96;
+  font-weight: 500;
+  padding: 4px 8px;
+  background: #f1f3f5;
+  border-radius: 4px;
+  cursor: help;
+  margin-left: auto;
+}
+
+.price-change {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.price-change.positive {
+  color: #f03e3e;
+}
+
+.price-change.negative {
+  color: #1971c2;
+}
+
+.change-amount {
+  font-size: 18px;
+}
+
+.change-percent {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* 차트 컨테이너 */
+.chart-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  overflow: hidden;
+  min-height: 400px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 호가창 */
+.orderbook-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  overflow: hidden;
+  min-height: 400px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.orderbook-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.orderbook-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #191f28;
+  margin: 0;
+}
+
+.orderbook-content {
+  padding: 16px;
+}
+
+.orderbook-simple {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.orderbook-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.orderbook-row.ask {
+  background: #fff5f5;
+  color: #f03e3e;
+}
+
+.orderbook-row.current {
+  background: #f8f9fa;
+  color: #191f28;
+  font-size: 18px;
+}
+
+.orderbook-row.bid {
+  background: #e7f5ff;
+  color: #1971c2;
+}
+
+.orderbook-info {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-label {
+  font-size: 13px;
+  color: #868e96;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #191f28;
+}
+
+/* 중앙 패널 */
+.center-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.center-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.center-panel::-webkit-scrollbar-thumb {
+  background: #dee2e6;
+  border-radius: 4px;
+}
+
+.center-panel::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd;
+}
+
+/* 오른쪽 패널 */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.right-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.right-panel::-webkit-scrollbar-thumb {
+  background: #dee2e6;
+  border-radius: 4px;
+}
+
+.right-panel::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd;
+}
+
+/* 반응형 */
+@media (max-width: 1400px) {
+  .trading-content {
+    grid-template-columns: 1fr 350px 300px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .trading-content {
+    grid-template-columns: 1fr 320px;
+  }
+  
+  .right-panel {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .trading-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .center-panel {
+    display: none;
+  }
+}
+
