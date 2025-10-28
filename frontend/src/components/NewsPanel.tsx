@@ -13,10 +13,16 @@ interface NewsItem {
   imageUrl?: string
   publishedTime: string
   ticker?: string
+  primaryTicker?: string // 우선 티커
+  alternateTicker?: string | null // 대체 티커
+  n_ticker?: string
+  n_symbol?: string
   n_summary_kr?: string // 한글 요약
   n_link?: string // 원문 링크
   n_immediate_impact?: number // 당일 상승 점수
   n_bullish?: number // 호재 점수
+  capturedPriceUSD?: number | null // 뉴스 캡처 당시 가격 (USD)
+  capturedVolume?: number | null // 뉴스 캡처 당시 거래량
   analysis?: {
     ticker?: string
     positivePercentage?: number
@@ -32,25 +38,21 @@ interface NewsPanelProps {
 
 const NewsPanel: React.FC<NewsPanelProps> = ({ onTickerClick }) => {
   const [news, setNews] = useState<NewsItem[]>([])
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
   const [loading, setLoading] = useState(false)
   const [socket, setSocket] = useState<Socket | null>(null)
   const [newNewsCount, setNewNewsCount] = useState(0) // 새 뉴스 개수
   const [expandedNews, setExpandedNews] = useState<Set<string>>(new Set()) // 펼쳐진 뉴스 ID
-  const pageSize = 30
 
-  // 뉴스 불러오기
-  const fetchNews = async (pageNum: number) => {
+  // 뉴스 불러오기 (최근 30개만)
+  const fetchNews = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`http://localhost:3001/api/news?page=${pageNum}&pageSize=${pageSize}`)
+      const response = await fetch(`http://localhost:3001/api/news`)
       const data = await response.json()
       
       if (data.news) {
         setNews(data.news)
-        setTotalPages(data.totalPages || 1)
-        console.log(`📰 뉴스 ${data.news.length}개 로드 (${pageNum}/${data.totalPages} 페이지)`)
+        console.log(`📰 뉴스 ${data.news.length}개 로드`)
       }
     } catch (error) {
       console.error('뉴스 로드 실패:', error)
@@ -59,10 +61,10 @@ const NewsPanel: React.FC<NewsPanelProps> = ({ onTickerClick }) => {
     }
   }
 
-  // 초기 로드 및 페이지 변경 시 뉴스 불러오기
+  // 초기 로드
   useEffect(() => {
-    fetchNews(page)
-  }, [page])
+    fetchNews()
+  }, [])
 
   // WebSocket 연결 및 실시간 뉴스 수신
   useEffect(() => {
@@ -73,29 +75,26 @@ const NewsPanel: React.FC<NewsPanelProps> = ({ onTickerClick }) => {
     newSocket.on('news:new', (newNewsItems: NewsItem[]) => {
       console.log(`📰 신규 뉴스 ${newNewsItems.length}개 수신`)
       
-      // 1페이지에 있을 때만 자동으로 새 뉴스를 상단에 추가
-      if (page === 1) {
-        setNews(prev => {
-          // 중복 제거: 기존 뉴스에 없는 것만 추가
-          const existingIds = new Set(prev.map(item => item.id))
-          const uniqueNewNews = newNewsItems.filter(item => !existingIds.has(item.id))
+      setNews(prev => {
+        // 중복 제거: 기존 뉴스에 없는 것만 추가
+        const existingIds = new Set(prev.map(item => item.id))
+        const uniqueNewNews = newNewsItems.filter(item => !existingIds.has(item.id))
+        
+        if (uniqueNewNews.length > 0) {
+          // 새 뉴스 개수 증가
+          setNewNewsCount(prevCount => prevCount + uniqueNewNews.length)
           
-          if (uniqueNewNews.length > 0) {
-            // 새 뉴스 개수 증가
-            setNewNewsCount(prevCount => prevCount + uniqueNewNews.length)
-            
-            // 새 뉴스를 맨 위에 추가하고, 페이지 크기만큼만 유지
-            return [...uniqueNewNews, ...prev].slice(0, pageSize)
-          }
-          return prev
-        })
-      }
+          // 새 뉴스를 맨 위에 추가하고, 최대 30개만 유지
+          return [...uniqueNewNews, ...prev].slice(0, 30)
+        }
+        return prev
+      })
     })
 
     return () => {
       newSocket.close()
     }
-  }, [page, pageSize])
+  }, [])
 
   // 시간 포맷팅
   const formatTime = (timeStr: string) => {
@@ -121,8 +120,18 @@ const NewsPanel: React.FC<NewsPanelProps> = ({ onTickerClick }) => {
 
   // 뉴스 카드 클릭
   const handleNewsClick = (item: NewsItem) => {
-    if (item.analysis?.ticker && onTickerClick) {
+    if (item.primaryTicker && onTickerClick) {
+      onTickerClick(item.primaryTicker)
+    } else if (item.analysis?.ticker && onTickerClick) {
       onTickerClick(item.analysis.ticker)
+    }
+  }
+
+  // 티커 선택 클릭
+  const handleTickerSelect = (ticker: string, event: React.MouseEvent) => {
+    event.stopPropagation()
+    if (onTickerClick) {
+      onTickerClick(ticker)
     }
   }
 
@@ -168,6 +177,9 @@ const NewsPanel: React.FC<NewsPanelProps> = ({ onTickerClick }) => {
       {loading && <div className="news-loading">로딩 중...</div>}
 
       <div className="news-list" onScroll={handleScroll}>
+        {news.length === 0 && !loading && (
+          <div className="news-empty">표시할 뉴스가 없습니다</div>
+        )}
         {news.map((item) => {
           const isExpanded = expandedNews.has(item.id)
           return (
@@ -183,10 +195,21 @@ const NewsPanel: React.FC<NewsPanelProps> = ({ onTickerClick }) => {
                 <div className="news-meta">
                   <span className="news-source">{item.source}</span>
                   <span className="news-time">{formatTime(item.publishedTime)}</span>
-                  {item.analysis?.ticker && (
-                    <span className="news-ticker">{item.analysis.ticker}</span>
+                  {item.primaryTicker && (
+                    <span className="news-ticker">{item.primaryTicker}</span>
                   )}
                 </div>
+
+                {/* 캡처 당시 가격/거래량 */}
+                {item.capturedPriceUSD && (
+                  <div className="captured-info-panel">
+                    <span className="captured-label">뉴스 발생 시:</span>
+                    <span className="captured-price">${item.capturedPriceUSD.toFixed(2)}</span>
+                    {item.capturedVolume && (
+                      <span className="captured-volume">/ 거래량: {item.capturedVolume.toLocaleString()}</span>
+                    )}
+                  </div>
+                )}
 
                 {/* 점수 표시 */}
                 <div className="news-scores">
@@ -206,6 +229,25 @@ const NewsPanel: React.FC<NewsPanelProps> = ({ onTickerClick }) => {
                 {isExpanded && item.n_summary_kr && (
                   <div className="news-summary">
                     {item.n_summary_kr}
+                  </div>
+                )}
+
+                {/* 티커 선택 버튼 (대체 티커가 있을 경우) */}
+                {item.alternateTicker && (
+                  <div className="ticker-selector-panel">
+                    <button 
+                      className="ticker-option-panel"
+                      onClick={(e) => handleTickerSelect(item.primaryTicker!, e)}
+                    >
+                      {item.primaryTicker} 차트
+                    </button>
+                    <span className="ticker-or">또는</span>
+                    <button 
+                      className="ticker-option-panel alternate"
+                      onClick={(e) => handleTickerSelect(item.alternateTicker!, e)}
+                    >
+                      {item.alternateTicker} 차트
+                    </button>
                   </div>
                 )}
 
@@ -232,27 +274,6 @@ const NewsPanel: React.FC<NewsPanelProps> = ({ onTickerClick }) => {
             </div>
           )
         })}
-      </div>
-
-      {/* 페이지네이션 */}
-      <div className="news-pagination">
-        <button 
-          onClick={() => setPage(p => Math.max(1, p - 1))}
-          disabled={page === 1 || loading}
-          className="page-btn"
-        >
-          이전
-        </button>
-        <span className="page-info">
-          {page} / {totalPages}
-        </span>
-        <button 
-          onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-          disabled={page === totalPages || loading}
-          className="page-btn"
-        >
-          다음
-        </button>
       </div>
     </div>
   )

@@ -10,7 +10,7 @@ import { accountCacheService } from './account-cache.js'
 class KISSyncService {
   private syncInterval: NodeJS.Timeout | null = null
   private isSyncing = false
-  private readonly SYNC_INTERVAL = 300000 // 5분마다 동기화 (Rate Limit 방지)
+  private readonly SYNC_INTERVAL = 300000 // 5분마다 동기화
 
   /**
    * 동기화 서비스 시작
@@ -56,14 +56,14 @@ class KISSyncService {
       // 1. 잔고 갱신 (캐시 무효화)
       await this.syncBalance()
       
-      // ⏱️ Rate Limit 방지: 1초 대기
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // ⏱️ Rate Limit 방지: 3초 대기
+      await new Promise(resolve => setTimeout(resolve, 3000))
       
       // 2. 보유 포지션 갱신
       await this.syncPositions()
       
-      // ⏱️ Rate Limit 방지: 1초 대기
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // ⏱️ Rate Limit 방지: 3초 대기
+      await new Promise(resolve => setTimeout(resolve, 3000))
       
       // 3. 미체결 주문 동기화 (현재 KIS API에서 미지원이므로 스킵)
       // await this.syncUnexecutedOrders()

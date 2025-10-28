@@ -71,37 +71,34 @@ export async function getNewsFromDB(limit: number = 100): Promise<NewsFromDB[]> 
 }
 
 // _NEWS 테이블에서 뉴스 페이징 조회
-export async function getNewsPaginated(page: number = 1, pageSize: number = 30): Promise<{ news: NewsFromDB[], total: number }> {
+export async function getNewsPaginated(page: number = 1, pageSize: number = 30): Promise<{ news: NewsFromDB[], total: number, totalPages: number }> {
   try {
-    const offset = (page - 1) * pageSize
-    
-    // 전체 개수 조회
-    const [countRows] = await pool.query(
-      `SELECT COUNT(*) as total FROM _NEWS 
-       WHERE n_gpt_is = 'Y' 
-       AND n_ticker IS NOT NULL 
-       AND n_ticker != ''`
-    )
-    const total = (countRows as any)[0].total
-    
-    // 페이징된 뉴스 조회
+    // 최근 30개만 조회 (단순화)
     const [rows] = await pool.query(
-      `SELECT * FROM _NEWS 
+      `SELECT n_idx, n_title, n_title_kr, n_summary, n_summary_kr, n_link, n_source, n_image, 
+              n_ticker, n_symbol, n_time_kst, n_save_time, n_immediate_impact, n_bullish, n_bearish,
+              n_bullish_potential, captured_price, trade_volume, n_in_time
+       FROM _NEWS 
        WHERE n_gpt_is = 'Y' 
-       AND n_ticker IS NOT NULL 
-       AND n_ticker != ''
+       AND ((n_ticker IS NOT NULL AND n_ticker != '') OR (n_symbol IS NOT NULL AND n_symbol != ''))
+       AND (
+         EXISTS (SELECT 1 FROM _STOCKS WHERE s_ticker COLLATE utf8mb4_general_ci = n_ticker COLLATE utf8mb4_general_ci)
+         OR EXISTS (SELECT 1 FROM _STOCKS WHERE s_ticker COLLATE utf8mb4_general_ci = n_symbol COLLATE utf8mb4_general_ci)
+       )
        ORDER BY n_in_time DESC 
-       LIMIT ? OFFSET ?`,
-      [pageSize, offset]
+       LIMIT 30`
     )
+    
+    const total = (rows as any[]).length
     
     return {
       news: rows as NewsFromDB[],
-      total
+      total,
+      totalPages: 1
     }
   } catch (error) {
     console.error('❌ DB 뉴스 페이징 조회 실패:', error)
-    return { news: [], total: 0 }
+    return { news: [], total: 0, totalPages: 0 }
   }
 }
 

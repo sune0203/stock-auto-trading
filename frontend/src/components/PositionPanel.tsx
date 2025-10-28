@@ -4,6 +4,7 @@ import './PositionPanel.css'
 
 interface Position {
   ticker: string
+  stockNameKo?: string // 한국어 종목명 추가
   quantity: number
   buyPrice: number
   currentPrice: number
@@ -15,6 +16,7 @@ interface Position {
 interface PendingOrder {
   po_id: number
   po_ticker: string
+  stockNameKo?: string // 한국어 종목명 추가
   po_order_type: 'buy' | 'sell'
   po_quantity: number
   po_price_type: 'market' | 'limit'
@@ -28,6 +30,7 @@ interface PendingOrder {
 interface TradingHistory {
   th_id: number
   th_ticker: string
+  stockNameKo?: string // 한국어 종목명 추가
   th_type: 'BUY' | 'SELL'
   th_price: number
   th_quantity: number
@@ -49,6 +52,7 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
   const [pendingOrders, setPendingOrders] = useState<PendingOrder[]>([])
   const [tradingHistory, setTradingHistory] = useState<TradingHistory[]>([])
   const [activeTab, setActiveTab] = useState<'holdings' | 'pending' | 'history'>('holdings') // 보유 | 대기 | 거래내역
+  const [stockNames, setStockNames] = useState<Map<string, string>>(new Map()) // 티커 → 한국어 이름 맵
   const [isSyncing, setIsSyncing] = useState(false) // 동기화 중 상태
 
   useEffect(() => {
@@ -65,11 +69,36 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
     return () => clearInterval(interval)
   }, [activeTab])
 
+  // 종목 한국어 이름 조회
+  const fetchStockName = async (ticker: string): Promise<string> => {
+    if (stockNames.has(ticker)) {
+      return stockNames.get(ticker)!
+    }
+    
+    try {
+      const response = await axios.get(`http://localhost:3001/api/stocks/${ticker}`)
+      const nameKo = response.data?.s_name_kr || ''
+      setStockNames(prev => new Map(prev).set(ticker, nameKo))
+      return nameKo
+    } catch (error) {
+      return ''
+    }
+  }
+
   const loadPositions = async () => {
     try {
       const response = await axios.get('http://localhost:3001/api/trading/positions')
       console.log('📊 포지션 데이터:', response.data)
-      setPositions(response.data || [])
+      
+      // 한국어 이름 추가
+      const positionsWithNames = await Promise.all(
+        (response.data || []).map(async (pos: Position) => ({
+          ...pos,
+          stockNameKo: await fetchStockName(pos.ticker)
+        }))
+      )
+      
+      setPositions(positionsWithNames)
     } catch (error) {
       console.error('포지션 조회 실패:', error)
       setPositions([])
@@ -80,7 +109,16 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
     try {
       const response = await axios.get('http://localhost:3001/api/trading/pending-orders')
       console.log('⏰ 예약 주문 데이터:', response.data)
-      setPendingOrders(response.data || [])
+      
+      // 한국어 이름 추가
+      const ordersWithNames = await Promise.all(
+        (response.data || []).map(async (order: PendingOrder) => ({
+          ...order,
+          stockNameKo: await fetchStockName(order.po_ticker)
+        }))
+      )
+      
+      setPendingOrders(ordersWithNames)
     } catch (error) {
       console.error('예약 주문 조회 실패:', error)
       setPendingOrders([])
@@ -91,7 +129,16 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
     try {
       const response = await axios.get('http://localhost:3001/api/trading/history?limit=50')
       console.log('📜 거래내역 데이터:', response.data)
-      setTradingHistory(response.data || [])
+      
+      // 한국어 이름 추가
+      const historyWithNames = await Promise.all(
+        (response.data || []).map(async (history: TradingHistory) => ({
+          ...history,
+          stockNameKo: await fetchStockName(history.th_ticker)
+        }))
+      )
+      
+      setTradingHistory(historyWithNames)
     } catch (error) {
       console.error('거래내역 조회 실패:', error)
       setTradingHistory([])
@@ -224,7 +271,10 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
             positions.map((position) => (
               <div key={position.ticker} className="position-item">
                 <div className="position-info">
-                  <div className="position-ticker">{position.ticker}</div>
+                  <div className="position-ticker">
+                    {position.ticker}
+                    {position.stockNameKo && <span className="ticker-name-ko">{position.stockNameKo}</span>}
+                  </div>
                   <div className="position-quantity">{position.quantity}주</div>
                 </div>
                 <div className="position-prices">
@@ -276,6 +326,7 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
                 <div className="position-info">
                   <div className="position-ticker">
                     {order.po_ticker}
+                    {order.stockNameKo && <span className="ticker-name-ko">{order.stockNameKo}</span>}
                     <span className={`order-type-badge ${order.po_order_type}`}>
                       {order.po_order_type === 'buy' ? '매수' : '매도'}
                     </span>
@@ -287,13 +338,20 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
                     <span className="price-label">주문 타입</span>
                     <span className="price-value">
                       {order.po_price_type === 'market' ? '시장가' : '지정가'}
-                      {order.po_limit_price != null && ` ($${Number(order.po_limit_price).toFixed(2)})`}
                     </span>
                   </div>
                   <div className="price-row">
                     <span className="price-label">실행 방식</span>
-                    <span className="price-value">
-                      {order.po_reservation_type === 'opening' ? '시초가' : '현재가'}
+                    <span className="price-value execution-type">
+                      {order.po_price_type === 'market' ? (
+                        <span className="market-order">
+                          시초가 (장 시작 시 시장가 체결)
+                        </span>
+                      ) : (
+                        <span className="limit-order">
+                          지정가 ${order.po_limit_price != null ? Number(order.po_limit_price).toFixed(2) : '0.00'}
+                        </span>
+                      )}
                     </span>
                   </div>
                 </div>
@@ -332,6 +390,7 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
                 <div className="position-info">
                   <div className="position-ticker">
                     {history.th_ticker}
+                    {history.stockNameKo && <span className="ticker-name-ko">{history.stockNameKo}</span>}
                     <span className={`order-type-badge ${history.th_type.toLowerCase()}`}>
                       {history.th_type === 'BUY' ? '매수' : '매도'}
                     </span>

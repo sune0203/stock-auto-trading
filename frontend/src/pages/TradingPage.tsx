@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { io, Socket } from 'socket.io-client'
+import axios from 'axios'
 import './TradingPage.css'
 import OrderPanel from '../components/OrderPanel'
 import NewsPanel from '../components/NewsPanel'
@@ -7,6 +8,7 @@ import PositionPanel from '../components/PositionPanel'
 import OrderBook from '../components/OrderBook'
 import MarketStatus from '../components/MarketStatus'
 import AccountSwitcher from '../components/AccountSwitcher'
+import AutoTradingSettings from '../components/AutoTradingSettings'
 
 interface RealTimeQuote {
   symbol: string
@@ -22,10 +24,18 @@ interface RealTimeQuote {
 }
 
 const TradingPage: React.FC = () => {
-  // URL 파라미터에서 티커 가져오기
+  // URL 파라미터에서 티커 및 주문 정보 가져오기
   const getSymbolFromURL = () => {
     const params = new URLSearchParams(window.location.hash.split('?')[1])
     return params.get('symbol') || 'AAPL'
+  }
+
+  const getOrderParamsFromURL = () => {
+    const params = new URLSearchParams(window.location.hash.split('?')[1])
+    return {
+      orderType: params.get('orderType') as 'buy' | 'sell' | null,
+      priceType: params.get('priceType') as 'market' | 'limit' | null
+    }
   }
 
   const [socket, setSocket] = useState<Socket | null>(null)
@@ -38,14 +48,27 @@ const TradingPage: React.FC = () => {
   const [currentHolding, setCurrentHolding] = useState<number>(0) // 현재 선택된 종목의 보유 수량
   const [clickedPrice, setClickedPrice] = useState<number | undefined>(undefined) // 호가 클릭 시 가격
   const [initialOrderType, setInitialOrderType] = useState<'buy' | 'sell' | undefined>(undefined) // 초기 주문 타입
+  const [initialPriceType, setInitialPriceType] = useState<'market' | 'limit' | undefined>(undefined) // 초기 가격 타입
   const [stockNameKo, setStockNameKo] = useState<string>('') // 종목 한국어 이름
+  const [autoTradingEnabled, setAutoTradingEnabled] = useState<boolean>(false) // 자동매수 ON/OFF
+  const [showSettings, setShowSettings] = useState<boolean>(false) // 설정 팝업 표시
 
   // URL 변경 감지
   useEffect(() => {
     const handleHashChange = () => {
       const newSymbol = getSymbolFromURL()
+      const orderParams = getOrderParamsFromURL()
+      
       setSelectedSymbol(newSymbol)
       setInputSymbol(newSymbol) // 검색창도 동기화
+      
+      // 주문 타입 및 가격 타입 설정
+      if (orderParams.orderType) {
+        setInitialOrderType(orderParams.orderType)
+      }
+      if (orderParams.priceType) {
+        setInitialPriceType(orderParams.priceType)
+      }
     }
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
@@ -86,6 +109,21 @@ const TradingPage: React.FC = () => {
     }
   }
 
+  // 종목 한국어 이름 조회
+  const fetchStockNameKo = async (symbol: string) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/api/stocks/${symbol}`)
+      if (response.data && response.data.s_name_kr) {
+        setStockNameKo(response.data.s_name_kr)
+      } else {
+        setStockNameKo('')
+      }
+    } catch (error) {
+      console.error('종목 한국어 이름 조회 실패:', error)
+      setStockNameKo('')
+    }
+  }
+
   useEffect(() => {
     // 소켓 연결
     const newSocket = io('http://localhost:3001')
@@ -94,10 +132,36 @@ const TradingPage: React.FC = () => {
     // 초기 잔고 조회
     fetchBalance()
 
+    // 자동매수 상태 조회
+    loadAutoTradingStatus()
+
     return () => {
       newSocket.close()
     }
   }, [])
+
+  // 자동매수 ON/OFF 상태 로드
+  const loadAutoTradingStatus = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/api/auto-trading/status')
+      setAutoTradingEnabled(response.data.enabled)
+    } catch (error) {
+      console.error('자동매수 상태 로드 실패:', error)
+    }
+  }
+
+  // 자동매수 ON/OFF 토글
+  const toggleAutoTrading = async () => {
+    try {
+      const newStatus = !autoTradingEnabled
+      await axios.post('http://localhost:3001/api/auto-trading/toggle', { enabled: newStatus })
+      setAutoTradingEnabled(newStatus)
+      console.log(`🤖 자동매수: ${newStatus ? 'ON' : 'OFF'}`)
+    } catch (error) {
+      console.error('자동매수 토글 실패:', error)
+      alert('자동매수 설정 변경에 실패했습니다.')
+    }
+  }
 
   useEffect(() => {
     if (socket && selectedSymbol) {
@@ -108,6 +172,9 @@ const TradingPage: React.FC = () => {
       
       // 현재 종목의 보유 수량 조회
       fetchCurrentHolding(selectedSymbol)
+
+      // 종목 한국어 이름 조회
+      fetchStockNameKo(selectedSymbol)
       
       // 실시간 가격 구독 (단일 심볼)
       socket.emit('subscribe:realtime', [selectedSymbol])
@@ -227,7 +294,7 @@ const TradingPage: React.FC = () => {
       {/* 헤더 */}
       <header className="trading-header">
         <div className="header-left">
-          <h1 className="logo">NASDAQ Trading</h1>
+          <h1 className="logo">코어</h1>
           <div className="symbol-selector">
             <input
               type="text"
@@ -240,37 +307,59 @@ const TradingPage: React.FC = () => {
           </div>
         </div>
 
-                  {/* 종목 정보 */}
-                  <div className="stock-info">
-            <div className="stock-name">
-              <h2>{selectedSymbol}</h2>
+        {/* 자동매수 컨트롤 */}
+        <div className="header-right">
+          <div className="auto-trading-controls">
+            <div className="auto-trading-toggle">
+              <span className="toggle-label">자동매수</span>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={autoTradingEnabled}
+                  onChange={toggleAutoTrading}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+              <span className={`toggle-status ${autoTradingEnabled ? 'on' : 'off'}`}>
+                {autoTradingEnabled ? 'ON' : 'OFF'}
+              </span>
             </div>
-            <div className="stock-price">
-              <div className="current-price">
-                ${quote ? formatPrice(quote.price) : '---'}
-                <span className="price-krw">
-                  {quote ? formatKRW(quote.price) : '---'}원
-                </span>
-                {quote && (
-                  <span className="price-source" title="정규장 마감 가격 (장외거래 가격은 반영되지 않음)">
-                    📊 정규장
-                  </span>
-                )}
-              </div>
-              <div className={`price-change ${quote && quote.change >= 0 ? 'positive' : 'negative'}`}>
-                {quote && (
-                  <>
-                    <span className="change-amount">
-                      {quote.change >= 0 ? '+' : ''}{formatPrice(quote.change)}
-                    </span>
-                    <span className="change-percent">
-                      ({quote.changesPercentage >= 0 ? '+' : ''}{quote.changesPercentage.toFixed(2)}%)
-                    </span>
-                  </>
-                )}
-              </div>
+            <button
+              className="settings-btn"
+              onClick={() => setShowSettings(true)}
+              title="자동매수 설정"
+            >
+              ⚙️
+            </button>
+          </div>
+        </div>
+
+        {/* 종목 정보 */}
+        <div className="stock-info">
+          <div className="stock-name-section">
+            <div className="stock-name-row">
+              <h2 className="stock-ticker">{selectedSymbol}</h2>
+              {stockNameKo && <span className="stock-name-ko">{stockNameKo}</span>}
             </div>
           </div>
+          <div className="stock-price">
+            <div className="current-price">
+              <span className="price-value">${quote ? formatPrice(quote.price) : '---'}</span>
+              <span className="price-krw">{quote ? formatKRW(quote.price) : '---'}원</span>
+
+            </div>
+            {quote && (
+              <div className={`price-change ${quote.change >= 0 ? 'positive' : 'negative'}`}>
+                <span className="change-amount">
+                  {quote.change >= 0 ? '+' : ''}{formatPrice(quote.change)}
+                </span>
+                <span className="change-percent">
+                  ({quote.changesPercentage >= 0 ? '+' : ''}{quote.changesPercentage.toFixed(2)}%)
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
 
         <div className="header-right">
           {/* 계정 전환 */}
@@ -322,6 +411,7 @@ const TradingPage: React.FC = () => {
             currentHolding={currentHolding}
             initialPrice={clickedPrice}
             initialOrderType={initialOrderType}
+            initialPriceType={initialPriceType}
             onOrderComplete={() => {
               console.log(`🔄 [TradingPage] 주문 완료 콜백 실행`)
               console.log(`   - 잔고 새로고침 시작`)
@@ -331,6 +421,7 @@ const TradingPage: React.FC = () => {
               console.log(`   - UI 상태 초기화`)
               setClickedPrice(undefined)
               setInitialOrderType(undefined)
+              setInitialPriceType(undefined)
               console.log(`✓ [TradingPage] 주문 완료 콜백 종료`)
             }}
           />
@@ -366,6 +457,11 @@ const TradingPage: React.FC = () => {
           />
         </div>
       </div>
+
+      {/* 자동매수 설정 팝업 */}
+      {showSettings && (
+        <AutoTradingSettings onClose={() => setShowSettings(false)} />
+      )}
     </div>
   )
 }

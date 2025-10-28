@@ -11,6 +11,7 @@ interface OrderPanelProps {
   onOrderComplete?: () => void // 주문 완료 콜백
   initialPrice?: number // 초기 가격 (호가 클릭 시)
   initialOrderType?: 'buy' | 'sell' // 초기 주문 타입
+  initialPriceType?: 'market' | 'limit' // 초기 가격 타입
 }
 
 const OrderPanel: React.FC<OrderPanelProps> = ({ 
@@ -21,10 +22,11 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
   currentHolding = 0,
   onOrderComplete,
   initialPrice,
-  initialOrderType
+  initialOrderType,
+  initialPriceType
 }) => {
   const [orderType, setOrderType] = useState<'buy' | 'sell'>(initialOrderType || 'buy')
-  const [priceType, setPriceType] = useState<'market' | 'limit'>('market') // 시장가/지정가
+  const [priceType, setPriceType] = useState<'market' | 'limit'>(initialPriceType || 'market') // 시장가/지정가
   const [quantity, setQuantity] = useState<number>(1)
   const [limitPrice, setLimitPrice] = useState<number>(initialPrice || currentPrice)
   const [loading, setLoading] = useState(false)
@@ -32,10 +34,8 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
   const [stopLossPercent, setStopLossPercent] = useState<number>(0) // 손절 %
   const [takeProfitEnabled, setTakeProfitEnabled] = useState<boolean>(false) // 익절 활성화
   const [stopLossEnabled, setStopLossEnabled] = useState<boolean>(false) // 손절 활성화
-  const [isReservation, setIsReservation] = useState<boolean>(false) // 예약 주문 여부
-  const [reservationPriceType, setReservationPriceType] = useState<'current' | 'opening'>('opening') // 예약 주문 가격 타입
   const [accountType, setAccountType] = useState<'REAL' | 'VIRTUAL' | null>(null) // 계정 타입
-  const [accountName, setAccountName] = useState<string>('') // 계정 이름
+  const [pendingSellQuantity, setPendingSellQuantity] = useState<number>(0) // 대기 중 매도 수량
 
   // 현재 계정 정보 로드
   useEffect(() => {
@@ -43,13 +43,44 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
       try {
         const response = await axios.get('http://localhost:3001/api/accounts/current')
         setAccountType(response.data.ka_type)
-        setAccountName(response.data.ka_name)
       } catch (error) {
         console.error('계정 정보 조회 실패:', error)
       }
     }
     loadAccountInfo()
   }, [])
+
+  // 대기 중인 매도 주문 수량 조회
+  useEffect(() => {
+    const loadPendingOrders = async () => {
+      if (!symbol) return
+
+      try {
+        const response = await axios.get('http://localhost:3001/api/trading/pending-orders')
+        const pendingOrders = response.data || []
+        
+        // 현재 종목의 대기 중 매도 주문 수량 합산
+        const sellQuantity = pendingOrders
+          .filter((order: any) => 
+            order.po_ticker === symbol && 
+            order.po_order_type === 'sell' && 
+            order.po_status === 'pending'
+          )
+          .reduce((sum: number, order: any) => sum + order.po_quantity, 0)
+        
+        setPendingSellQuantity(sellQuantity)
+      } catch (error) {
+        console.error('대기 주문 조회 실패:', error)
+        setPendingSellQuantity(0)
+      }
+    }
+
+    loadPendingOrders()
+    
+    // 10초마다 자동 갱신
+    const interval = setInterval(loadPendingOrders, 10000) // 10초마다 갱신
+    return () => clearInterval(interval)
+  }, [symbol])
 
   // 호가 클릭으로 가격이 설정되면 지정가 모드로 전환
   useEffect(() => {
@@ -66,6 +97,13 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
     }
   }, [initialOrderType])
 
+  // 초기 가격 타입 반영
+  useEffect(() => {
+    if (initialPriceType) {
+      setPriceType(initialPriceType)
+    }
+  }, [initialPriceType])
+
   const effectivePrice = priceType === 'market' ? currentPrice : limitPrice
   const totalPrice = effectivePrice * quantity
   const totalPriceKRW = totalPrice * exchangeRate
@@ -73,8 +111,8 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
   // 매수가능 수량 계산
   const maxBuyableQty = currentPrice > 0 ? Math.floor(balance / currentPrice) : 0
   
-  // 매도가능 수량 = 현재 보유 수량
-  const maxSellableQty = currentHolding
+  // 매도가능 수량 = 전체 보유 - 대기 중 매도
+  const maxSellableQty = currentHolding - pendingSellQuantity
 
   // 미국 시장 오픈 여부 확인
   const isMarketOpen = () => {
@@ -114,38 +152,10 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
       return
     }
 
-    // 시장 오픈 체크 - 예약 주문 확인
+    // 시장 오픈 체크 - 자동으로 백엔드에서 예약 주문으로 전환
+    // (사용자는 알 필요 없음 - 백엔드가 자동 처리)
     if (!isMarketOpen()) {
-      // 예약 주문 옵션 선택 (커스텀 다이얼로그 대신 두 번의 확인 사용)
-      const wantReservation = window.confirm(
-        '⏰ 현재 장이 마감되었습니다.\n\n거래 가능 시간:\n한국시간 23:30 ~ 06:00 (월~금)\n미국시간 09:30 ~ 16:00 (EST)\n\n장 시작 시 자동 실행되도록 예약하시겠습니까?'
-      )
-      
-      if (!wantReservation) {
-        return
-      }
-
-      // 예약 주문 가격 설정 방식 선택
-      const useOpeningPrice = window.confirm(
-        '📊 예약 주문 실행 가격을 선택해주세요:\n\n' +
-        '✅ [확인] → 장 시작 시 시초가로 주문\n' +
-        '   (가장 안전하지만, 시초가가 현재 표시 가격과 다를 수 있습니다)\n\n' +
-        '❌ [취소] → 현재 표시된 가격으로 지정가 주문\n' +
-        `   (현재가: $${priceType === 'market' ? currentPrice.toFixed(2) : limitPrice.toFixed(2)})\n` +
-        '   (장 시작 시 가격이 맞으면 체결, 아니면 미체결)\n\n' +
-        '※ 주의: 장외거래로 인해 실제 시초가는 현재 표시 가격과 다를 수 있습니다.'
-      )
-
-      setIsReservation(true)
-      setReservationPriceType(useOpeningPrice ? 'opening' : 'current')
-      
-      if (!useOpeningPrice) {
-        // 현재 가격으로 지정가 예약 주문 시, 지정가 모드로 전환
-        if (priceType === 'market') {
-          setPriceType('limit')
-          setLimitPrice(currentPrice)
-        }
-      }
+      console.log('⏰ 장 마감: 백엔드에서 자동으로 예약 주문으로 전환됩니다')
     }
 
     // 매수 시 잔고 확인
@@ -169,36 +179,36 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
         ? '/api/trading/manual-buy' 
         : '/api/trading/sell'
 
-      await axios.post(`http://localhost:3001${endpoint}`, {
+      const response = await axios.post(`http://localhost:3001${endpoint}`, {
         ticker: symbol,
         quantity,
         price: orderPrice,
         orderType: priceType, // 'market' or 'limit'
         currentPrice: currentPrice, // FMP 실시간 가격
-        newsTitle: `${isReservation ? `[예약-${reservationPriceType === 'opening' ? '시초가' : '지정가'}] ` : ''}${priceType === 'market' ? '시장가' : '지정가'} 주문`,
+        newsTitle: `${priceType === 'market' ? '시장가' : '지정가'} 주문`,
         takeProfitPercent: takeProfitEnabled && takeProfitPercent > 0 ? takeProfitPercent : undefined,
-        stopLossPercent: stopLossEnabled && stopLossPercent > 0 ? stopLossPercent : undefined,
-        isReservation: isReservation,
-        reservationPriceType: isReservation ? reservationPriceType : undefined
+        stopLossPercent: stopLossEnabled && stopLossPercent > 0 ? stopLossPercent : undefined
       })
 
-      const reservationTypeText = isReservation 
-        ? `\n실행 방식: ${reservationPriceType === 'opening' ? '시초가 시장가 주문' : `지정가 $${orderPrice.toFixed(2)}`}`
-        : ''
+      // 백엔드 응답에 따라 알림 메시지 표시
+      const isReservation = response.data.reservation || false
       
       alert(
         `${isReservation ? '[예약 주문] ' : ''}${orderType === 'buy' ? '매수' : '매도'} 주문이 완료되었습니다.\n` +
-        `${isReservation ? '' : `가격: $${orderPrice.toFixed(2)}\n`}` +
+        `가격: $${orderPrice.toFixed(2)}\n` +
         `수량: ${quantity}주` +
-        `${reservationTypeText}` +
         `${isReservation ? '\n\n※ 장 시작 시 자동 실행됩니다' : ''}`
       )
       
       console.log(`✅ [프론트] 주문 성공 - ${orderType} ${symbol} ${quantity}주 @ $${orderPrice}`)
       
       setQuantity(1)
-      setIsReservation(false)
-      setReservationPriceType('opening')
+      
+      // 대기 중 수량 즉시 갱신 (매도 예약 주문인 경우)
+      if (isReservation && orderType === 'sell') {
+        setPendingSellQuantity(prev => prev + quantity)
+        console.log(`📊 [프론트] 대기 중 매도 수량 갱신: +${quantity}주`)
+      }
       
       // 주문 완료 후 콜백 실행 (잔고 및 포지션 갱신)
       console.log(`🔄 [프론트] onOrderComplete 콜백 호출 시작`)
@@ -319,6 +329,28 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
             </span>
           </div>
         </div>
+
+        {/* 보유/대기 수량 표시 */}
+        {currentHolding > 0 && (
+          <div className="holding-info">
+            <div className="holding-row">
+              <span className="holding-label">전체 보유</span>
+              <span className="holding-value total">{currentHolding}주</span>
+            </div>
+            {pendingSellQuantity > 0 && (
+              <>
+                <div className="holding-row">
+                  <span className="holding-label">매도 대기</span>
+                  <span className="holding-value pending">-{pendingSellQuantity}주</span>
+                </div>
+                <div className="holding-row available">
+                  <span className="holding-label">판매 가능</span>
+                  <span className="holding-value">{currentHolding - pendingSellQuantity}주</span>
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         {/* 지정가 입력 */}
         {priceType === 'limit' && (

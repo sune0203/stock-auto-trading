@@ -169,7 +169,7 @@ io.on('connection', (socket) => {
       socket.join(`orderbook-${symbol}`)
       
       socket.emit('orderbook-subscribed', { symbol, success: true })
-    } catch (error) {
+  } catch (error) {
       console.error(`❌ 호가 구독 실패: ${symbol}`, error)
       socket.emit('orderbook-subscribed', { symbol, success: false, error: String(error) })
     }
@@ -304,42 +304,55 @@ app.get('/api/trading/config', (req, res) => {
 // 뉴스 조회 API (페이징)
 app.get('/api/news', async (req, res) => {
   try {
-    const page = parseInt(req.query.page as string) || 1
-    const pageSize = parseInt(req.query.pageSize as string) || 30
-    
-    const result = await getNewsPaginated(page, pageSize)
+    // 최근 30개만 조회 (페이지네이션 제거)
+    const result = await getNewsPaginated(1, 30)
     
     // NewsFromDB를 프론트엔드 형식으로 변환
-    const formattedNews = result.news.map((dbNews: NewsFromDB) => ({
-      id: dbNews.n_idx.toString(),
-      title: dbNews.n_title,
-      titleKo: dbNews.n_title_kr || dbNews.n_title,
-      description: dbNews.n_summary,
-      descriptionKo: dbNews.n_summary_kr || dbNews.n_summary,
-      url: dbNews.n_link,
-      source: dbNews.n_source,
-      imageUrl: dbNews.n_image,
-      publishedTime: dbNews.n_time_kst || dbNews.n_save_time || '',
-      ticker: dbNews.n_ticker,
-      n_summary_kr: dbNews.n_summary_kr, // 한글 요약
-      n_link: dbNews.n_link, // 원문 링크
-      n_immediate_impact: dbNews.n_immediate_impact, // 당일 상승 점수
-      n_bullish: dbNews.n_bullish, // 호재 점수
-      analysis: {
-        ticker: dbNews.n_ticker,
-        positivePercentage: dbNews.n_bullish || 0,
-        negativePercentage: dbNews.n_bearish || 0,
-        riseScore: dbNews.n_bullish_potential || 0,
-        grade: 'A'
+    const formattedNews = result.news.map((dbNews: any) => {
+      // n_ticker 또는 n_symbol 중 우선 티커 결정
+      const primaryTicker = dbNews.n_ticker || dbNews.n_symbol
+      const alternateTicker = (dbNews.n_ticker && dbNews.n_symbol && dbNews.n_ticker !== dbNews.n_symbol) 
+        ? (dbNews.n_ticker ? dbNews.n_symbol : dbNews.n_ticker) 
+        : null
+      
+      // KRW → USD 환산 (captured_price)
+      const capturedPriceUSD = dbNews.captured_price ? Number(dbNews.captured_price) / 1437.7 : null
+      const capturedVolume = dbNews.trade_volume ? Number(dbNews.trade_volume) : null
+      
+      return {
+        id: dbNews.n_idx.toString(),
+        title: dbNews.n_title,
+        titleKo: dbNews.n_title_kr || dbNews.n_title,
+        description: dbNews.n_summary,
+        descriptionKo: dbNews.n_summary_kr || dbNews.n_summary,
+        url: dbNews.n_link,
+        source: dbNews.n_source,
+        imageUrl: dbNews.n_image,
+        publishedTime: dbNews.n_time_kst || dbNews.n_save_time || '',
+        ticker: primaryTicker, // 우선 티커
+        primaryTicker, // 우선 티커
+        alternateTicker, // 대체 티커
+        n_ticker: dbNews.n_ticker,
+        n_symbol: dbNews.n_symbol,
+        n_summary_kr: dbNews.n_summary_kr, // 한글 요약
+        n_link: dbNews.n_link, // 원문 링크
+        n_immediate_impact: dbNews.n_immediate_impact, // 당일 상승 점수
+        n_bullish: dbNews.n_bullish, // 호재 점수
+        capturedPriceUSD, // 뉴스 캡처 당시 가격 (USD)
+        capturedVolume, // 뉴스 캡처 당시 거래량
+        analysis: {
+          ticker: primaryTicker,
+          positivePercentage: dbNews.n_bullish || 0,
+          negativePercentage: dbNews.n_bearish || 0,
+          riseScore: dbNews.n_bullish_potential || 0,
+          grade: 'A'
+        }
       }
-    }))
+    })
     
     res.json({
       news: formattedNews,
-      page,
-      pageSize,
-      total: result.total,
-      totalPages: Math.ceil(result.total / pageSize)
+      total: result.total
     })
   } catch (error) {
     console.error('뉴스 조회 오류:', error)
@@ -512,11 +525,17 @@ app.post('/api/trading/manual-buy', async (req, res) => {
           await tradingManager.getKISApi().buyStock(ticker, quantity, orderPrice)
           console.log(`✅ [모의투자] KIS API 매수 성공: ${ticker} x ${quantity}주`)
         } catch (buyError: any) {
-          // 장 마감 시 자동 예약 주문 처리
-          if (buyError.message?.includes('장중이 아니거나') || 
-              buyError.message?.includes('거래시간이 아닙니다') ||
-              buyError.message?.includes('해당 시장은 거래 불가능한 시간입니다')) {
-            console.log(`⏰ [모의투자] 장 마감 - 자동 예약 주문 처리`)
+          // 장 마감 OR 모의투자 미지원 → 자동 예약 주문 처리
+          const isMarketClosed = buyError.message?.includes('장중이 아니거나') || 
+                                 buyError.message?.includes('거래시간이 아닙니다') ||
+                                 buyError.message?.includes('해당 시장은 거래 불가능한 시간입니다')
+          
+          const isVirtualUnsupported = buyError.message?.includes('모의투자에서는') || 
+                                       buyError.message?.includes('해당업무가 제공되지')
+          
+          if (isMarketClosed || isVirtualUnsupported) {
+            const reason = isMarketClosed ? '장 마감' : '모의투자 API 미지원'
+            console.log(`⏰ [모의투자] ${reason} - 자동 예약 주문 처리`)
             
             // 예약 주문으로 저장
             const orderId = await savePendingOrder({
@@ -529,7 +548,7 @@ app.post('/api/trading/manual-buy', async (req, res) => {
               po_reservation_type: 'opening', // 장 시작 시 실행
               po_take_profit_percent: takeProfitPercent,
               po_stop_loss_percent: stopLossPercent,
-              po_reason: orderType === 'market' ? '시장가 매수 (장시작 시 실행)' : '지정가 매수 (장시작 시 실행)',
+              po_reason: `${orderType === 'market' ? '시장가' : '지정가'} 매수 (${reason})`,
               po_news_title: newsTitle || '',
               po_status: 'pending'
             })
@@ -541,6 +560,8 @@ app.post('/api/trading/manual-buy', async (req, res) => {
               orderId
             })
           }
+          
+          // 그 외 에러는 그대로 던짐
           throw buyError
         }
         
@@ -625,7 +646,7 @@ app.post('/api/trading/manual-buy', async (req, res) => {
         } catch (error: any) {
           if (error.code === 'ER_NO_SUCH_TABLE' || error.code === 'ER_BAD_FIELD_ERROR') {
             console.log(`⚠️ 익절/손절 테이블 없음 - DB 테이블 생성 필요 (${ticker})`)
-          } else {
+      } else {
             throw error
           }
         }
@@ -758,43 +779,92 @@ app.post('/api/trading/sell', async (req, res) => {
       if (accountType === 'VIRTUAL') {
         console.log(`🔵 [모의투자] KIS API 기반 매도 처리 시작`)
         
-        // 1. KIS API로 실제 보유 수량 확인
+        // 1. 보유 수량 확인 (캐시 우선, KIS API 폴백)
         let currentHolding = 0
+        
+        // 1-1. 캐시에서 먼저 확인 (빠르고 안정적)
         try {
-          const balance = await tradingManager.getKISApi().getBalance()
-          console.log(`📊 [모의투자] KIS API 잔고 조회 성공`)
-          
-          // output1: 해외주식 잔고 (각 종목별 보유 정보)
-          if (balance.output1 && Array.isArray(balance.output1)) {
-            const holding = balance.output1.find((item: any) => item.pdno === ticker)
-            if (holding) {
-              currentHolding = parseInt(holding.ord_psbl_qty || holding.hldg_qty || '0') // 주문가능수량 or 보유수량
-              console.log(`✓ [모의투자] ${ticker} 보유 수량: ${currentHolding}주 (KIS API)`)
-            } else {
-              console.log(`⚠️ [모의투자] ${ticker} 보유 내역 없음 (KIS API)`)
-            }
+          const positions = await accountCacheService.getPositions()
+          const position = positions.find(p => p.ticker === ticker)
+          if (position) {
+            currentHolding = position.quantity
+            console.log(`✓ [모의투자] ${ticker} 보유 수량: ${currentHolding}주 (캐시)`)
           }
-        } catch (balanceError: any) {
-          console.warn(`⚠️ [모의투자] KIS 잔고 조회 실패: ${balanceError.message}`)
+        } catch (cacheError) {
+          console.log(`⚠️ 캐시 조회 실패, KIS API 직접 조회 시도`)
         }
         
-        console.log(`📊 [모의투자] ${ticker} 최종 보유 수량: ${currentHolding}, 매도 요청: ${quantity}`)
-        
-        // 2. 수량 검증
-        if (currentHolding < quantity) {
-          throw new Error(`[모의투자] 매도 가능한 수량이 부족합니다 (보유: ${currentHolding}, 요청: ${quantity})`)
+        // 1-2. 캐시에 없으면 KIS API 직접 조회
+        if (currentHolding === 0) {
+          try {
+            const balance = await tradingManager.getKISApi().getBalance()
+            console.log(`📊 [모의투자] KIS API 잔고 조회 성공`)
+            
+            // 🔍 디버깅: 전체 응답 구조 확인
+            console.log(`🔍 output1 타입: ${typeof balance.output1}, 길이: ${balance.output1?.length || 0}`)
+            if (balance.output1 && balance.output1.length > 0) {
+              console.log(`🔍 첫 번째 항목 샘플:`, JSON.stringify(balance.output1[0], null, 2))
+            }
+            
+            // output1: 해외주식 잔고 (각 종목별 보유 정보)
+            if (balance.output1 && Array.isArray(balance.output1)) {
+              console.log(`🔍 ${ticker} 검색 중... (총 ${balance.output1.length}개 종목)`)
+              
+              // 모든 종목 티커 출력
+              const allTickers = balance.output1.map((item: any) => item.pdno || item.ticker || 'unknown')
+              console.log(`🔍 보유 종목 티커: ${allTickers.join(', ')}`)
+              
+              const holding = balance.output1.find((item: any) => item.pdno === ticker)
+              if (holding) {
+                currentHolding = parseInt(holding.ord_psbl_qty || holding.hldg_qty || '0') // 주문가능수량 or 보유수량
+                console.log(`✓ [모의투자] ${ticker} 보유 수량: ${currentHolding}주 (KIS API)`)
+                console.log(`   상세:`, JSON.stringify(holding, null, 2))
+  } else {
+                console.log(`⚠️ [모의투자] ${ticker} 보유 내역 없음 (KIS API)`)
+              }
+            } else {
+              console.log(`⚠️ output1이 배열이 아니거나 비어있음`)
+            }
+          } catch (balanceError: any) {
+            console.warn(`⚠️ [모의투자] KIS 잔고 조회 실패: ${balanceError.message}`)
+          }
         }
         
-        // 3. KIS API 매도 시도
+        // 2. 대기 중인 매도 주문 수량 확인
+        const pendingOrders = await getPendingOrders(accountType)
+        const pendingSellQuantity = pendingOrders
+          .filter((order: any) => order.po_ticker === ticker && order.po_order_type === 'sell' && order.po_status === 'pending')
+          .reduce((sum: number, order: any) => sum + order.po_quantity, 0)
+        
+        const availableToSell = currentHolding - pendingSellQuantity
+        
+        console.log(`📊 [모의투자] ${ticker} 수량 현황:`)
+        console.log(`   전체 보유: ${currentHolding}주`)
+        console.log(`   대기 중 매도: ${pendingSellQuantity}주`)
+        console.log(`   실제 판매 가능: ${availableToSell}주`)
+        console.log(`   요청 수량: ${quantity}주`)
+        
+        // 3. 수량 검증
+        if (availableToSell < quantity) {
+          throw new Error(`매도 가능한 수량이 부족합니다.\n\n전체 보유: ${currentHolding}주\n대기 중 매도: ${pendingSellQuantity}주\n판매 가능: ${availableToSell}주\n요청 수량: ${quantity}주`)
+        }
+        
+        // 4. KIS API 매도 시도
         try {
           await tradingManager.getKISApi().sellStock(ticker, quantity, orderPrice)
           console.log(`✅ [모의투자] KIS API 매도 성공: ${ticker} x ${quantity}주`)
         } catch (sellError: any) {
-          // 장 마감 시 자동 예약 주문 처리
-          if (sellError.message?.includes('장중이 아니거나') || 
-              sellError.message?.includes('거래시간이 아닙니다') ||
-              sellError.message?.includes('해당 시장은 거래 불가능한 시간입니다')) {
-            console.log(`⏰ [모의투자] 장 마감 - 자동 예약 주문 처리`)
+          // 장 마감 OR 모의투자 미지원 → 자동 예약 주문 처리
+          const isMarketClosed = sellError.message?.includes('장중이 아니거나') || 
+                                 sellError.message?.includes('거래시간이 아닙니다') ||
+                                 sellError.message?.includes('해당 시장은 거래 불가능한 시간입니다')
+          
+          const isVirtualUnsupported = sellError.message?.includes('모의투자에서는') || 
+                                       sellError.message?.includes('해당업무가 제공되지')
+          
+          if (isMarketClosed || isVirtualUnsupported) {
+            const reason = isMarketClosed ? '장 마감' : '모의투자 API 미지원'
+            console.log(`⏰ [모의투자] ${reason} - 자동 예약 주문 처리`)
             
             // 예약 주문으로 저장
             await savePendingOrder({
@@ -807,7 +877,7 @@ app.post('/api/trading/sell', async (req, res) => {
               po_reservation_type: 'opening', // 장 시작 시 실행
               po_take_profit_percent: undefined,
               po_stop_loss_percent: undefined,
-              po_reason: orderType === 'market' ? '시장가 매도 (장시작 시 실행)' : '지정가 매도 (장시작 시 실행)',
+              po_reason: `${orderType === 'market' ? '시장가' : '지정가'} 매도 (${reason})`,
               po_news_title: '',
               po_status: 'pending'
             })
@@ -819,11 +889,7 @@ app.post('/api/trading/sell', async (req, res) => {
             })
           }
           
-          // 모의투자 미지원 에러
-          if (sellError.message?.includes('모의투자에서는') || sellError.message?.includes('해당업무가 제공되지')) {
-            console.log(`⚠️ [모의투자] KIS API 매도 미지원 - 수동 처리`)
-            throw new Error('[모의투자] KIS API가 매도를 지원하지 않습니다. 실제 KIS 모의투자 웹/앱에서 매도해주세요.')
-          }
+          // 그 외 에러는 그대로 던짐
           throw sellError
         }
         
@@ -847,9 +913,55 @@ app.post('/api/trading/sell', async (req, res) => {
           isReservation: false,
           virtual: true
         })
-      } else {
+  } else {
         // 실전투자: KIS API 매도
         console.log(`🔴 [실전투자] KIS API 매도 처리 시작`)
+        
+        // 1. 보유 수량 확인 (캐시 우선)
+        let currentHolding = 0
+        try {
+          const positions = await accountCacheService.getPositions()
+          const position = positions.find(p => p.ticker === ticker)
+          if (position) {
+            currentHolding = position.quantity
+            console.log(`✓ [실전투자] ${ticker} 보유 수량: ${currentHolding}주 (캐시)`)
+          }
+        } catch (cacheError) {
+          console.log(`⚠️ 캐시 조회 실패, KIS API 직접 조회 시도`)
+          try {
+            const balance = await tradingManager.getKISApi().getBalance()
+            if (balance.output1 && Array.isArray(balance.output1)) {
+              const holding = balance.output1.find((item: any) => item.pdno === ticker)
+              if (holding) {
+                currentHolding = parseInt(holding.ord_psbl_qty || holding.hldg_qty || '0')
+                console.log(`✓ [실전투자] ${ticker} 보유 수량: ${currentHolding}주 (KIS API)`)
+              }
+            }
+          } catch (balanceError: any) {
+            console.warn(`⚠️ [실전투자] KIS 잔고 조회 실패: ${balanceError.message}`)
+          }
+        }
+        
+        // 2. 대기 중인 매도 주문 수량 확인
+        const pendingOrders = await getPendingOrders(accountType)
+        const pendingSellQuantity = pendingOrders
+          .filter((order: any) => order.po_ticker === ticker && order.po_order_type === 'sell' && order.po_status === 'pending')
+          .reduce((sum: number, order: any) => sum + order.po_quantity, 0)
+        
+        const availableToSell = currentHolding - pendingSellQuantity
+        
+        console.log(`📊 [실전투자] ${ticker} 수량 현황:`)
+        console.log(`   전체 보유: ${currentHolding}주`)
+        console.log(`   대기 중 매도: ${pendingSellQuantity}주`)
+        console.log(`   실제 판매 가능: ${availableToSell}주`)
+        console.log(`   요청 수량: ${quantity}주`)
+        
+        // 3. 수량 검증
+        if (availableToSell < quantity) {
+          throw new Error(`매도 가능한 수량이 부족합니다.\n\n전체 보유: ${currentHolding}주\n대기 중 매도: ${pendingSellQuantity}주\n판매 가능: ${availableToSell}주\n요청 수량: ${quantity}주`)
+        }
+        
+        // 4. KIS API 매도 실행
         await tradingManager.getKISApi().sellStock(ticker, quantity, orderPrice)
       }
 
@@ -1089,7 +1201,7 @@ httpServer.listen(PORT, async () => {
 // ==================== 계정 관리 API ====================
 
 import { kisApiManager } from './kis-api-manager.js'
-import { getAllAccounts, getAccountsByType, setDefaultAccount as setDefaultAccountDB, addAccount } from './db.js'
+import { getAllAccounts, getAccountsByType, setDefaultAccount as setDefaultAccountDB, addAccount, pool } from './db.js'
 
 // 현재 계정 정보 조회 (반드시 /api/accounts/:type 보다 먼저 정의)
 app.get('/api/accounts/current', async (req, res) => {
@@ -1214,9 +1326,9 @@ app.post('/api/accounts/switch', async (req, res) => {
       kisWebSocketService.disconnect()
       console.log(`🔄 계정 전환: WebSocket 재연결 중... (${currentAccount?.ka_type})`)
       await kisWebSocketService.connect()
-    }
-    
-    res.json({
+  }
+  
+  res.json({
       success: true,
       message: `${currentAccount?.ka_name}(으)로 전환되었습니다`,
       currentAccount: currentAccount ? {
@@ -1278,6 +1390,30 @@ app.post('/api/accounts/add', async (req, res) => {
   }
 })
 
+// ==================== 종목 정보 API ====================
+
+// 종목 한국어 이름 조회
+app.get('/api/stocks/:ticker', async (req, res) => {
+  try {
+    const { ticker } = req.params
+    const [rows] = await pool.query(
+      `SELECT s_ticker, s_name_kr, s_name FROM _STOCKS WHERE s_ticker = ?`,
+      [ticker]
+    )
+    const stock = (rows as any[])[0]
+    if (stock) {
+      res.json(stock)
+    } else {
+      // 데이터 없으면 빈 값 반환 (404 대신)
+      res.json({ s_ticker: ticker, s_name_kr: '', s_name: '' })
+    }
+  } catch (error) {
+    // 테이블이 없거나 오류 발생 시 빈 값 반환 (500 에러 대신)
+    // console.error('종목 정보 조회 오류:', error) // 로그 제거
+    res.json({ s_ticker: req.params.ticker, s_name_kr: '', s_name: '' })
+  }
+})
+
 // ==================== 자동 매수 서비스 API ====================
 
 // 자동 매수 상태 조회
@@ -1310,5 +1446,67 @@ app.post('/api/auto-trading/stop', (req, res) => {
   } catch (error) {
     console.error('자동 매수 중지 오류:', error)
     res.status(500).json({ error: 'Failed to stop auto-trading' })
+  }
+})
+
+// 자동 매수 ON/OFF 토글
+app.post('/api/auto-trading/toggle', (req, res) => {
+  try {
+    const { enabled } = req.body
+    if (enabled) {
+      autoTradingService.start()
+    } else {
+      autoTradingService.stop()
+    }
+    res.json({ success: true, enabled })
+  } catch (error) {
+    console.error('자동 매수 토글 오류:', error)
+    res.status(500).json({ error: 'Failed to toggle auto-trading' })
+  }
+})
+
+// 자동 매수 설정 조회
+app.get('/api/auto-trading/config', (req, res) => {
+  try {
+    const config = autoTradingService.getConfig()
+    res.json(config)
+  } catch (error) {
+    console.error('자동 매수 설정 조회 오류:', error)
+    res.status(500).json({ error: 'Failed to get auto-trading config' })
+  }
+})
+
+// 자동 매수 설정 저장
+app.post('/api/auto-trading/config', (req, res) => {
+  try {
+    const config = req.body
+    autoTradingService.setConfig(config)
+    res.json({ success: true, message: '설정이 저장되었습니다' })
+  } catch (error) {
+    console.error('자동 매수 설정 저장 오류:', error)
+    res.status(500).json({ error: 'Failed to save auto-trading config' })
+  }
+})
+
+// 감지된 뉴스 조회
+app.get('/api/auto-trading/detected-news', async (req, res) => {
+  try {
+    const detectedNews = await autoTradingService.getDetectedNews()
+    res.json(detectedNews)
+  } catch (error) {
+    console.error('감지된 뉴스 조회 오류:', error)
+    res.status(500).json({ error: 'Failed to get detected news' })
+  }
+})
+
+// 수동 즉시 매수
+app.post('/api/auto-trading/manual-buy', async (req, res) => {
+  try {
+    const { ticker, newsTitle, bullishScore, impactScore } = req.body
+    const result = await autoTradingService.manualBuy(ticker, newsTitle, bullishScore, impactScore)
+    res.json(result)
+  } catch (error: any) {
+    console.error('수동 매수 오류:', error)
+    res.status(500).json({ error: error.message || 'Failed to execute manual buy' })
   }
 })

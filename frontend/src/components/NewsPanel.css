@@ -59,6 +59,13 @@
   color: #868e96;
 }
 
+.news-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #adb5bd;
+  font-size: 14px;
+}
+
 .news-list {
   flex: 1;
   overflow-y: auto;
@@ -240,6 +247,71 @@
 }
 
 /* 버튼 그룹 */
+/* 캡처 당시 정보 (뉴스 패널용) */
+.captured-info-panel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #718096;
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: #f7fafc;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.captured-info-panel .captured-label {
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.captured-info-panel .captured-price {
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.captured-info-panel .captured-volume {
+  color: #718096;
+}
+
+/* 티커 선택기 (뉴스 패널용) */
+.ticker-selector-panel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.ticker-option-panel {
+  flex: 1;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ticker-option-panel:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.ticker-option-panel.alternate {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.ticker-selector-panel .ticker-or {
+  font-size: 10px;
+  color: #a0aec0;
+  font-weight: 600;
+}
+
 .news-actions {
   display: flex;
   gap: 6px;
