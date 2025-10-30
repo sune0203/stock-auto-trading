@@ -213,7 +213,13 @@ const OrderBook: React.FC<OrderBookProps> = ({ symbol, currentPrice, onPriceClic
     return () => clearInterval(interval)
   }, [generateOrderBook, isMarketOpen, useRealTimeData])
 
-  const formatPrice = (price: number) => price.toFixed(2)
+  const formatPrice = (price: number) => {
+    if (price >= 1) {
+      return price.toFixed(2)
+    } else {
+      return price.toFixed(4)
+    }
+  }
   const formatQuantity = (qty: number) => qty.toLocaleString()
 
   return (

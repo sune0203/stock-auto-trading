@@ -6,7 +6,7 @@ import cors from 'cors'
 import { TradingManager } from './trading-manager.js'
 import { FMPApi } from './fmp-api.js'
 import { LocalSymbolMatcher } from './local-symbol-matcher.js'
-import { getTradingHistory, saveTradingRecord, TradingRecord, getNewsPaginated, NewsFromDB, watchNewsDB, savePendingOrder, getPendingOrders, saveDBPosition, updatePendingOrderStatus } from './db.js'
+import { getTradingHistory, saveTradingRecord, TradingRecord, getNewsPaginated, NewsFromDB, watchNewsDB, savePendingOrder, getPendingOrders, saveDBPosition, updatePendingOrderStatus, getAutoTradingConfig, saveAutoTradingConfig, toggleAutoTrading } from './db.js'
 import { fmpRealTimeApi } from './fmp-realtime.js'
 import { chartCacheService } from './chart-cache.js'
 import { accountCacheService } from './account-cache.js'
@@ -264,22 +264,39 @@ app.get('/api/realtime/quote/:symbol', async (req, res) => {
   try {
     const { symbol } = req.params
     
-    // 1. KIS API로 실시간 시세 조회 시도
-    try {
-      const kisQuote = await tradingManager.getKISApi().getOverseasQuote(symbol, 'NASD')
-      if (kisQuote && kisQuote.price) {
-        console.log(`💵 KIS 실시간 가격: ${symbol} = $${kisQuote.price}`)
-        return res.json(kisQuote)
+    // 1. FMP API로 시세 조회 (프리마켓~애프터마켓 연장까지 지원)
+    // FMP의 getCurrentPrice는 내부적으로 /quote + /aftermarket-trade를 순차 호출
+    const currentPrice = await fmpRealTimeApi.getCurrentPrice(symbol)
+    
+    if (currentPrice) {
+      // FMP 전체 quote 정보도 가져오기
+      const fullQuote = await fmpRealTimeApi.getQuote(symbol)
+      
+      if (fullQuote) {
+        // 현재가를 getCurrentPrice로 덮어쓰기 (애프터마켓 반영)
+        fullQuote.price = currentPrice
+        console.log(`💵 [FMP] ${symbol} = $${currentPrice}`)
+        return res.json(fullQuote)
       }
-    } catch (kisError) {
-      console.log(`⚠️ KIS API 실패, FMP로 폴백: ${symbol}`)
+      
+      // fullQuote가 없으면 최소한 가격만이라도 반환
+      return res.json({
+        symbol,
+        price: currentPrice,
+        changesPercentage: 0,
+        change: 0,
+        dayLow: currentPrice,
+        dayHigh: currentPrice,
+        volume: 0,
+        marketCap: 0,
+        exchange: 'NASDAQ',
+        timestamp: Date.now()
+      })
     }
     
-    // 2. FMP API로 폴백
-    const quote = await fmpRealTimeApi.getQuote(symbol)
-    console.log(`💵 FMP 가격: ${symbol} = $${quote?.price || 'N/A'}`)
-    
-    res.json(quote)
+    // 2. FMP도 실패하면 null 반환
+    console.log(`❌ [FMP] ${symbol} 가격 조회 실패`)
+    res.status(404).json({ error: 'Price not available' })
   } catch (error) {
     console.error('실시간 시세 조회 오류:', error)
     res.status(500).json({ error: 'Failed to fetch quote' })
@@ -420,23 +437,23 @@ app.get('/api/trading/history', async (req, res) => {
     
     if (history.length > 0) {
       console.log(`   최근 거래: ${history[0].th_ticker} (${history[0].th_type}) - ${history[0].th_account_type}`)
-    } else {
+  } else {
       console.log(`⚠️ 거래내역이 비어있습니다. DB를 확인하세요.`)
-    }
-    
+  }
+  
     res.json(history)
   } catch (error) {
     console.error('거래 히스토리 조회 오류:', error)
     res.status(500).json({ error: 'Failed to fetch trading history' })
   }
 })
-
+  
 // 거래 기록 저장 API
 app.post('/api/trading/record', async (req, res) => {
   try {
     const record: TradingRecord = req.body
     await saveTradingRecord(record)
-    res.json({ success: true })
+  res.json({ success: true })
   } catch (error) {
     console.error('거래 기록 저장 오류:', error)
     res.status(500).json({ error: 'Failed to save trading record' })
@@ -646,7 +663,7 @@ app.post('/api/trading/manual-buy', async (req, res) => {
         } catch (error: any) {
           if (error.code === 'ER_NO_SUCH_TABLE' || error.code === 'ER_BAD_FIELD_ERROR') {
             console.log(`⚠️ 익절/손절 테이블 없음 - DB 테이블 생성 필요 (${ticker})`)
-      } else {
+    } else {
             throw error
           }
         }
@@ -1450,9 +1467,14 @@ app.post('/api/auto-trading/stop', (req, res) => {
 })
 
 // 자동 매수 ON/OFF 토글
-app.post('/api/auto-trading/toggle', (req, res) => {
+app.post('/api/auto-trading/toggle', async (req, res) => {
   try {
     const { enabled } = req.body
+    const accountType = kisApiManager.getCurrentAccountType()
+    
+    // DB에 설정 저장
+    await toggleAutoTrading(accountType, enabled)
+    
     if (enabled) {
       autoTradingService.start()
     } else {
@@ -1466,10 +1488,33 @@ app.post('/api/auto-trading/toggle', (req, res) => {
 })
 
 // 자동 매수 설정 조회
-app.get('/api/auto-trading/config', (req, res) => {
+app.get('/api/auto-trading/config', async (req, res) => {
   try {
-    const config = autoTradingService.getConfig()
-    res.json(config)
+    const accountType = kisApiManager.getCurrentAccountType()
+    const dbConfig = await getAutoTradingConfig(accountType)
+    
+    if (dbConfig) {
+      res.json({
+        enabled: dbConfig.atc_enabled,
+        bullishThreshold: dbConfig.atc_bullish_threshold,
+        immediateImpactThreshold: dbConfig.atc_immediate_impact_threshold,
+        takeProfitPercent: dbConfig.atc_take_profit_percent,
+        stopLossPercent: dbConfig.atc_stop_loss_percent,
+        maxInvestmentPerTrade: dbConfig.atc_max_investment_per_trade,
+        maxDailyTrades: dbConfig.atc_max_daily_trades
+      })
+    } else {
+      // 기본값 반환
+      res.json({
+        enabled: false,
+        bullishThreshold: 70,
+        immediateImpactThreshold: 70,
+        takeProfitPercent: 5.0,
+        stopLossPercent: 3.0,
+        maxInvestmentPerTrade: 100.0,
+        maxDailyTrades: 10
+      })
+    }
   } catch (error) {
     console.error('자동 매수 설정 조회 오류:', error)
     res.status(500).json({ error: 'Failed to get auto-trading config' })
@@ -1477,11 +1522,30 @@ app.get('/api/auto-trading/config', (req, res) => {
 })
 
 // 자동 매수 설정 저장
-app.post('/api/auto-trading/config', (req, res) => {
+app.post('/api/auto-trading/config', async (req, res) => {
   try {
     const config = req.body
-    autoTradingService.setConfig(config)
-    res.json({ success: true, message: '설정이 저장되었습니다' })
+    const accountType = kisApiManager.getCurrentAccountType()
+    
+    // DB에 저장
+    const success = await saveAutoTradingConfig({
+      atc_account_type: accountType,
+      atc_enabled: config.enabled,
+      atc_bullish_threshold: config.bullishThreshold,
+      atc_immediate_impact_threshold: config.immediateImpactThreshold,
+      atc_take_profit_percent: config.takeProfitPercent,
+      atc_stop_loss_percent: config.stopLossPercent,
+      atc_max_investment_per_trade: config.maxInvestmentPerTrade,
+      atc_max_daily_trades: config.maxDailyTrades
+    })
+    
+    if (success) {
+      // 자동매수 서비스에도 설정 반영
+      autoTradingService.setConfig(config)
+      res.json({ success: true, message: '설정이 저장되었습니다' })
+    } else {
+      res.status(500).json({ error: 'Failed to save config to database' })
+    }
   } catch (error) {
     console.error('자동 매수 설정 저장 오류:', error)
     res.status(500).json({ error: 'Failed to save auto-trading config' })

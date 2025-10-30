@@ -1,6 +1,7 @@
 .market-status {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
 .status-indicator {
@@ -13,12 +14,19 @@
   transition: all 0.3s;
 }
 
+/* 정규장 (녹색) */
 .status-indicator.open {
   background: rgba(46, 213, 115, 0.15);
 }
 
+/* 장 마감 / 주말 (빨강) */
 .status-indicator.closed {
   background: rgba(255, 71, 87, 0.15);
+}
+
+/* 프리마켓 / 애프터마켓 (노랑) */
+.status-indicator.extended {
+  background: rgba(255, 193, 7, 0.15);
 }
 
 .status-light {
@@ -39,6 +47,11 @@
   animation: pulse-red 2s ease-in-out infinite;
 }
 
+.status-indicator.extended .status-light {
+  background: #ffc107;
+  animation: pulse-yellow 2s ease-in-out infinite;
+}
+
 @keyframes pulse-green {
   0%, 100% {
     box-shadow: 0 0 8px #2ed573, 0 0 16px #2ed573;
@@ -54,6 +67,15 @@
   }
   50% {
     box-shadow: 0 0 12px #ff4757, 0 0 24px #ff4757;
+  }
+}
+
+@keyframes pulse-yellow {
+  0%, 100% {
+    box-shadow: 0 0 8px #ffc107, 0 0 16px #ffc107;
+  }
+  50% {
+    box-shadow: 0 0 12px #ffc107, 0 0 24px #ffc107;
   }
 }
 
@@ -77,10 +99,35 @@
   color: #ff4757;
 }
 
+.status-indicator.extended .status-label {
+  color: #ffc107;
+}
+
 .status-time {
   font-size: 11px;
   color: rgb(0 0 0);
   font-weight: 500;
+}
+
+/* 실시간 뱃지 */
+.realtime-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.realtime-badge.realtime-active {
+  background: rgba(46, 213, 115, 0.2);
+  color: #2ed573;
+  border: 1px solid rgba(46, 213, 115, 0.3);
+}
+
+.realtime-badge.realtime-inactive {
+  background: rgba(189, 195, 199, 0.2);
+  color: #95a5a6;
+  border: 1px solid rgba(189, 195, 199, 0.3);
 }
 
 

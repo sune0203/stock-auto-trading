@@ -25,6 +25,26 @@ interface StockQuote {
   volume: number
   marketCap: number
   exchange: string
+  open?: number
+  previousClose?: number
+  timestamp?: number
+}
+
+interface AftermarketQuote {
+  symbol: string
+  bidSize: number
+  bidPrice: number
+  askSize: number
+  askPrice: number
+  volume: number
+  timestamp: number
+}
+
+interface AftermarketTrade {
+  symbol: string
+  price: number
+  tradeSize: number
+  timestamp: number
 }
 
 interface HistoricalPrice {
@@ -416,9 +436,95 @@ export class FMPApi {
   /**
    * 현재가 조회 (KIS API 대체/보조용)
    */
+  /**
+   * 🔥 실시간 가격 조회 (정규장 + 시간외 거래)
+   * - 정규장: /quote API
+   * - 시간외: /aftermarket-trade API (최신 거래가)
+   */
   async getCurrentPrice(symbol: string): Promise<number | null> {
-    const quote = await this.getQuote(symbol)
-    return quote ? quote.price : null
+    try {
+      // 1. 애프터마켓 거래 가격 우선 조회 (After-hours Trade)
+      const aftermarketUrl = `${FMP_BASE_URL}/aftermarket-trade/${symbol}?apikey=${FMP_API_KEY}`
+      const aftermarketResponse = await axios.get(aftermarketUrl, { timeout: 5000 })
+      
+      if (aftermarketResponse.data && aftermarketResponse.data.length > 0) {
+        const trade = aftermarketResponse.data[0]
+        const price = trade.price
+        const timestamp = trade.timestamp
+        const tradeDate = new Date(timestamp)
+        
+        // 최근 5분 이내 거래만 유효하다고 판단
+        const now = Date.now()
+        const fiveMinutesAgo = now - (5 * 60 * 1000)
+        
+        if (price && price > 0 && timestamp >= fiveMinutesAgo) {
+          console.log(`🌙 [FMP Aftermarket] ${symbol} = $${price} (${tradeDate.toLocaleTimeString('ko-KR')})`)
+          return price
+        }
+      }
+      
+      // 2. 정규장 시세 조회 (정규장 또는 애프터마켓 데이터가 없을 때)
+      const quoteUrl = `${FMP_BASE_URL}/quote/${symbol}?apikey=${FMP_API_KEY}`
+      const quoteResponse = await axios.get(quoteUrl, { timeout: 5000 })
+      
+      if (quoteResponse.data && quoteResponse.data.length > 0) {
+        const quote = quoteResponse.data[0]
+        const price = quote.price
+        
+        if (price && price > 0) {
+          console.log(`💵 [FMP Quote] ${symbol} = $${price}`)
+          return price
+        }
+      }
+      
+      // 가격 조회 실패
+      return null
+    } catch (error: any) {
+      console.error(`❌ FMP 가격 조회 오류: ${symbol}`, error.message)
+      return null
+    }
+  }
+
+  /**
+   * 🔥 시간외 호가 조회 (After-hours Quote)
+   */
+  async getAftermarketQuote(symbol: string): Promise<AftermarketQuote | null> {
+    try {
+      const url = `${FMP_BASE_URL}/aftermarket-quote/${symbol}?apikey=${FMP_API_KEY}`
+      const response = await axios.get(url, { timeout: 5000 })
+      
+      if (response.data && response.data.length > 0) {
+        const quote = response.data[0] as AftermarketQuote
+        console.log(`🌙 FMP 시간외 호가: ${symbol} - BID: $${quote.bidPrice} / ASK: $${quote.askPrice}`)
+        return quote
+      }
+      
+      return null
+    } catch (error: any) {
+      console.error(`❌ FMP 시간외 호가 조회 오류: ${symbol}`, error.message)
+      return null
+    }
+  }
+
+  /**
+   * 🔥 시간외 거래 내역 조회 (After-hours Trade)
+   */
+  async getAftermarketTrade(symbol: string): Promise<AftermarketTrade | null> {
+    try {
+      const url = `${FMP_BASE_URL}/aftermarket-trade/${symbol}?apikey=${FMP_API_KEY}`
+      const response = await axios.get(url, { timeout: 5000 })
+      
+      if (response.data && response.data.length > 0) {
+        const trade = response.data[0] as AftermarketTrade
+        console.log(`🌙 FMP 시간외 거래: ${symbol} = $${trade.price} (Size: ${trade.tradeSize})`)
+        return trade
+      }
+      
+      return null
+    } catch (error: any) {
+      console.error(`❌ FMP 시간외 거래 조회 오류: ${symbol}`, error.message)
+      return null
+    }
   }
 }
 

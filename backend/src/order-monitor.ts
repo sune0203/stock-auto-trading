@@ -57,7 +57,7 @@ export class OrderMonitor {
     console.log('⏹️ 주문 감시 서비스 중지')
   }
 
-  // 미국 시장 오픈 여부 확인
+  // 미국 시장 오픈 여부 확인 (Summer Time 자동 적용)
   private checkMarketStatus() {
     const now = new Date()
     const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
@@ -72,7 +72,7 @@ export class OrderMonitor {
     if (day === 0 || day === 6) {
       this.isMarketOpen = false
     } else {
-      // 9:30 AM ~ 4:00 PM (EST)
+      // 정규장: 9:30 AM ~ 4:00 PM (EST/EDT 자동 적용)
       const marketOpen = 9 * 60 + 30 // 9:30 AM = 570분
       const marketClose = 16 * 60 // 4:00 PM = 960분
       this.isMarketOpen = currentMinutes >= marketOpen && currentMinutes < marketClose
@@ -80,7 +80,9 @@ export class OrderMonitor {
 
     // 장이 막 열렸을 때 예약 주문 실행
     if (!wasOpen && this.isMarketOpen) {
-      console.log('🔔 미국 정규장 오픈 - 예약 주문 실행 시작')
+      const koreaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+      console.log(`🔔 미국 정규장 오픈 (한국시간: ${koreaTime.toLocaleTimeString('ko-KR')})`)
+      console.log('   → 예약 주문 실행 시작')
       this.executePendingOrders()
     }
   }
@@ -99,7 +101,11 @@ export class OrderMonitor {
 
       for (const order of orders) {
         try {
-          console.log(`\n🔄 예약 주문 처리: ${order.po_ticker} (${order.po_order_type})`)
+          console.log(`\n🔄 예약 주문 처리: ${order.po_ticker} (${order.po_order_type}) - 계정: ${order.po_account_type}`)
+          
+          // 🔥 중요: 각 주문의 계정 타입에 맞게 KIS API 설정
+          const kisApiManager = (await import('./kis-api-manager.js')).kisApiManager
+          await kisApiManager.switchAccountType(order.po_account_type)
           
           // 시장가 주문: 시초가로 즉시 체결
           if (order.po_price_type === 'market') {
@@ -131,13 +137,28 @@ export class OrderMonitor {
 
   // 시장가 주문 실행 (시초가 즉시 체결)
   private async executeMarketOrder(order: PendingOrder) {
-    // 현재가 조회 (장 오픈 직후이므로 시초가)
-    const currentPrice = await this.fmpApi.getCurrentPrice(order.po_ticker)
-    if (!currentPrice) {
-      throw new Error('현재가 조회 실패')
+    // 정규장: KIS API 우선, 정규장 외: FMP API만 사용
+    let currentPrice: number | null = null
+    let priceSource = ''
+    
+    // 1. KIS API 시도 (정규장만 지원)
+    const kisPrice = await this.kisApi.getCurrentPrice(order.po_ticker)
+    if (kisPrice && kisPrice > 0) {
+      currentPrice = kisPrice
+      priceSource = 'KIS'
     }
-
-    console.log(`   💵 시장가 주문 - 현재가: $${currentPrice}`)
+    
+    // 2. KIS 실패 시 FMP API 대체 (정규장 외 시간 포함)
+    if (!currentPrice) {
+      currentPrice = await this.fmpApi.getCurrentPrice(order.po_ticker)
+      priceSource = 'FMP'
+    }
+    
+    if (!currentPrice) {
+      throw new Error('현재가 조회 실패 (KIS, FMP 모두 실패)')
+    }
+    
+    console.log(`   💵 시장가 주문 - ${priceSource} 현재가: $${currentPrice}`)
 
     if (order.po_order_type === 'buy') {
       // KIS API 매수
@@ -146,6 +167,7 @@ export class OrderMonitor {
       // DB에 포지션 추가
       await saveDBPosition({
         p_ticker: order.po_ticker,
+        p_account_type: order.po_account_type, // 🔥 계정 타입 추가
         p_quantity: order.po_quantity,
         p_buy_price: currentPrice,
         p_current_price: currentPrice,
@@ -159,13 +181,14 @@ export class OrderMonitor {
       
       // 거래 이력 저장
       await saveTradingRecord({
-        t_ticker: order.po_ticker,
-        t_type: 'BUY',
-        t_quantity: order.po_quantity,
-        t_price: currentPrice,
-        t_total_amount: currentPrice * order.po_quantity,
-        t_status: 'COMPLETED',
-        t_reason: order.po_reason || '예약 주문 실행 (시장가)'
+        th_ticker: order.po_ticker,
+        th_account_type: order.po_account_type, // 🔥 계정 타입 추가
+        th_type: 'BUY',
+        th_quantity: order.po_quantity,
+        th_price: currentPrice,
+        th_amount: currentPrice * order.po_quantity,
+        th_status: 'COMPLETED',
+        th_reason: order.po_reason || '예약 주문 실행 (시장가)'
       })
     } else {
       // KIS API 매도
@@ -176,21 +199,28 @@ export class OrderMonitor {
       
       // 거래 이력 저장
       await saveTradingRecord({
-        t_ticker: order.po_ticker,
-        t_type: 'SELL',
-        t_quantity: order.po_quantity,
-        t_price: currentPrice,
-        t_total_amount: currentPrice * order.po_quantity,
-        t_status: 'COMPLETED',
-        t_reason: order.po_reason || '예약 주문 실행 (시장가)'
+        th_ticker: order.po_ticker,
+        th_account_type: order.po_account_type, // 🔥 계정 타입 추가
+        th_type: 'SELL',
+        th_quantity: order.po_quantity,
+        th_price: currentPrice,
+        th_amount: currentPrice * order.po_quantity,
+        th_status: 'COMPLETED',
+        th_reason: order.po_reason || '예약 주문 실행 (시장가)'
       })
     }
   }
 
   // 지정가 주문 실행
   private async executeLimitOrder(order: PendingOrder) {
-    const limitPrice = order.po_limit_price!
-    console.log(`   💵 지정가 주문 - 지정가: $${limitPrice}`)
+    // 🔥 DB에서 가져온 값이 문자열일 수 있으므로 Number로 변환
+    const limitPrice = Number(order.po_limit_price)
+    
+    if (!limitPrice || limitPrice <= 0) {
+      throw new Error(`잘못된 지정가: ${order.po_limit_price}`)
+    }
+    
+    console.log(`   💵 지정가 주문 - 지정가: $${limitPrice.toFixed(2)}`)
 
     if (order.po_order_type === 'buy') {
       // KIS API 매수 (지정가)
@@ -199,6 +229,7 @@ export class OrderMonitor {
       // 체결 여부는 KIS API가 알아서 처리하므로, 일단 포지션 추가
       await saveDBPosition({
         p_ticker: order.po_ticker,
+        p_account_type: order.po_account_type, // 🔥 계정 타입 추가
         p_quantity: order.po_quantity,
         p_buy_price: limitPrice,
         p_current_price: limitPrice,
@@ -212,13 +243,14 @@ export class OrderMonitor {
       
       // 거래 이력 저장
       await saveTradingRecord({
-        t_ticker: order.po_ticker,
-        t_type: 'BUY',
-        t_quantity: order.po_quantity,
-        t_price: limitPrice,
-        t_total_amount: limitPrice * order.po_quantity,
-        t_status: 'COMPLETED',
-        t_reason: order.po_reason || '예약 주문 실행 (지정가)'
+        th_ticker: order.po_ticker,
+        th_account_type: order.po_account_type, // 🔥 계정 타입 추가
+        th_type: 'BUY',
+        th_quantity: order.po_quantity,
+        th_price: limitPrice,
+        th_amount: limitPrice * order.po_quantity,
+        th_status: 'COMPLETED',
+        th_reason: order.po_reason || '예약 주문 실행 (지정가)'
       })
     } else {
       // KIS API 매도 (지정가)
@@ -229,13 +261,14 @@ export class OrderMonitor {
       
       // 거래 이력 저장
       await saveTradingRecord({
-        t_ticker: order.po_ticker,
-        t_type: 'SELL',
-        t_quantity: order.po_quantity,
-        t_price: limitPrice,
-        t_total_amount: limitPrice * order.po_quantity,
-        t_status: 'COMPLETED',
-        t_reason: order.po_reason || '예약 주문 실행 (지정가)'
+        th_ticker: order.po_ticker,
+        th_account_type: order.po_account_type, // 🔥 계정 타입 추가
+        th_type: 'SELL',
+        th_quantity: order.po_quantity,
+        th_price: limitPrice,
+        th_amount: limitPrice * order.po_quantity,
+        th_status: 'COMPLETED',
+        th_reason: order.po_reason || '예약 주문 실행 (지정가)'
       })
     }
   }
@@ -243,6 +276,10 @@ export class OrderMonitor {
   // 익절/손절 감시
   private async monitorProfitLoss() {
     try {
+      // 🔥 중요: 현재 계정 타입 확인
+      const kisApiManager = (await import('./kis-api-manager.js')).kisApiManager
+      const currentAccountType = kisApiManager.getCurrentAccountType()
+      
       // DB에서 익절/손절 설정 조회
       let settingsFromDB: any[] = []
       try {
@@ -255,15 +292,20 @@ export class OrderMonitor {
         throw error
       }
       
-      if (settingsFromDB.length === 0) {
+      // 🔥 현재 계정 타입의 포지션만 필터링
+      const currentAccountSettings = settingsFromDB.filter(
+        (s: any) => s.p_account_type === currentAccountType
+      )
+      
+      if (currentAccountSettings.length === 0) {
         return
       }
 
-      console.log(`🔍 익절/손절 감시: ${settingsFromDB.length}개 설정`)
+      console.log(`🔍 익절/손절 감시 (${currentAccountType}): ${currentAccountSettings.length}개 설정`)
 
-      for (const setting of settingsFromDB) {
+      for (const setting of currentAccountSettings) {
         try {
-          // KIS API에서 실제 포지션 조회
+          // KIS API에서 실제 포지션 조회 (이미 올바른 계정 타입으로 설정됨)
           const kisPositions = await this.kisApi.getBalance()
           if (!kisPositions || !kisPositions.output1) {
             continue
@@ -325,19 +367,25 @@ export class OrderMonitor {
     targetPercent: number
   ) {
     try {
+      // 🔥 현재 계정 타입 확인
+      const kisApiManager = (await import('./kis-api-manager.js')).kisApiManager
+      const currentAccountType = kisApiManager.getCurrentAccountType()
+      
       // KIS API 전량 매도
       await this.kisApi.sellStock(ticker, quantity, currentPrice)
       
       // 거래 이력 저장
       await saveTradingRecord({
-        t_ticker: ticker,
-        t_type: 'SELL',
-        t_quantity: quantity,
-        t_price: currentPrice,
-        t_total_amount: currentPrice * quantity,
-        t_profit_loss_rate: profitLossPercent,
-        t_status: 'COMPLETED',
-        t_reason: `익절 (목표: ${targetPercent}%, 실현: ${profitLossPercent.toFixed(2)}%)`
+        th_ticker: ticker,
+        th_account_type: currentAccountType, // 🔥 계정 타입 추가
+        th_type: 'SELL',
+        th_quantity: quantity,
+        th_price: currentPrice,
+        th_amount: currentPrice * quantity,
+        th_profit_loss: undefined, // 나중에 계산
+        th_profit_loss_percent: profitLossPercent,
+        th_status: 'COMPLETED',
+        th_reason: `익절 (목표: ${targetPercent}%, 실현: ${profitLossPercent.toFixed(2)}%)`
       })
       
       // 익절/손절 설정 삭제
@@ -358,19 +406,25 @@ export class OrderMonitor {
     targetPercent: number
   ) {
     try {
+      // 🔥 현재 계정 타입 확인
+      const kisApiManager = (await import('./kis-api-manager.js')).kisApiManager
+      const currentAccountType = kisApiManager.getCurrentAccountType()
+      
       // KIS API 전량 매도
       await this.kisApi.sellStock(ticker, quantity, currentPrice)
       
       // 거래 이력 저장
       await saveTradingRecord({
-        t_ticker: ticker,
-        t_type: 'SELL',
-        t_quantity: quantity,
-        t_price: currentPrice,
-        t_total_amount: currentPrice * quantity,
-        t_profit_loss_rate: profitLossPercent,
-        t_status: 'COMPLETED',
-        t_reason: `손절 (목표: -${targetPercent}%, 실현: ${profitLossPercent.toFixed(2)}%)`
+        th_ticker: ticker,
+        th_account_type: currentAccountType, // 🔥 계정 타입 추가
+        th_type: 'SELL',
+        th_quantity: quantity,
+        th_price: currentPrice,
+        th_amount: currentPrice * quantity,
+        th_profit_loss: undefined, // 나중에 계산
+        th_profit_loss_percent: profitLossPercent,
+        th_status: 'COMPLETED',
+        th_reason: `손절 (목표: -${targetPercent}%, 실현: ${profitLossPercent.toFixed(2)}%)`
       })
       
       // 익절/손절 설정 삭제

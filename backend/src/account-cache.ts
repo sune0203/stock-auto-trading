@@ -112,15 +112,13 @@ export class AccountCacheService {
     try {
       const now = new Date()
       
-      // 1. 캐시가 최신이면 메모리 캐시 반환 (실시간 가격 업데이트 포함)
+      // 1. 캐시가 최신이면 FMP 실시간 가격 업데이트 후 반환
       if (this.lastPositionUpdate && 
           (now.getTime() - this.lastPositionUpdate.getTime()) < this.positionUpdateInterval) {
-        // 실시간 가격 업데이트 (비동기, 백그라운드)
-        this.updatePositionPrices(this.cachedPositions).then(updated => {
-          this.cachedPositions = updated
-        }).catch(() => {})
-        
-        return this.cachedPositions
+        // ✅ 실시간 가격 업데이트 (동기적으로 대기하여 최신 가격 반영)
+        const updated = await this.updatePositionPrices(this.cachedPositions)
+        this.cachedPositions = updated
+        return updated
       }
       
       // 2. KIS API 호출 (실제 포지션 조회)
@@ -137,8 +135,10 @@ export class AccountCacheService {
         this.cachedPositions = updated
         return updated
       } else {
-        // API 실패 시 기존 캐시 반환
-        return this.cachedPositions
+        // API 실패 시 기존 캐시에 FMP 가격 업데이트 적용
+        const updated = await this.updatePositionPrices(this.cachedPositions)
+        this.cachedPositions = updated
+        return updated
       }
     } catch (error) {
       console.error('❌ 포지션 조회 실패:', error)
@@ -292,7 +292,9 @@ export class AccountCacheService {
         const name = item.ovrs_item_name // 종목명
         const quantity = parseInt(item.ovrs_cblc_qty || '0') // 해외잔고수량
         const buyPrice = parseFloat(item.pchs_avg_pric || '0') // 매입평균가격
-        const currentPrice = parseFloat(item.now_pric2 || '0') // 현재가
+        // ❌ KIS API의 현재가는 정규장 외 시간에 업데이트되지 않음
+        // const currentPrice = parseFloat(item.now_pric2 || '0')
+        const currentPrice = buyPrice // 임시로 매입가 사용 (FMP로 업데이트 예정)
         const profitLoss = parseFloat(item.frcr_evlu_pfls_amt || '0') // 외화평가손익금액
         const profitLossPercent = parseFloat(item.evlu_pfls_rt || '0') // 평가손익율
         
@@ -302,14 +304,14 @@ export class AccountCacheService {
             name,
             quantity,
             buyPrice,
-            currentPrice,
+            currentPrice, // FMP로 업데이트 필요
             profitLoss,
             profitLossPercent
           })
         }
       }
       
-      // 로그 제거 (불필요)
+      console.log(`📊 KIS에서 ${positions.length}개 포지션 조회 (FMP 가격 업데이트 예정)`)
       return positions
     } catch (error) {
       console.error('❌ KIS 포지션 조회 실패:', error)
@@ -349,37 +351,46 @@ export class AccountCacheService {
   }
 
   /**
-   * 실시간 가격으로 포지션 업데이트
+   * 실시간 가격으로 포지션 업데이트 (FMP Batch API 사용)
    * 
    * 🚨 주의: DB 업데이트 없음 (메모리 캐시만 사용)
    */
   private async updatePositionPrices(positions: Position[]): Promise<Position[]> {
     if (positions.length === 0) return []
 
-    const tickers = positions.map(p => p.ticker)
-    const quotes = await this.fmpApi.getQuotes(tickers)
-    
-    const updated = positions.map(pos => {
-      const quote = quotes.find(q => q.symbol === pos.ticker)
-      if (quote) {
-        const currentPrice = quote.price
-        const profitLoss = (currentPrice - pos.buyPrice) * pos.quantity
-        const profitLossPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100
+    try {
+      const tickers = positions.map(p => p.ticker)
+      console.log(`💵 [FMP Batch] 포지션 가격 업데이트 중: ${tickers.join(', ')}`)
+      
+      // FMP Real-time API 배치 호출 (aftermarket-trade 우선, fallback to quote)
+      const { fmpRealTimeApi } = await import('./fmp-realtime')
+      const priceMap = await fmpRealTimeApi.getBatchAftermarketPrices(tickers)
+      
+      const updated = positions.map(pos => {
+        const currentPrice = priceMap.get(pos.ticker)
         
-        return {
-          ...pos,
-          currentPrice,
-          profitLoss,
-          profitLossPercent,
-          totalValue: currentPrice * pos.quantity
+        if (currentPrice && currentPrice > 0) {
+          const profitLoss = (currentPrice - pos.buyPrice) * pos.quantity
+          const profitLossPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100
+          
+          return {
+            ...pos,
+            currentPrice,
+            profitLoss,
+            profitLossPercent,
+            totalValue: currentPrice * pos.quantity
+          }
+        } else {
+          console.warn(`⚠️ [FMP Batch] ${pos.ticker} 가격 조회 실패 (기존 가격 유지)`)
+          return pos
         }
-      }
-      return pos
-    })
-    
-    // ❌ DB 업데이트 제거 (KIS API가 단일 소스)
-    
-    return updated
+      })
+      
+      return updated
+    } catch (error) {
+      console.error('❌ FMP 배치 가격 업데이트 실패:', error)
+      return positions
+    }
   }
 
   /**

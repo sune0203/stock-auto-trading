@@ -59,11 +59,9 @@ class KISSyncService {
       // ⏱️ Rate Limit 방지: 3초 대기
       await new Promise(resolve => setTimeout(resolve, 3000))
       
-      // 2. 보유 포지션 갱신
-      await this.syncPositions()
-      
-      // ⏱️ Rate Limit 방지: 3초 대기
-      await new Promise(resolve => setTimeout(resolve, 3000))
+      // 2. 보유 포지션 갱신 → ❌ 삭제 (FMP 실시간 가격을 종가로 덮어씌우는 문제 발생)
+      // await this.syncPositions()
+      // 💡 포지션은 getPositions()에서 FMP 배치 API로 자동 업데이트됨
       
       // 3. 미체결 주문 동기화 (현재 KIS API에서 미지원이므로 스킵)
       // await this.syncUnexecutedOrders()
@@ -102,25 +100,11 @@ class KISSyncService {
 
   /**
    * 보유 포지션 동기화
+   * 
+   * ❌ 삭제됨: FMP 실시간 가격을 KIS API 종가로 덮어씌우는 문제 발생
+   * 💡 대신 getPositions()에서 FMP 배치 API로 자동 업데이트됨
    */
-  private async syncPositions() {
-    try {
-      console.log('📊 보유 포지션 동기화 중...')
-      
-      // 캐시 무효화하여 최신 데이터 조회
-      const positions = await accountCacheService.getPositions()
-      
-      console.log(`✅ 보유 포지션 동기화 완료: ${positions.length}개`)
-      
-      // 포지션 요약 로그
-      if (positions.length > 0) {
-        const tickers = positions.map(p => p.ticker).join(', ')
-        console.log(`   보유 종목: ${tickers}`)
-      }
-    } catch (error) {
-      console.error('❌ 보유 포지션 동기화 오류:', error)
-    }
-  }
+  // private async syncPositions() { ... }
 
   /**
    * 미체결 주문 동기화
@@ -241,10 +225,14 @@ class KISSyncService {
                 ? e.th_timestamp.toISOString().split('T')[0] 
                 : String(e.th_timestamp || '').split('T')[0].split(' ')[0]
               
+              // 🔥 수정: 대소문자 구분 없이 비교
+              const eType = e.th_type?.toUpperCase() || ''
+              const targetType = orderType.toUpperCase()
+              
               return e.th_ticker === item.pdno &&
-                e.th_type?.toLowerCase() === orderType &&
-                Math.abs(e.th_quantity - quantity) < 0.01 &&
-                Math.abs(e.th_price - price) < 0.01 &&
+                eType === targetType &&
+                Math.abs(Number(e.th_quantity) - quantity) < 0.01 &&
+                Math.abs(Number(e.th_price) - price) < 0.01 &&
                 timestampStr === ordDateFormatted
             })
           }
@@ -264,16 +252,17 @@ class KISSyncService {
           
           // 새로운 거래 저장
           const recordToSave = {
-            t_account_type: currentAccount.ka_type,
-            t_ticker: item.pdno, // 종목코드
-            t_type: orderType, // buy or sell
-            t_price: price, // 체결단가
-            t_quantity: quantity, // 체결수량
-            t_total_amount: amount, // 체결금액 (수정됨)
-            t_profit_loss: null,
-            t_profit_loss_rate: null,
-            t_reason: `KIS API 동기화 (주문번호: ${orderNumber})`, // 주문번호 포함
-            t_executed_at: new Date(timestamp)
+            th_account_type: currentAccount.ka_type, // 🔥 수정: t_ → th_
+            th_ticker: item.pdno, // 종목코드
+            th_type: orderType.toUpperCase(), // 🔥 수정: BUY or SELL (대문자)
+            th_price: price, // 체결단가
+            th_quantity: quantity, // 체결수량
+            th_amount: amount, // 🔥 수정: t_total_amount → th_amount
+            th_profit_loss: undefined, // 🔥 수정: null → undefined
+            th_profit_loss_percent: undefined, // 🔥 수정: t_profit_loss_rate → th_profit_loss_percent
+            th_reason: `KIS API 동기화 (주문번호: ${orderNumber})`, // 주문번호 포함
+            th_timestamp: timestamp, // 🔥 수정: t_executed_at → th_timestamp (문자열)
+            th_status: 'COMPLETED' // 🔥 추가
           }
           
           // 🔍 저장할 데이터 로그 (첫 번째만)

@@ -323,7 +323,7 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
         <div className="order-field">
           <label className="field-label">현재가</label>
           <div className="field-value price-value">
-            ${currentPrice.toFixed(2)}
+            ${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice.toFixed(4)}
             <span className="price-krw">
               {(currentPrice * exchangeRate).toLocaleString('ko-KR', { maximumFractionDigits: 0 })}원
             </span>
@@ -359,17 +359,17 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
             <div className="price-input-group">
               <button
                 className="price-btn"
-                onClick={() => setLimitPrice(Math.max(0.01, limitPrice - 0.01))}
+                onClick={() => setLimitPrice(Math.max(0.0001, limitPrice - 0.01))}
               >
                 -
               </button>
               <input
                 type="number"
                 className="price-input"
-                value={limitPrice.toFixed(2)}
-                onChange={(e) => setLimitPrice(Math.max(0.01, parseFloat(e.target.value) || 0.01))}
-                step="0.01"
-                min="0.01"
+                value={limitPrice >= 1 ? limitPrice.toFixed(2) : limitPrice.toFixed(4)}
+                onChange={(e) => setLimitPrice(Math.max(0.0001, parseFloat(e.target.value) || 0.0001))}
+                step={limitPrice >= 1 ? "0.01" : "0.0001"}
+                min="0.0001"
               />
               <button
                 className="price-btn"

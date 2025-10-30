@@ -1,10 +1,48 @@
 import React, { useState, useEffect } from 'react'
 import './MarketStatus.css'
 
+type MarketPhase = 'pre-market' | 'regular' | 'after-market' | 'after-extended' | 'day-market' | 'weekend'
+
+interface MarketStatusState {
+  phase: MarketPhase
+  isSummerTime: boolean
+  statusLabel: string
+  timeInfo: string
+  hasRealTimeData: boolean
+}
+
 const MarketStatus: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [timeUntilOpen, setTimeUntilOpen] = useState('')
-  const [timeUntilClose, setTimeUntilClose] = useState('')
+  const [status, setStatus] = useState<MarketStatusState>({
+    phase: 'day-market',
+    isSummerTime: false,
+    statusLabel: '주간거래',
+    timeInfo: '',
+    hasRealTimeData: false
+  })
+
+  // Summer Time 체크 함수 (3월 두번째 일요일 ~ 11월 첫번째 일요일)
+  const isSummerTime = (date: Date): boolean => {
+    const year = date.getFullYear()
+    const month = date.getMonth() // 0-11
+    
+    // 3월 이전 또는 11월 이후면 동절기
+    if (month < 2 || month > 10) return false
+    if (month > 2 && month < 10) return true
+    
+    // 3월이나 11월인 경우 정확한 일요일 계산
+    const day = date.getDate()
+    const dayOfWeek = date.getDay()
+    
+    if (month === 2) { // 3월
+      // 두번째 일요일 찾기
+      const secondSunday = 8 + (7 - new Date(year, 2, 8).getDay())
+      return day >= secondSunday
+    } else { // 11월
+      // 첫번째 일요일 찾기
+      const firstSunday = 1 + (7 - new Date(year, 10, 1).getDay())
+      return day < firstSunday
+    }
+  }
 
   useEffect(() => {
     const updateMarketStatus = () => {
@@ -14,11 +52,10 @@ const MarketStatus: React.FC = () => {
       const hours = nyTime.getHours()
       const minutes = nyTime.getMinutes()
       const currentMinutes = hours * 60 + minutes
+      const isSummer = isSummerTime(nyTime)
 
       // 주말 체크
       if (day === 0 || day === 6) {
-        setIsOpen(false)
-        // 다음 월요일 계산
         const daysUntilMonday = day === 0 ? 1 : 2
         const nextMonday = new Date(nyTime)
         nextMonday.setDate(nextMonday.getDate() + daysUntilMonday)
@@ -28,51 +65,92 @@ const MarketStatus: React.FC = () => {
         const daysLeft = Math.floor(diff / (1000 * 60 * 60 * 24))
         const hoursLeft = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
         
-        setTimeUntilOpen(`${daysLeft}일 ${hoursLeft}시간`)
-        setTimeUntilClose('')
+        setStatus({
+          phase: 'weekend',
+          isSummerTime: isSummer,
+          statusLabel: '주말 휴장',
+          timeInfo: `월요일 오픈까지 ${daysLeft}일 ${hoursLeft}시간`,
+          hasRealTimeData: false
+        })
         return
       }
 
-      // 9:30 AM ~ 4:00 PM (EST)
-      const marketOpen = 9 * 60 + 30 // 9:30 AM = 570분
-      const marketClose = 16 * 60 // 4:00 PM = 960분
+      // 시장 시간대 구분
+      const preMarketStart = 4 * 60      // 04:00 (EST)
+      const regularStart = 9 * 60 + 30   // 09:30 (EST)
+      const regularEnd = 16 * 60         // 16:00 (EST)
+      const afterMarketEnd = 17 * 60     // 17:00 (EST)
+      const afterExtendedEnd = 19 * 60   // 19:00 (EST)
 
-      if (currentMinutes >= marketOpen && currentMinutes < marketClose) {
-        // 장 중
-        setIsOpen(true)
-        const minutesUntilClose = marketClose - currentMinutes
-        const hoursLeft = Math.floor(minutesUntilClose / 60)
-        const minsLeft = minutesUntilClose % 60
-        setTimeUntilClose(`${hoursLeft}시간 ${minsLeft}분`)
-        setTimeUntilOpen('')
+      let nextChangeTime: Date
+      let phase: MarketPhase
+      let statusLabel: string
+      let hasRealTimeData: boolean
+
+      if (currentMinutes >= preMarketStart && currentMinutes < regularStart) {
+        // 프리마켓 (04:00 ~ 09:30)
+        phase = 'pre-market'
+        statusLabel = isSummer ? '프리마켓 (Summer)' : '프리마켓'
+        hasRealTimeData = true
+        nextChangeTime = new Date(nyTime)
+        nextChangeTime.setHours(9, 30, 0, 0)
+      } else if (currentMinutes >= regularStart && currentMinutes < regularEnd) {
+        // 정규장 (09:30 ~ 16:00)
+        phase = 'regular'
+        statusLabel = '정규장'
+        hasRealTimeData = true
+        nextChangeTime = new Date(nyTime)
+        nextChangeTime.setHours(16, 0, 0, 0)
+      } else if (currentMinutes >= regularEnd && currentMinutes < afterMarketEnd) {
+        // 애프터마켓 (16:00 ~ 17:00)
+        phase = 'after-market'
+        statusLabel = isSummer ? '애프터마켓 (Summer)' : '애프터마켓'
+        hasRealTimeData = true
+        nextChangeTime = new Date(nyTime)
+        nextChangeTime.setHours(17, 0, 0, 0)
+      } else if (currentMinutes >= afterMarketEnd && currentMinutes < afterExtendedEnd) {
+        // 애프터마켓 연장 (17:00 ~ 19:00)
+        phase = 'after-extended'
+        statusLabel = '애프터마켓 연장'
+        hasRealTimeData = true
+        nextChangeTime = new Date(nyTime)
+        nextChangeTime.setHours(19, 0, 0, 0)
       } else {
-        // 장 마감
-        setIsOpen(false)
-        
-        let nextOpenTime: Date
-        if (currentMinutes < marketOpen) {
-          // 오늘 오픈 전
-          nextOpenTime = new Date(nyTime)
-          nextOpenTime.setHours(9, 30, 0, 0)
-        } else {
-          // 오늘 마감 후 -> 다음 날
-          nextOpenTime = new Date(nyTime)
-          nextOpenTime.setDate(nextOpenTime.getDate() + 1)
-          nextOpenTime.setHours(9, 30, 0, 0)
-          
-          // 금요일이면 월요일로
-          if (day === 5 && currentMinutes >= marketClose) {
-            nextOpenTime.setDate(nextOpenTime.getDate() + 2)
-          }
+        // 주간거래 (데이마켓, 19:00 ~ 04:00)
+        phase = 'day-market'
+        statusLabel = '주간거래 (데이터 반영불가)'
+        hasRealTimeData = false
+        nextChangeTime = new Date(nyTime)
+        if (currentMinutes >= afterExtendedEnd) {
+          // 19:00 이후 -> 다음날 04:00
+          nextChangeTime.setDate(nextChangeTime.getDate() + 1)
         }
-        
-        const diff = nextOpenTime.getTime() - nyTime.getTime()
-        const hoursLeft = Math.floor(diff / (1000 * 60 * 60))
-        const minsLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-        
-        setTimeUntilOpen(`${hoursLeft}시간 ${minsLeft}분`)
-        setTimeUntilClose('')
+        nextChangeTime.setHours(4, 0, 0, 0)
       }
+
+      // 다음 시간대까지 남은 시간 계산
+      const diff = nextChangeTime.getTime() - nyTime.getTime()
+      const hoursLeft = Math.floor(diff / (1000 * 60 * 60))
+      const minsLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+      let timeInfo = ''
+      if (phase === 'regular') {
+        timeInfo = `마감까지 ${hoursLeft}시간 ${minsLeft}분`
+      } else if (phase === 'pre-market') {
+        timeInfo = `정규장까지 ${hoursLeft}시간 ${minsLeft}분`
+      } else if (phase === 'after-market' || phase === 'after-extended') {
+        timeInfo = `종료까지 ${hoursLeft}시간 ${minsLeft}분`
+      } else {
+        timeInfo = `프리마켓까지 ${hoursLeft}시간 ${minsLeft}분`
+      }
+
+      setStatus({
+        phase,
+        isSummerTime: isSummer,
+        statusLabel,
+        timeInfo,
+        hasRealTimeData
+      })
     }
 
     // 초기 실행
@@ -84,19 +162,25 @@ const MarketStatus: React.FC = () => {
     return () => clearInterval(interval)
   }, [])
 
+  // 시장 상태에 따른 CSS 클래스 결정
+  const getStatusClass = () => {
+    if (status.phase === 'regular') return 'open'
+    if (status.phase === 'weekend' || status.phase === 'day-market') return 'closed'
+    return 'extended' // pre-market, after-market, after-extended
+  }
+
+
+
   return (
     <div className="market-status">
-      <div className={`status-indicator ${isOpen ? 'open' : 'closed'}`}>
+      <div className={`status-indicator ${getStatusClass()}`}>
         <div className="status-light"></div>
         <div className="status-text">
           <span className="status-label">
-            {isOpen ? '정규장 오픈' : '장 마감'}
+            {status.statusLabel}
           </span>
           <span className="status-time">
-            {isOpen 
-              ? `마감까지 ${timeUntilClose}` 
-              : `오픈까지 ${timeUntilOpen}`
-            }
+            {status.timeInfo}
           </span>
         </div>
       </div>

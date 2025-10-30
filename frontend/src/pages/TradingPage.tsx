@@ -179,6 +179,9 @@ const TradingPage: React.FC = () => {
       // 실시간 가격 구독 (단일 심볼)
       socket.emit('subscribe:realtime', [selectedSymbol])
 
+      // 🔥 KIS WebSocket 호가 구독 (정규장 외 시간에도 실시간 가격 반영)
+      socket.emit('subscribe:orderbook', selectedSymbol)
+
       // 종목 한국어 이름 매핑
       const stockNameMap: Record<string, string> = {
         'AAPL': '애플',
@@ -202,16 +205,24 @@ const TradingPage: React.FC = () => {
           const response = await fetch(`http://localhost:3001/api/realtime/quote/${selectedSymbol}`)
           const data = await response.json()
           if (data && data.price) {
-            console.log(`💵 초기 가격 조회: ${data.symbol} = $${data.price}`)
+            const currentPrice = data.price
+            const prevClose = data.previousClose || currentPrice
+            
+            // 실시간 가격 기준으로 변동금액/변동률 재계산
+            const change = currentPrice - prevClose
+            const changesPercentage = prevClose > 0 ? (change / prevClose) * 100 : 0
+            
+            console.log(`💵 초기 가격 조회: ${data.symbol} = $${currentPrice} (전일: $${prevClose}, 변동: ${change >= 0 ? '+' : ''}${change.toFixed(4)} / ${changesPercentage.toFixed(2)}%)`)
+            
             setQuote({
               symbol: data.symbol,
-              price: data.price,
-              changesPercentage: data.changesPercentage || 0,
-              change: data.change || 0,
+              price: currentPrice,
+              changesPercentage: changesPercentage,
+              change: change,
               dayLow: data.dayLow || 0,
               dayHigh: data.dayHigh || 0,
               volume: data.volume || 0,
-              previousClose: data.previousClose || data.price - (data.change || 0),
+              previousClose: prevClose,
               timestamp: Date.now()
             })
           } else {
@@ -224,19 +235,27 @@ const TradingPage: React.FC = () => {
       
       fetchInitialPrice()
       
-      // 실시간 가격 업데이트 리스너
+      // 🔥 FMP 실시간 가격 업데이트 (프리마켓~애프터마켓 연장까지 지원)
       const handlePriceUpdate = (data: any) => {
         if (data.symbol === selectedSymbol) {
-          console.log(`💵 [실시간] ${data.symbol} = $${data.price}`)
+          const currentPrice = data.price
+          const prevClose = data.previousClose || currentPrice
+          
+          // 실시간 가격 기준으로 변동금액/변동률 재계산
+          const change = currentPrice - prevClose
+          const changesPercentage = prevClose > 0 ? (change / prevClose) * 100 : 0
+          
+          console.log(`💵 [FMP 실시간] ${data.symbol} = $${currentPrice} (${change >= 0 ? '+' : ''}${change.toFixed(4)} / ${changesPercentage >= 0 ? '+' : ''}${changesPercentage.toFixed(2)}%)`)
+          
           setQuote(prev => ({
             symbol: data.symbol,
-            price: data.price,
-            changesPercentage: data.changesPercentage || prev?.changesPercentage || 0,
-            change: data.change || prev?.change || 0,
+            price: currentPrice,
+            changesPercentage: changesPercentage,
+            change: change,
             dayLow: data.dayLow || prev?.dayLow || 0,
             dayHigh: data.dayHigh || prev?.dayHigh || 0,
             volume: data.volume || prev?.volume || 0,
-            previousClose: data.previousClose || prev?.previousClose || data.price,
+            previousClose: prevClose,
             timestamp: Date.now()
           }))
         }
@@ -244,20 +263,44 @@ const TradingPage: React.FC = () => {
       
       socket.on('realtime:price', handlePriceUpdate)
       
-      // 주기적 가격 갱신 (5초마다, 실시간이 작동하지 않을 경우 대비)
-      const priceRefreshInterval = setInterval(fetchInitialPrice, 5000)
+      // KIS WebSocket 호가 (정규장만 참고용)
+      const handleOrderbookUpdate = (data: any) => {
+        if (data.symbol === selectedSymbol) {
+          // 호가 데이터는 호가창에만 표시, 현재가는 FMP 우선
+          console.log(`📊 [KIS 호가] ${data.symbol} - 매수: $${data.bid?.price}, 매도: $${data.ask?.price}`)
+        }
+      }
+      
+      socket.on('orderbook-update', handleOrderbookUpdate)
+      
+      // 주기적 가격 갱신 (2초마다, 프리마켓~애프터마켓 연장까지 실시간 반영)
+      const priceRefreshInterval = setInterval(fetchInitialPrice, 2000)
       
       // 컴포넌트 언마운트 시 정리
       return () => {
         socket.emit('unsubscribe:realtime', [selectedSymbol])
+        socket.emit('unsubscribe:orderbook', selectedSymbol)
         socket.off('realtime:price', handlePriceUpdate)
+        socket.off('orderbook-update', handleOrderbookUpdate)
         clearInterval(priceRefreshInterval)
       }
     }
   }, [socket, selectedSymbol])
 
+  // 가격 포맷 (소수점 자리 유지)
   const formatPrice = (price: number) => {
-    return price.toFixed(2)
+    // 1달러 이상: 소수점 2자리
+    // 1달러 미만: 소수점 4자리
+    if (price >= 1) {
+      return price.toFixed(2)
+    } else {
+      return price.toFixed(4)
+    }
+  }
+
+  // 변동률 포맷 (소수점 2자리)
+  const formatChangePercent = (percent: number) => {
+    return percent.toFixed(2)
   }
 
   const formatKRW = (usd: number) => {
@@ -354,7 +397,10 @@ const TradingPage: React.FC = () => {
                   {quote.change >= 0 ? '+' : ''}{formatPrice(quote.change)}
                 </span>
                 <span className="change-percent">
-                  ({quote.changesPercentage >= 0 ? '+' : ''}{quote.changesPercentage.toFixed(2)}%)
+                  ({quote.changesPercentage >= 0 ? '+' : ''}{formatChangePercent(quote.changesPercentage)}%)
+                </span>
+                <span className="previous-close" title="전일 종가">
+                  (전일: ${formatPrice(quote.previousClose)})
                 </span>
               </div>
             )}

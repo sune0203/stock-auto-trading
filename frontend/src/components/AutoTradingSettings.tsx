@@ -4,12 +4,12 @@ import './AutoTradingSettings.css'
 
 interface AutoTradingConfig {
   enabled: boolean
-  bullish_threshold: number // 호재 점수 임계값 (%)
-  impact_threshold: number // 당일 상승 점수 임계값 (%)
-  investment_percent: number // 잔고 대비 투자 비율 (%)
-  max_investment: number // 최대 투자 금액 ($)
-  take_profit_percent: number // 익절 비율 (%)
-  stop_loss_percent: number // 손절 비율 (%)
+  bullishThreshold: number // 호재 점수 임계값 (%)
+  immediateImpactThreshold: number // 당일 상승 점수 임계값 (%)
+  takeProfitPercent: number // 익절 비율 (%)
+  stopLossPercent: number // 손절 비율 (%)
+  maxInvestmentPerTrade: number // 거래당 최대 투자 금액 ($)
+  maxDailyTrades: number // 하루 최대 거래 횟수
 }
 
 interface DetectedNews {
@@ -38,12 +38,12 @@ interface AutoTradingSettingsProps {
 const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) => {
   const [config, setConfig] = useState<AutoTradingConfig>({
     enabled: false,
-    bullish_threshold: 95,
-    impact_threshold: 95,
-    investment_percent: 10,
-    max_investment: 1000,
-    take_profit_percent: 10,
-    stop_loss_percent: 5
+    bullishThreshold: 70,
+    immediateImpactThreshold: 70,
+    takeProfitPercent: 5.0,
+    stopLossPercent: 3.0,
+    maxInvestmentPerTrade: 100.0,
+    maxDailyTrades: 10
   })
 
   const [detectedNews, setDetectedNews] = useState<DetectedNews[]>([])
@@ -52,6 +52,8 @@ const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) =>
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [position, setPosition] = useState({ x: window.innerWidth / 2 - 400, y: 50 })
   const [currentBalance, setCurrentBalance] = useState<number>(0) // 현재 잔고
+  const [showNotification, setShowNotification] = useState(false) // 자동매수 알림 표시
+  const [notificationMessage, setNotificationMessage] = useState('') // 알림 메시지
 
   // 초기 설정 로드 (팝업 열릴 때 한 번만 실행)
   useEffect(() => {
@@ -142,13 +144,43 @@ const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) =>
   // 설정 저장
   const saveConfig = async () => {
     try {
-      await axios.post('http://localhost:3001/api/auto-trading/config', config)
-      alert('설정이 저장되었습니다.')
+      const response = await axios.post('http://localhost:3001/api/auto-trading/config', config)
+      if (response.data.success) {
+        // 알림 표시
+        setNotificationMessage('✅ 설정이 저장되었습니다.')
+        setShowNotification(true)
+        setTimeout(() => setShowNotification(false), 3000)
+      }
     } catch (error) {
       console.error('설정 저장 실패:', error)
-      alert('설정 저장에 실패했습니다.')
+      setNotificationMessage('❌ 설정 저장에 실패했습니다.')
+      setShowNotification(true)
+      setTimeout(() => setShowNotification(false), 3000)
     }
   }
+
+  // 자동매수 알림 표시 (외부에서 호출 가능하도록)
+  const showAutoBuyNotification = (ticker: string, price: number, quantity: number) => {
+    const formattedPrice = price >= 1 ? price.toFixed(2) : price.toFixed(4)
+    setNotificationMessage(`🤖 자동매수 완료: ${ticker} ${quantity}주 @ $${formattedPrice}`)
+    setShowNotification(true)
+    setTimeout(() => setShowNotification(false), 5000)
+  }
+
+  // 자동매수 감지 리스너 (Socket.IO로 백엔드에서 푸시 받음)
+  useEffect(() => {
+    const socket = (window as any).socket
+    if (socket) {
+      socket.on('auto-buy-executed', (data: { ticker: string, price: number, quantity: number }) => {
+        showAutoBuyNotification(data.ticker, data.price, data.quantity)
+      })
+    }
+    return () => {
+      if (socket) {
+        socket.off('auto-buy-executed')
+      }
+    }
+  }, [])
 
   // 즉시 매수 실행
   const handleBuyNow = (news: DetectedNews, selectedTicker?: string) => {
@@ -172,6 +204,20 @@ const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) =>
         y: e.clientY - position.y
       })
     }
+  }
+
+  // 가격 포맷 함수
+  const formatPrice = (price: number) => {
+    if (price >= 1) {
+      return price.toFixed(2)
+    } else {
+      return price.toFixed(4)
+    }
+  }
+
+  // 변동률 포맷 함수
+  const formatChangePercent = (percent: number) => {
+    return percent.toFixed(2)
   }
 
   // 드래그 중
@@ -223,18 +269,18 @@ const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) =>
                 type="number"
                 min="0"
                 max="100"
-                value={config.bullish_threshold}
-                onChange={(e) => setConfig({ ...config, bullish_threshold: Number(e.target.value) })}
+                value={config.bullishThreshold}
+                onChange={(e) => setConfig({ ...config, bullishThreshold: Number(e.target.value) })}
               />
             </div>
             <div className="setting-item">
-              <label>당일 상승 점수 임계값 (%)</label>
+              <label>즉시 영향 점수 임계값 (%)</label>
               <input
                 type="number"
                 min="0"
                 max="100"
-                value={config.impact_threshold}
-                onChange={(e) => setConfig({ ...config, impact_threshold: Number(e.target.value) })}
+                value={config.immediateImpactThreshold}
+                onChange={(e) => setConfig({ ...config, immediateImpactThreshold: Number(e.target.value) })}
               />
             </div>
           </div>
@@ -250,38 +296,33 @@ const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) =>
             </div>
 
             <div className="setting-item">
-              <label>잔고 대비 투자 비율 (%)</label>
+              <label>거래당 최대 투자 금액 ($)</label>
               <input
                 type="number"
                 min="1"
-                max="100"
-                value={config.investment_percent}
-                onChange={(e) => setConfig({ ...config, investment_percent: Number(e.target.value) })}
+                max="10000"
+                step="10"
+                value={config.maxInvestmentPerTrade}
+                onChange={(e) => setConfig({ ...config, maxInvestmentPerTrade: Number(e.target.value) })}
               />
-            </div>
-            <div className="calculated-amount">
-              → ${(currentBalance * (config.investment_percent / 100)).toFixed(2)}
             </div>
 
             <div className="setting-item">
-              <label>최대 투자 금액 ($)</label>
+              <label>하루 최대 거래 횟수</label>
               <input
                 type="number"
-                min="0"
-                step="100"
-                value={config.max_investment}
-                onChange={(e) => setConfig({ ...config, max_investment: Number(e.target.value) })}
+                min="1"
+                max="50"
+                value={config.maxDailyTrades}
+                onChange={(e) => setConfig({ ...config, maxDailyTrades: Number(e.target.value) })}
               />
             </div>
 
             {/* 최종 투자 금액 계산 */}
             <div className="final-investment-display">
-              <span className="final-label">실제 투자 금액 (작은 값 사용):</span>
+              <span className="final-label">일일 최대 투자 금액:</span>
               <span className="final-value">
-                ${Math.min(
-                  currentBalance * (config.investment_percent / 100),
-                  config.max_investment
-                ).toFixed(2)}
+                ${(config.maxInvestmentPerTrade * config.maxDailyTrades).toFixed(2)}
               </span>
             </div>
           </div>
@@ -295,8 +336,8 @@ const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) =>
                 type="number"
                 min="0"
                 step="0.5"
-                value={config.take_profit_percent}
-                onChange={(e) => setConfig({ ...config, take_profit_percent: Number(e.target.value) })}
+                value={config.takeProfitPercent}
+                onChange={(e) => setConfig({ ...config, takeProfitPercent: Number(e.target.value) })}
               />
             </div>
             <div className="setting-item">
@@ -305,8 +346,8 @@ const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) =>
                 type="number"
                 min="0"
                 step="0.5"
-                value={config.stop_loss_percent}
-                onChange={(e) => setConfig({ ...config, stop_loss_percent: Number(e.target.value) })}
+                value={config.stopLossPercent}
+                onChange={(e) => setConfig({ ...config, stopLossPercent: Number(e.target.value) })}
               />
             </div>
           </div>
@@ -333,10 +374,10 @@ const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) =>
                       <div className="price-info">
                         {news.currentPrice !== undefined && news.currentPrice > 0 && (
                           <>
-                            <div className="news-price">${news.currentPrice.toFixed(2)}</div>
+                            <div className="news-price">${formatPrice(news.currentPrice)}</div>
                             {news.changePercent !== undefined && (
                               <div className={`change-percent ${news.changePercent >= 0 ? 'positive' : 'negative'}`}>
-                                {news.changePercent >= 0 ? '▲' : '▼'} {Math.abs(news.changePercent).toFixed(2)}%
+                                {news.changePercent >= 0 ? '▲' : '▼'} {formatChangePercent(Math.abs(news.changePercent))}%
                               </div>
                             )}
                           </>
@@ -351,7 +392,7 @@ const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) =>
                     {news.capturedPriceUSD && (
                       <div className="captured-info">
                         <span className="captured-label">뉴스 발생 시:</span>
-                        <span className="captured-price">${news.capturedPriceUSD.toFixed(2)}</span>
+                        <span className="captured-price">${formatPrice(news.capturedPriceUSD)}</span>
                         {news.capturedVolume && (
                           <span className="captured-volume">/ 거래량: {news.capturedVolume.toLocaleString()}</span>
                         )}
@@ -408,6 +449,21 @@ const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) =>
             💾 설정 저장
           </button>
         </div>
+
+        {/* 자동매수 알림 팝업 */}
+        {showNotification && (
+          <div className="auto-buy-notification">
+            <div className="notification-content">
+              {notificationMessage}
+            </div>
+            <button 
+              className="notification-close" 
+              onClick={() => setShowNotification(false)}
+            >
+              확인
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

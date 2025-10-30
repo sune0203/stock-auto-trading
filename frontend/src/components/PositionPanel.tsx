@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { io, Socket } from 'socket.io-client'
 import './PositionPanel.css'
 
 interface Position {
@@ -48,26 +49,228 @@ interface PositionPanelProps {
 }
 
 const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick, onSellClick }) => {
+  // 가격 포맷 함수
+  const formatPrice = (price: number) => {
+    if (price >= 1) {
+      return price.toFixed(2)
+    } else {
+      return price.toFixed(4)
+    }
+  }
   const [positions, setPositions] = useState<Position[]>([])
   const [pendingOrders, setPendingOrders] = useState<PendingOrder[]>([])
   const [tradingHistory, setTradingHistory] = useState<TradingHistory[]>([])
   const [activeTab, setActiveTab] = useState<'holdings' | 'pending' | 'history'>('holdings') // 보유 | 대기 | 거래내역
   const [stockNames, setStockNames] = useState<Map<string, string>>(new Map()) // 티커 → 한국어 이름 맵
   const [isSyncing, setIsSyncing] = useState(false) // 동기화 중 상태
+  const [socket, setSocket] = useState<Socket | null>(null) // WebSocket 연결
+
+  // WebSocket 연결 및 실시간 가격 구독
+  useEffect(() => {
+    const newSocket = io('http://localhost:3001')
+    setSocket(newSocket)
+
+    return () => {
+      newSocket.close()
+    }
+  }, [])
+
+  // 현재 구독 중인 티커 목록을 ref로 관리 (재렌더링 방지)
+  const subscribedTickers = React.useRef<Set<string>>(new Set())
+
+  // 보유 종목 실시간 가격 구독 (티커 변경 시에만)
+  useEffect(() => {
+    if (!socket || positions.length === 0) return
+
+    const currentTickers = new Set(positions.map(p => p.ticker))
+    const previousTickers = subscribedTickers.current
+
+    // 새로 추가된 티커 구독
+    const tickersToAdd = Array.from(currentTickers).filter(t => !previousTickers.has(t))
+    if (tickersToAdd.length > 0) {
+      console.log(`🔄 [PositionPanel] 새 티커 구독: ${tickersToAdd.join(', ')}`)
+      tickersToAdd.forEach(ticker => {
+        socket.emit('subscribe:realtime', [ticker])
+      })
+    }
+
+    // 제거된 티커 구독 해제
+    const tickersToRemove = Array.from(previousTickers).filter(t => !currentTickers.has(t))
+    if (tickersToRemove.length > 0) {
+      console.log(`❌ [PositionPanel] 티커 구독 해제: ${tickersToRemove.join(', ')}`)
+      tickersToRemove.forEach(ticker => {
+        socket.emit('unsubscribe:realtime', [ticker])
+      })
+    }
+
+    // 구독 목록 업데이트
+    subscribedTickers.current = currentTickers
+
+    return () => {
+      // 컴포넌트 언마운트 시 모든 구독 해제
+      Array.from(subscribedTickers.current).forEach(ticker => {
+        socket.emit('unsubscribe:realtime', [ticker])
+      })
+      subscribedTickers.current.clear()
+    }
+  }, [socket, positions.map(p => p.ticker).sort().join(',')])
+
+  // 실시간 가격 업데이트 리스너
+  useEffect(() => {
+    if (!socket) return
+
+    const handlePriceUpdate = (data: any) => {
+      if (data && data.symbol && data.price) {
+        const currentPrice = data.price
+        console.log(`💵 [PositionPanel] ${data.symbol} 실시간 가격: $${currentPrice}`)
+        
+        // 포지션의 현재가 업데이트
+        setPositions(prev => {
+          let updated = false
+          const newPositions = prev.map(pos => {
+            if (pos.ticker === data.symbol) {
+              updated = true
+              const profitLoss = (currentPrice - pos.buyPrice) * pos.quantity
+              const profitLossPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100
+              
+              console.log(`📊 [PositionPanel] ${data.symbol} 포지션 업데이트:`, {
+                이전_현재가: pos.currentPrice,
+                새_현재가: currentPrice,
+                매수가: pos.buyPrice,
+                수량: pos.quantity,
+                손익: profitLoss.toFixed(4),
+                손익률: profitLossPercent.toFixed(2) + '%'
+              })
+              
+              return {
+                ...pos,
+                currentPrice,
+                profitLoss,
+                profitLossPercent
+              }
+            }
+            return pos
+          })
+          
+          if (!updated) {
+            console.warn(`⚠️ [PositionPanel] ${data.symbol} 포지션을 찾을 수 없음`)
+          }
+          
+          return newPositions
+        })
+      }
+    }
+
+    socket.on('realtime:price', handlePriceUpdate)
+    console.log('✅ [PositionPanel] realtime:price 리스너 등록')
+
+    return () => {
+      socket.off('realtime:price', handlePriceUpdate)
+      console.log('❌ [PositionPanel] realtime:price 리스너 해제')
+    }
+  }, [socket])
+
+  // 배치 API로 모든 포지션 가격 업데이트 (애프터마켓 우선)
+  const updatePositionPricesBatch = async () => {
+    if (positions.length === 0) return
+
+    try {
+      const tickers = positions.map(p => p.ticker).join(',')
+      
+      // 1. 애프터마켓 배치 API 우선 시도
+      const aftermarketResponse = await fetch(`https://financialmodelingprep.com/stable/batch-aftermarket-trade?symbols=${tickers}&apikey=Nz122fIiH3KWDx8UVBdQFL8a5NU9lRhc`)
+      const aftermarketTrades = await aftermarketResponse.json()
+      
+      // 애프터마켓 가격을 Map으로 변환
+      const priceMap = new Map<string, number>()
+      
+      if (Array.isArray(aftermarketTrades) && aftermarketTrades.length > 0) {
+        aftermarketTrades.forEach((trade: any) => {
+          if (trade.symbol && trade.price && trade.price > 0) {
+            priceMap.set(trade.symbol, trade.price)
+          }
+        })
+        console.log(`🌙 [FMP Batch Aftermarket] ${aftermarketTrades.map((t: any) => `${t.symbol}=$${t.price}`).join(', ')}`)
+      }
+      
+      // 2. 애프터마켓에 없는 종목은 정규장 Quote API로 조회
+      const missingTickers = positions
+        .map(p => p.ticker)
+        .filter(ticker => !priceMap.has(ticker))
+      
+      if (missingTickers.length > 0) {
+        const quoteResponse = await fetch(`https://financialmodelingprep.com/api/v3/quote/${missingTickers.join(',')}?apikey=Nz122fIiH3KWDx8UVBdQFL8a5NU9lRhc`)
+        const quotes = await quoteResponse.json()
+        
+        if (Array.isArray(quotes) && quotes.length > 0) {
+          quotes.forEach((quote: any) => {
+            if (quote.symbol && quote.price && quote.price > 0) {
+              priceMap.set(quote.symbol, quote.price)
+            }
+          })
+          console.log(`💵 [FMP Batch Quote] ${quotes.map((q: any) => `${q.symbol}=$${q.price}`).join(', ')}`)
+        }
+      }
+      
+      // 3. 가격 업데이트
+      setPositions(prev => 
+        prev.map(pos => {
+          const currentPrice = priceMap.get(pos.ticker)
+          if (currentPrice && currentPrice > 0) {
+            const profitLoss = (currentPrice - pos.buyPrice) * pos.quantity
+            const profitLossPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100
+            
+            return {
+              ...pos,
+              currentPrice,
+              profitLoss,
+              profitLossPercent
+            }
+          }
+          return pos
+        })
+      )
+    } catch (error) {
+      console.error('❌ [PositionPanel] 배치 가격 업데이트 실패:', error)
+    }
+  }
 
   useEffect(() => {
     loadPositions()
     loadPendingOrders()
     loadTradingHistory()
+    
     const interval = setInterval(() => {
-      loadPositions()
       loadPendingOrders()
       if (activeTab === 'history') {
         loadTradingHistory()
       }
-    }, 10000) // 10초마다 갱신
-    return () => clearInterval(interval)
+    }, 10000) // 10초마다 대기/거래내역 갱신
+    
+    return () => {
+      clearInterval(interval)
+    }
   }, [activeTab])
+
+  // 배치 가격 업데이트 (포지션이 있을 때만)
+  useEffect(() => {
+    if (positions.length === 0) return
+
+    // 초기 배치 업데이트
+    const initialTimer = setTimeout(() => {
+      updatePositionPricesBatch()
+    }, 3000)
+
+    // 2초마다 배치 업데이트
+    const batchInterval = setInterval(() => {
+      updatePositionPricesBatch()
+    }, 2000)
+
+    return () => {
+      clearTimeout(initialTimer)
+      clearInterval(batchInterval)
+    }
+  }, [positions.map(p => p.ticker).sort().join(',')])
 
   // 종목 한국어 이름 조회
   const fetchStockName = async (ticker: string): Promise<string> => {
@@ -88,14 +291,42 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
   const loadPositions = async () => {
     try {
       const response = await axios.get('http://localhost:3001/api/trading/positions')
-      console.log('📊 포지션 데이터:', response.data)
+      console.log('📊 [PositionPanel] 포지션 데이터:', response.data)
       
-      // 한국어 이름 추가
+      // 한국어 이름 추가 및 실시간 가격 업데이트
       const positionsWithNames = await Promise.all(
-        (response.data || []).map(async (pos: Position) => ({
-          ...pos,
-          stockNameKo: await fetchStockName(pos.ticker)
-        }))
+        (response.data || []).map(async (pos: Position) => {
+          const stockNameKo = await fetchStockName(pos.ticker)
+          
+          // 실시간 가격 조회
+          try {
+            const priceResponse = await fetch(`http://localhost:3001/api/realtime/quote/${pos.ticker}`)
+            const priceData = await priceResponse.json()
+            
+            if (priceData && priceData.price) {
+              const currentPrice = priceData.price
+              const profitLoss = (currentPrice - pos.buyPrice) * pos.quantity
+              const profitLossPercent = ((currentPrice - pos.buyPrice) / pos.buyPrice) * 100
+              
+              console.log(`💵 [PositionPanel] ${pos.ticker} 초기 가격: $${currentPrice} (매수가: $${pos.buyPrice})`)
+              
+              return {
+                ...pos,
+                stockNameKo,
+                currentPrice,
+                profitLoss,
+                profitLossPercent
+              }
+            }
+          } catch (err) {
+            console.warn(`⚠️ [PositionPanel] ${pos.ticker} 가격 조회 실패:`, err)
+          }
+          
+          return {
+            ...pos,
+            stockNameKo
+          }
+        })
       )
       
       setPositions(positionsWithNames)
@@ -241,7 +472,7 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
           <div className="summary-item">
             <span className="summary-label">총 평가액</span>
             <span className="summary-value">
-              ${totalValue.toFixed(2)}
+              ${formatPrice(totalValue)}
               <span className="value-krw">
                 {(totalValue * exchangeRate).toLocaleString('ko-KR', { maximumFractionDigits: 0 })}원
               </span>
@@ -250,7 +481,7 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
           <div className="summary-item">
             <span className="summary-label">총 손익</span>
             <span className={`summary-value ${totalProfitLoss >= 0 ? 'profit' : 'loss'}`}>
-              {totalProfitLoss >= 0 ? '+' : ''}${totalProfitLoss.toFixed(2)}
+              {totalProfitLoss >= 0 ? '+' : ''}${formatPrice(Math.abs(totalProfitLoss))}
               <span className="profit-percent">
                 ({totalProfitLossPercent >= 0 ? '+' : ''}{totalProfitLossPercent.toFixed(2)}%)
               </span>
@@ -280,16 +511,16 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
                 <div className="position-prices">
                   <div className="price-row">
                     <span className="price-label">매수가</span>
-                    <span className="price-value">${position.buyPrice.toFixed(2)}</span>
+                    <span className="price-value">${formatPrice(position.buyPrice)}</span>
                   </div>
                   <div className="price-row">
                     <span className="price-label">현재가</span>
-                    <span className="price-value">${position.currentPrice.toFixed(2)}</span>
+                    <span className="price-value">${formatPrice(position.currentPrice)}</span>
                   </div>
                 </div>
                 <div className={`position-profit ${position.profitLoss >= 0 ? 'profit' : 'loss'}`}>
                   <span className="profit-amount">
-                    {position.profitLoss >= 0 ? '+' : ''}${position.profitLoss.toFixed(2)}
+                    {position.profitLoss >= 0 ? '+' : ''}${formatPrice(Math.abs(position.profitLoss))}
                   </span>
                   <span className="profit-percent">
                     ({position.profitLossPercent >= 0 ? '+' : ''}{position.profitLossPercent.toFixed(2)}%)
@@ -349,7 +580,7 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
                         </span>
                       ) : (
                         <span className="limit-order">
-                          지정가 ${order.po_limit_price != null ? Number(order.po_limit_price).toFixed(2) : '0.00'}
+                          지정가 ${order.po_limit_price != null ? formatPrice(Number(order.po_limit_price)) : '0.0000'}
                         </span>
                       )}
                     </span>
@@ -400,17 +631,17 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
                 <div className="position-prices">
                   <div className="price-row">
                     <span className="price-label">체결가</span>
-                    <span className="price-value">${Number(history.th_price).toFixed(2)}</span>
+                    <span className="price-value">${formatPrice(Number(history.th_price))}</span>
                   </div>
                   <div className="price-row">
                     <span className="price-label">총 금액</span>
-                    <span className="price-value">${Number(history.th_amount).toFixed(2)}</span>
+                    <span className="price-value">${formatPrice(Number(history.th_amount))}</span>
                   </div>
                 </div>
                 {history.th_profit_loss != null && (
                   <div className={`position-profit ${Number(history.th_profit_loss) >= 0 ? 'profit' : 'loss'}`}>
                     <span className="profit-amount">
-                      {Number(history.th_profit_loss) >= 0 ? '+' : ''}${Number(history.th_profit_loss).toFixed(2)}
+                      {Number(history.th_profit_loss) >= 0 ? '+' : ''}${formatPrice(Math.abs(Number(history.th_profit_loss)))}
                     </span>
                     {history.th_profit_loss_percent != null && (
                       <span className="profit-percent">

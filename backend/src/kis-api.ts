@@ -27,6 +27,11 @@ export class KISApi {
     return kisApiManager.sellStock(ticker, quantity, price)
   }
 
+  // 🔥 실시간 시세 조회 (KISApiManager로 위임)
+  async getCurrentPrice(ticker: string): Promise<number | null> {
+    return kisApiManager.getCurrentPrice(ticker)
+  }
+
   // 결제기준잔고 조회 (KISApiManager로 위임)
   async getPaymentBalance(): Promise<{ cash: number; totalAssets: number }> {
     return kisApiManager.getPaymentBalance()
@@ -74,17 +79,17 @@ export class KISApi {
 
   // 차트 데이터 조회 메서드 (현재 미구현, FMP API 사용 권장)
   async getOverseasDailyChart(ticker: string, exchange: string, period: string, days: number): Promise<any[]> {
-    console.warn('⚠️ KIS API 차트 조회는 현재 지원하지 않습니다. FMP API를 사용하세요.')
+    // FMP API 사용 (로그 제거)
     return []
   }
 
   async getOverseasChartData(ticker: string, exchange: string, period: string | number, count: number): Promise<any[]> {
-    console.warn('⚠️ KIS API 차트 조회는 현재 지원하지 않습니다. FMP API를 사용하세요.')
+    // FMP API 사용 (로그 제거)
     return []
   }
 
   async getOverseasQuote(ticker: string, exchange: string): Promise<any> {
-    console.warn('⚠️ KIS API 시세 조회는 현재 지원하지 않습니다. FMP API를 사용하세요.')
+    // FMP API 사용 (로그 제거)
     return null
   }
 }

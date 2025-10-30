@@ -366,6 +366,14 @@
   opacity: 0.8;
 }
 
+.previous-close {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-left: 4px;
+  font-weight: 500;
+  cursor: help;
+}
+
 /* 차트 컨테이너 */
 .chart-container {
   background: white;

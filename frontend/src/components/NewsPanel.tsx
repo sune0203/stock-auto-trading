@@ -61,6 +61,15 @@ const NewsPanel: React.FC<NewsPanelProps> = ({ onTickerClick }) => {
     }
   }
 
+  // 가격 포맷 함수
+  const formatPrice = (price: number) => {
+    if (price >= 1) {
+      return price.toFixed(2)
+    } else {
+      return price.toFixed(4)
+    }
+  }
+
   // 초기 로드
   useEffect(() => {
     fetchNews()
@@ -204,7 +213,7 @@ const NewsPanel: React.FC<NewsPanelProps> = ({ onTickerClick }) => {
                 {item.capturedPriceUSD && (
                   <div className="captured-info-panel">
                     <span className="captured-label">뉴스 발생 시:</span>
-                    <span className="captured-price">${item.capturedPriceUSD.toFixed(2)}</span>
+                    <span className="captured-price">${formatPrice(item.capturedPriceUSD)}</span>
                     {item.capturedVolume && (
                       <span className="captured-volume">/ 거래량: {item.capturedVolume.toLocaleString()}</span>
                     )}

@@ -94,12 +94,12 @@ export class AutoTradingService {
          this.detectedNewsCache.length > 0 &&
          (now.getTime() - this.lastCacheUpdate.getTime()) / 1000 < this.cacheValiditySeconds
        ) {
-         console.log(`💾 [설정창] 캐시된 뉴스 반환 (${this.detectedNewsCache.length}개)`)
+         // 캐시 사용 (로그 제거)
          return this.detectedNewsCache
        }
 
-       console.log(`\n🔍 [설정창] 감지된 뉴스 조회 (캐시 갱신)`)
-       console.log(`  📊 조건: 호재 >= ${this.config.bullish_threshold}% OR 상승 >= ${this.config.impact_threshold}%`)
+       // 로그 간소화
+       console.log(`🔍 [설정창] 감지된 뉴스 조회 (캐시 갱신)`)
        
        // DB에서 최신 뉴스 20개 가져오기 (n_ticker 또는 n_symbol이 있으면 포함)
        const [rows] = await pool.query(
@@ -115,10 +115,8 @@ export class AutoTradingService {
        )
 
        const news = rows as any[]
-       console.log(`  📰 DB 조회: ${news.length}개`)
 
        if (news.length === 0) {
-         console.log(`  ⚠️ 조건에 맞는 뉴스 없음`)
          this.detectedNewsCache = []
          this.lastCacheUpdate = now
          return []
@@ -137,8 +135,6 @@ export class AutoTradingService {
              ? (item.n_ticker ? item.n_symbol : item.n_ticker) 
              : null
            
-           console.log(`  [${i + 1}/${news.length}] ${primaryTicker}${alternateTicker ? ` (대체: ${alternateTicker})` : ''} 검증 중...`)
-           
            // FMP API로 현재가 조회
            const fmpApiKey = process.env.FMP_API_KEY
            const quoteResponse = await fetch(
@@ -155,8 +151,7 @@ export class AutoTradingService {
            const previousClose = quote?.previousClose ? Number(quote.previousClose) : 0
            
            if (currentPrice <= 0) {
-             console.log(`    ❌ 무효 (가격 없음)`)
-             continue // 다음 뉴스로
+             continue // 다음 뉴스로 (로그 제거)
            }
 
            // 한국어 종목명 조회
@@ -169,11 +164,6 @@ export class AutoTradingService {
            // 뉴스 캡처 당시 가격 및 거래량
            const capturedPrice = item.captured_price ? Number(item.captured_price) / 1437.7 : null // KRW → USD 환산
            const capturedVolume = item.trade_volume ? Number(item.trade_volume) : null
-
-           console.log(`    ✅ $${currentPrice.toFixed(2)} ${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}% - ${stockNameKo || primaryTicker}`)
-           if (capturedPrice) {
-             console.log(`       캡처시: $${capturedPrice.toFixed(2)} / 거래량: ${capturedVolume?.toLocaleString() || 'N/A'}`)
-           }
 
            validNews.push({
              ...item,
@@ -190,20 +180,16 @@ export class AutoTradingService {
              isValidTicker: true
            })
          } catch (error: any) {
-           console.log(`    ⚠️ 오류: ${error.message}`)
+           // 오류 무시 (로그 제거)
            continue
          }
        }
 
-       console.log(`  ✅ 유효한 뉴스: ${validNews.length}개`)
-       if (validNews.length > 0) {
-         console.log(`  📋 티커: ${validNews.map((n: any) => n.n_ticker).join(', ')}`)
-       }
+       console.log(`✅ 유효한 뉴스: ${validNews.length}개`)
        
        // 캐시 업데이트
        this.detectedNewsCache = validNews
        this.lastCacheUpdate = now
-       console.log(`💾 캐시 업데이트 완료 (다음 갱신: ${this.cacheValiditySeconds}초 후)`)
        
        return validNews
     } catch (error) {
@@ -310,24 +296,16 @@ export class AutoTradingService {
 
       const news = rows as NewsFromDB[]
 
-      // 상세 로그: 체크 시작
-      const now = new Date()
-      const kstTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
-      const estTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
-      
-      console.log(`\n🔍 [자동매수] 뉴스 체크 시작`)
-      console.log(`  ⏰ KST: ${kstTime.toLocaleString('ko-KR')}`)
-      console.log(`  ⏰ EST: ${estTime.toLocaleString('en-US')}`)
-      console.log(`  📊 설정 - 호재: ${this.config.bullish_threshold}%, 상승: ${this.config.impact_threshold}%`)
-      console.log(`  💰 투자비율: ${this.config.investment_percent}%, 최대: $${this.config.max_investment}`)
-      console.log(`  📰 조회된 뉴스: ${news.length}개`)
-
-      // 새로운 뉴스가 없으면 로그 출력
+      // 새로운 뉴스가 없으면 조용히 종료 (로그 제거)
       if (news.length === 0) {
-        console.log(`  ⚠️ 최근 1분 내 높은 점수 뉴스 없음`)
-        console.log(`✅ [자동매수] 뉴스 체크 완료\n`)
         return
       }
+
+      // 뉴스가 있을 때만 로그 출력
+      const now = new Date()
+      const kstTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+      
+      console.log(`\n🔍 [자동매수] 뉴스 ${news.length}개 감지 (${kstTime.toLocaleString('ko-KR')})`)
 
       for (const item of news) {
         // 이미 처리한 뉴스는 건너뛰기

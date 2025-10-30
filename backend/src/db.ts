@@ -721,3 +721,93 @@ export async function deleteToken(accountId: number): Promise<void> {
   }
 }
 
+// ==================== 자동매수 설정 ====================
+
+export interface AutoTradingConfig {
+  atc_id: number
+  atc_account_type: 'REAL' | 'VIRTUAL'
+  atc_enabled: boolean
+  atc_bullish_threshold: number
+  atc_immediate_impact_threshold: number
+  atc_take_profit_percent: number
+  atc_stop_loss_percent: number
+  atc_max_investment_per_trade: number
+  atc_max_daily_trades: number
+  atc_created_at: Date
+  atc_updated_at: Date
+}
+
+// 자동매수 설정 조회
+export async function getAutoTradingConfig(accountType: 'REAL' | 'VIRTUAL'): Promise<AutoTradingConfig | null> {
+  try {
+    const [rows] = await pool.query<any[]>(
+      'SELECT * FROM _AUTO_TRADING_CONFIG WHERE atc_account_type = ?',
+      [accountType]
+    )
+    return rows.length > 0 ? rows[0] : null
+  } catch (error) {
+    console.error('❌ 자동매수 설정 조회 실패:', error)
+    return null
+  }
+}
+
+// 자동매수 설정 저장/업데이트
+export async function saveAutoTradingConfig(config: Partial<AutoTradingConfig>): Promise<boolean> {
+  try {
+    const accountType = config.atc_account_type || 'REAL'
+    
+    await pool.query(
+      `INSERT INTO _AUTO_TRADING_CONFIG (
+        atc_account_type, 
+        atc_enabled, 
+        atc_bullish_threshold, 
+        atc_immediate_impact_threshold,
+        atc_take_profit_percent,
+        atc_stop_loss_percent,
+        atc_max_investment_per_trade,
+        atc_max_daily_trades
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        atc_enabled = VALUES(atc_enabled),
+        atc_bullish_threshold = VALUES(atc_bullish_threshold),
+        atc_immediate_impact_threshold = VALUES(atc_immediate_impact_threshold),
+        atc_take_profit_percent = VALUES(atc_take_profit_percent),
+        atc_stop_loss_percent = VALUES(atc_stop_loss_percent),
+        atc_max_investment_per_trade = VALUES(atc_max_investment_per_trade),
+        atc_max_daily_trades = VALUES(atc_max_daily_trades),
+        atc_updated_at = CURRENT_TIMESTAMP`,
+      [
+        accountType,
+        config.atc_enabled ? 1 : 0,
+        config.atc_bullish_threshold || 70,
+        config.atc_immediate_impact_threshold || 70,
+        config.atc_take_profit_percent || 5.00,
+        config.atc_stop_loss_percent || 3.00,
+        config.atc_max_investment_per_trade || 100.00,
+        config.atc_max_daily_trades || 10
+      ]
+    )
+    
+    console.log(`✅ 자동매수 설정 저장: ${accountType}`)
+    return true
+  } catch (error) {
+    console.error('❌ 자동매수 설정 저장 실패:', error)
+    return false
+  }
+}
+
+// 자동매수 ON/OFF 토글
+export async function toggleAutoTrading(accountType: 'REAL' | 'VIRTUAL', enabled: boolean): Promise<boolean> {
+  try {
+    await pool.query(
+      'UPDATE _AUTO_TRADING_CONFIG SET atc_enabled = ?, atc_updated_at = CURRENT_TIMESTAMP WHERE atc_account_type = ?',
+      [enabled ? 1 : 0, accountType]
+    )
+    console.log(`✅ 자동매수 ${enabled ? 'ON' : 'OFF'}: ${accountType}`)
+    return true
+  } catch (error) {
+    console.error('❌ 자동매수 토글 실패:', error)
+    return false
+  }
+}
+

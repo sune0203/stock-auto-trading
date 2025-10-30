@@ -516,6 +516,81 @@ export class KISApiManager {
     }
   }
 
+  // 🔥 실시간 시세 조회 (장 마감 후에도 가능)
+  // 미국 정규장 오픈 시간 체크 (EST/EDT 09:30 ~ 16:00, Summer Time 자동 적용)
+  private isUSMarketOpen(): boolean {
+    const now = new Date()
+    const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
+    const day = nyTime.getDay() // 0=일요일, 6=토요일
+    const hours = nyTime.getHours()
+    const minutes = nyTime.getMinutes()
+    const currentMinutes = hours * 60 + minutes
+
+    // 주말 체크
+    if (day === 0 || day === 6) {
+      return false
+    }
+
+    // 정규장: 09:30 ~ 16:00 (EST/EDT, America/New_York 타임존이 자동으로 DST 적용)
+    const marketOpen = 9 * 60 + 30 // 9:30 AM = 570분
+    const marketClose = 16 * 60    // 4:00 PM = 960분
+    
+    return currentMinutes >= marketOpen && currentMinutes < marketClose
+  }
+
+  async getCurrentPrice(ticker: string): Promise<number | null> {
+    // 정규장 외 시간에는 KIS API 미지원
+    if (!this.isUSMarketOpen()) {
+      return null
+    }
+
+    if (!this.currentAccount) {
+      throw new Error('계정이 설정되지 않았습니다')
+    }
+
+    try {
+      const token = await this.getAccessToken()
+      
+      // 시장 코드 결정 (기본: 나스닥)
+      let exchangeCode = 'NAS' // 나스닥
+      // TODO: 티커로 시장 자동 판별 (NYS, AMS 등)
+      
+      const response = await axios.get(
+        `${this.getBaseUrl()}/uapi/overseas-price/v1/quotations/price`,
+        {
+          params: {
+            AUTH: '',
+            EXCD: exchangeCode,
+            SYMB: ticker
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${token}`,
+            appkey: this.currentAccount.ka_app_key,
+            appsecret: this.currentAccount.ka_app_secret,
+            tr_id: 'HHDFS00000300', // 실시간 시세 조회
+            custtype: 'P'
+          }
+        }
+      )
+
+      if (response.data && response.data.output) {
+        const price = parseFloat(response.data.output.last || '0')
+        if (price > 0) {
+          return price
+        }
+      }
+      
+      return null
+    } catch (error: any) {
+      // 정규장 중 오류만 로그 출력
+      if (this.isUSMarketOpen()) {
+        console.error(`❌ KIS 시세 조회 오류: ${ticker}`, error.response?.data?.msg1 || error.message)
+      }
+      return null
+    }
+  }
+
   // 매수가능금액 조회 (실제 USD 예수금)
   async getBuyingPower(ticker: string = 'QQQ', price: number = 1.0): Promise<{ cash: number; maxQuantity: number }> {
     if (!this.currentAccount) {

@@ -177,7 +177,7 @@ export class KISWebSocketService {
             dask1: bodyData[15] || ''
           }
 
-          console.log('📊 실시간 호가 수신:', askingPriceData.symb, `매수: ${askingPriceData.pbid1}, 매도: ${askingPriceData.pask1}`)
+          // 호가 수신 로그 제거 (너무 빈번함, 필요시 디버그용으로만 사용)
 
           if (this.onDataCallback) {
             this.onDataCallback(askingPriceData)
