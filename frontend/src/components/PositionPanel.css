@@ -1,20 +1,23 @@
 .position-panel {
   background: white;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .position-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: 0 16px;
+  height: 60px;
   border-bottom: 1px solid #e9ecef;
 }
 
 .position-header h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #191f28;
   margin: 0;
@@ -63,6 +66,25 @@
   background: #f8f9fa;
   border-color: #4c6ef5;
   color: #4c6ef5;
+}
+
+.position-content {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.position-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.position-content::-webkit-scrollbar-thumb {
+  background: #dee2e6;
+  border-radius: 3px;
+}
+
+.position-content::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd;
 }
 
 .position-summary {
@@ -118,8 +140,7 @@
 }
 
 .position-list {
-  max-height: 500px;
-  overflow-y: auto;
+  /* 스크롤은 부모 컨테이너에서 처리 */
 }
 
 .empty-positions {
@@ -181,10 +202,10 @@
 
 .position-action-btn {
   flex: 1;
-  padding: 8px 12px;
+  padding: 12px 12px;
   border: none;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -264,9 +285,6 @@
   transition: background 0.2s;
 }
 
-.position-item:hover {
-  background: #f8f9fa;
-}
 
 .position-item:last-child {
   border-bottom: none;

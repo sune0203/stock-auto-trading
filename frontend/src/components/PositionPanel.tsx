@@ -466,32 +466,34 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
         </button>
       </div>
 
-      {/* 총 수익률 */}
-      {positions.length > 0 && (
-        <div className="position-summary">
-          <div className="summary-item">
-            <span className="summary-label">총 평가액</span>
-            <span className="summary-value">
-              ${formatPrice(totalValue)}
-              <span className="value-krw">
-                {(totalValue * exchangeRate).toLocaleString('ko-KR', { maximumFractionDigits: 0 })}원
+      {/* 스크롤 가능한 컨텐츠 영역 */}
+      <div className="position-content">
+        {/* 총 수익률 */}
+        {positions.length > 0 && (
+          <div className="position-summary">
+            <div className="summary-item">
+              <span className="summary-label">총 평가액</span>
+              <span className="summary-value">
+                ${formatPrice(totalValue)}
+                <span className="value-krw">
+                  {(totalValue * exchangeRate).toLocaleString('ko-KR', { maximumFractionDigits: 0 })}원
+                </span>
               </span>
-            </span>
-          </div>
-          <div className="summary-item">
-            <span className="summary-label">총 손익</span>
-            <span className={`summary-value ${totalProfitLoss >= 0 ? 'profit' : 'loss'}`}>
-              {totalProfitLoss >= 0 ? '+' : ''}${formatPrice(Math.abs(totalProfitLoss))}
-              <span className="profit-percent">
-                ({totalProfitLossPercent >= 0 ? '+' : ''}{totalProfitLossPercent.toFixed(2)}%)
+            </div>
+            <div className="summary-item">
+              <span className="summary-label">총 손익</span>
+              <span className={`summary-value ${totalProfitLoss >= 0 ? 'profit' : 'loss'}`}>
+                {totalProfitLoss >= 0 ? '+' : ''}${formatPrice(Math.abs(totalProfitLoss))}
+                <span className="profit-percent">
+                  ({totalProfitLossPercent >= 0 ? '+' : ''}{totalProfitLossPercent.toFixed(2)}%)
+                </span>
               </span>
-            </span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* 포지션 리스트 */}
-      <div className="position-list">
+        {/* 포지션 리스트 */}
+        <div className="position-list">
         {activeTab === 'holdings' ? (
           // 보유 탭
           positions.length === 0 ? (
@@ -663,6 +665,7 @@ const PositionPanel: React.FC<PositionPanelProps> = ({ exchangeRate, onBuyClick,
             ))
           )
         )}
+        </div>
       </div>
     </div>
   )

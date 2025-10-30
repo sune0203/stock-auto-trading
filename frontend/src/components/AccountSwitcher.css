@@ -6,6 +6,7 @@
   background: #1a1d29;
   border-radius: 8px;
   position: relative;
+  width: calc(25% - 9px)
 }
 
 /* 실전/모의 토글 */
@@ -54,7 +55,7 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
-  min-width: 200px;
+  flex: 1;
 }
 
 .current-account:hover {
@@ -202,6 +203,7 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  padding-top: 50px;
 }
 
 .modal-close {

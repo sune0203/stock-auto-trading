@@ -4,10 +4,201 @@
   box-sizing: border-box;
 }
 
+
+/* Pretendard 폰트 패밀리 정의 */
+
+/* Thin (100) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/font/Pretendard/Pretendard-Thin.woff') format('woff');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ExtraLight (200) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/font/Pretendard/Pretendard-ExtraLight.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Light (300) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/font/Pretendard/Pretendard-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Regular (400) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/font/Pretendard/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Medium (500) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/font/Pretendard/Pretendard-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* SemiBold (600) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/font/Pretendard/Pretendard-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Bold (700) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/font/Pretendard/Pretendard-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ExtraBold (800) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/font/Pretendard/Pretendard-ExtraBold.woff') format('woff');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Black (900) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/font/Pretendard/Pretendard-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/* Montserrat 폰트 패밀리 정의 */
+
+/* Thin (100) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/font/Montserrat/Montserrat-Thin.woff') format('woff');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ExtraLight (200) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/font/Montserrat/Montserrat-ExtraLight.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Light (300) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/font/Montserrat/Montserrat-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Regular (400) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/font/Montserrat/Montserrat-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Medium (500) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/font/Montserrat/Montserrat-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* SemiBold (600) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/font/Montserrat/Montserrat-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Bold (700) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/font/Montserrat/Montserrat-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ExtraBold (800) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/font/Montserrat/Montserrat-ExtraBold.woff') format('woff');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Black (900) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/font/Montserrat/Montserrat-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 폰트 패밀리 선언 */
+.pretendard {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+}
+
+.montserrat {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', sans-serif;
+}
+
+/* 전체 문서에 기본 폰트 적용 */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+}
+
+.font-thin { font-weight: 100; }
+.font-extralight { font-weight: 200; }
+.font-light { font-weight: 300; }
+.font-regular { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+.font-extrabold { font-weight: 800; }
+.font-black { font-weight: 900; }
+
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f5f5f5;
@@ -17,3 +208,18 @@ body {
   min-height: 100vh;
 }
 
+
+input {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+}
+
+button {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+  border: none;
+  outline: none;
+}
+
+button:focus {
+  outline: none;
+  border: none;
+}

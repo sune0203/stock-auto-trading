@@ -1,0 +1,194 @@
+/* 전역 스타일 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f5f7fa;
+}
+
+/* 앱 컨테이너 */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 헤더 */
+.app-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  max-width: 1800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-header h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.status-dot.connected {
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+}
+
+.status-dot.disconnected {
+  background: #ef4444;
+}
+
+/* 메인 컨텐츠 */
+.app-main {
+  flex: 1;
+  padding: 20px 30px;
+  max-width: 1800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  height: calc(100vh - 140px);
+}
+
+.main-layout.with-list {
+  grid-template-columns: 300px 1fr 350px;
+}
+
+/* 사이드바 */
+.sidebar {
+  overflow-y: auto;
+}
+
+/* 컨텐츠 영역 */
+.content {
+  overflow-y: auto;
+}
+
+/* 감지 목록 사이드바 */
+.detection-sidebar {
+  overflow-y: auto;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 스크롤바 스타일 */
+.sidebar::-webkit-scrollbar,
+.content::-webkit-scrollbar,
+.detection-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.content::-webkit-scrollbar-track,
+.detection-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.content::-webkit-scrollbar-thumb,
+.detection-sidebar::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+.content::-webkit-scrollbar-thumb:hover,
+.detection-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1400px) {
+  .main-layout {
+    grid-template-columns: 280px 1fr;
+  }
+  
+  .detection-sidebar {
+    width: 320px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    grid-row: 1;
+  }
+  
+  .content {
+    grid-row: 2;
+  }
+  
+  .detection-sidebar {
+    position: fixed;
+    right: 0;
+    top: 84px;
+    height: calc(100vh - 84px);
+    width: 400px;
+    background: white;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 15px 20px;
+  }
+  
+  .app-header h1 {
+    font-size: 18px;
+  }
+  
+  .app-main {
+    padding: 15px 20px;
+  }
+  
+  .detection-sidebar {
+    width: 100%;
+  }
+}
+

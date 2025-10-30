@@ -15,6 +15,7 @@
   padding: 16px;
   border-bottom: 1px solid #e9ecef;
   flex-shrink: 0;
+  height: 60px;
 }
 
 .orderbook-title {
@@ -69,7 +70,7 @@
 
 .header-col {
   text-align: center;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
   color: #868e96;
   text-transform: uppercase;

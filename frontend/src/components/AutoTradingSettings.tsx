@@ -103,7 +103,7 @@ const AutoTradingSettings: React.FC<AutoTradingSettingsProps> = ({ onClose }) =>
         
         // 처리된 뉴스 ID 저장
         const ids = new Set(initialNews.map((news: DetectedNews) => news.n_idx))
-        setProcessedNewsIds(ids)
+        setProcessedNewsIds(ids as Set<number>)
       } else {
         setDetectedNews([])
         setProcessedNewsIds(new Set())

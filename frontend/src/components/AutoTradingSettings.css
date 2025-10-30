@@ -224,8 +224,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-  padding-bottom: 10px;
   border-bottom: 1px solid #e9ecef;
+  height: 60px;
 }
 
 /* 종목명 왼쪽 배치 */

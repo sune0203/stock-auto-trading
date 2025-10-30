@@ -541,6 +541,10 @@ app.post('/api/trading/manual-buy', async (req, res) => {
         try {
           await tradingManager.getKISApi().buyStock(ticker, quantity, orderPrice)
           console.log(`✅ [모의투자] KIS API 매수 성공: ${ticker} x ${quantity}주`)
+          
+          // 잔고 캐시 무효화 (다음 조회 시 최신 잔고 반영)
+          await accountCacheService.invalidateCache()
+          console.log(`🔄 [모의투자] 잔고 캐시 무효화 완료`)
         } catch (buyError: any) {
           // 장 마감 OR 모의투자 미지원 → 자동 예약 주문 처리
           const isMarketClosed = buyError.message?.includes('장중이 아니거나') || 
@@ -610,6 +614,10 @@ app.post('/api/trading/manual-buy', async (req, res) => {
       try {
         await tradingManager.getKISApi().buyStock(ticker, quantity, orderPrice)
         console.log(`✅ [실전투자] KIS API 매수 성공`)
+        
+        // 잔고 캐시 무효화 (다음 조회 시 최신 잔고 반영)
+        await accountCacheService.invalidateCache()
+        console.log(`🔄 [실전투자] 잔고 캐시 무효화 완료`)
       } catch (buyError: any) {
         // 장 마감 시 자동 예약 주문 처리
         if (buyError.message?.includes('장중이 아니거나') || 
@@ -870,6 +878,10 @@ app.post('/api/trading/sell', async (req, res) => {
         try {
           await tradingManager.getKISApi().sellStock(ticker, quantity, orderPrice)
           console.log(`✅ [모의투자] KIS API 매도 성공: ${ticker} x ${quantity}주`)
+          
+          // 잔고 캐시 무효화 (다음 조회 시 최신 잔고 반영)
+          await accountCacheService.invalidateCache()
+          console.log(`🔄 [모의투자] 잔고 캐시 무효화 완료`)
         } catch (sellError: any) {
           // 장 마감 OR 모의투자 미지원 → 자동 예약 주문 처리
           const isMarketClosed = sellError.message?.includes('장중이 아니거나') || 
@@ -984,6 +996,10 @@ app.post('/api/trading/sell', async (req, res) => {
 
       // 실전투자 매도 성공 후 처리
       console.log(`✅ [실전투자] KIS API 매도 성공`)
+      
+      // 잔고 캐시 무효화 (다음 조회 시 최신 잔고 반영)
+      await accountCacheService.invalidateCache()
+      console.log(`🔄 [실전투자] 잔고 캐시 무효화 완료`)
       
       // 익절/손절 설정 삭제 (실전투자)
       try {

@@ -9,6 +9,7 @@ import OrderBook from '../components/OrderBook'
 import MarketStatus from '../components/MarketStatus'
 import AccountSwitcher from '../components/AccountSwitcher'
 import AutoTradingSettings from '../components/AutoTradingSettings'
+import { RefreshDouble, Hourglass } from 'iconoir-react';
 
 interface RealTimeQuote {
   symbol: string
@@ -52,6 +53,9 @@ const TradingPage: React.FC = () => {
   const [stockNameKo, setStockNameKo] = useState<string>('') // 종목 한국어 이름
   const [autoTradingEnabled, setAutoTradingEnabled] = useState<boolean>(false) // 자동매수 ON/OFF
   const [showSettings, setShowSettings] = useState<boolean>(false) // 설정 팝업 표시
+  const [currentTime, setCurrentTime] = useState<string>('') // 현재 시간
+  const [showTooltip, setShowTooltip] = useState<boolean>(false) // 툴팁 표시
+  const [autoTradingConfig, setAutoTradingConfig] = useState<any>(null) // 자동매수 설정값
 
   // URL 변경 감지
   useEffect(() => {
@@ -87,6 +91,7 @@ const TradingPage: React.FC = () => {
       const data = await response.json()
       if (data.success) {
         setBalance(data.buyingPower || 0)
+        setCurrentTime(formatTime(new Date())) // 잔고 조회 시 시간 업데이트
         console.log('💰 잔고 새로고침 완료')
       }
     } catch (error) {
@@ -135,10 +140,14 @@ const TradingPage: React.FC = () => {
     // 자동매수 상태 조회
     loadAutoTradingStatus()
 
+    // 자동매수 설정값 조회
+    loadAutoTradingConfig()
+
     return () => {
       newSocket.close()
     }
   }, [])
+
 
   // 자동매수 ON/OFF 상태 로드
   const loadAutoTradingStatus = async () => {
@@ -147,6 +156,18 @@ const TradingPage: React.FC = () => {
       setAutoTradingEnabled(response.data.enabled)
     } catch (error) {
       console.error('자동매수 상태 로드 실패:', error)
+    }
+  }
+
+  // 자동매수 설정값 로드
+  const loadAutoTradingConfig = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/api/auto-trading/config')
+      if (response.data) {
+        setAutoTradingConfig(response.data)
+      }
+    } catch (error) {
+      console.error('자동매수 설정 로드 실패:', error)
     }
   }
 
@@ -303,6 +324,17 @@ const TradingPage: React.FC = () => {
     return percent.toFixed(2)
   }
 
+  // 시간 포맷 (YY.MM.DD HH:MM:SS)
+  const formatTime = (date: Date) => {
+    const year = date.getFullYear().toString().slice(-2)
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const day = date.getDate().toString().padStart(2, '0')
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    const seconds = date.getSeconds().toString().padStart(2, '0')
+    return `${year}.${month}.${day} ${hours}:${minutes}:${seconds}`
+  }
+
   const formatKRW = (usd: number) => {
     return (usd * exchangeRate).toLocaleString('ko-KR', { maximumFractionDigits: 0 })
   }
@@ -336,99 +368,156 @@ const TradingPage: React.FC = () => {
     <div className="trading-page">
       {/* 헤더 */}
       <header className="trading-header">
-        <div className="header-left">
-          <h1 className="logo">코어</h1>
-          <div className="symbol-selector">
-            <input
-              type="text"
-              value={inputSymbol}
-              onChange={(e) => setInputSymbol(e.target.value.toUpperCase())}
-              onKeyDown={handleSearchKeyDown}
-              placeholder="종목 검색 (엔터)"
-              className="symbol-input"
-            />
-          </div>
-        </div>
-
-        {/* 자동매수 컨트롤 */}
-        <div className="header-right">
-          <div className="auto-trading-controls">
-            <div className="auto-trading-toggle">
-              <span className="toggle-label">자동매수</span>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={autoTradingEnabled}
-                  onChange={toggleAutoTrading}
-                />
-                <span className="toggle-slider"></span>
-              </label>
-              <span className={`toggle-status ${autoTradingEnabled ? 'on' : 'off'}`}>
-                {autoTradingEnabled ? 'ON' : 'OFF'}
-              </span>
-            </div>
-            <button
-              className="settings-btn"
-              onClick={() => setShowSettings(true)}
-              title="자동매수 설정"
-            >
-              ⚙️
-            </button>
-          </div>
-        </div>
-
-        {/* 종목 정보 */}
-        <div className="stock-info">
-          <div className="stock-name-section">
-            <div className="stock-name-row">
-              <h2 className="stock-ticker">{selectedSymbol}</h2>
-              {stockNameKo && <span className="stock-name-ko">{stockNameKo}</span>}
+        {/* 헤더 상단 */}
+        <div className="header_top">
+          {/* 종목 검색 */}
+          <div className="header-search">
+            <h1 className="logo">종목 검색</h1>
+            <div className="symbol-selector">
+              <input
+                type="text"
+                value={inputSymbol}
+                onChange={(e) => setInputSymbol(e.target.value.toUpperCase())}
+                onKeyDown={handleSearchKeyDown}
+                placeholder="종목 검색 (엔터)"
+                className="symbol-input"
+              />
             </div>
           </div>
-          <div className="stock-price">
-            <div className="current-price">
-              <span className="price-value">${quote ? formatPrice(quote.price) : '---'}</span>
-              <span className="price-krw">{quote ? formatKRW(quote.price) : '---'}원</span>
-
-            </div>
-            {quote && (
-              <div className={`price-change ${quote.change >= 0 ? 'positive' : 'negative'}`}>
-                <span className="change-amount">
-                  {quote.change >= 0 ? '+' : ''}{formatPrice(quote.change)}
+          {/* 자동매수 컨트롤 */}
+          <div className="header-auto-trading">
+            <div className="auto-trading-controls">
+              <div className="auto-trading-toggle">
+                <span className="toggle-label">자동매수</span>
+                <span className={`toggle-status ${autoTradingEnabled ? 'on' : 'off'}`}>
+                  {autoTradingEnabled ? 'ON' : 'OFF'}
                 </span>
-                <span className="change-percent">
-                  ({quote.changesPercentage >= 0 ? '+' : ''}{formatChangePercent(quote.changesPercentage)}%)
-                </span>
-                <span className="previous-close" title="전일 종가">
-                  (전일: ${formatPrice(quote.previousClose)})
-                </span>
+                <label className="toggle-switch">
+                  <input
+                    type="checkbox"
+                    checked={autoTradingEnabled}
+                    onChange={toggleAutoTrading}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
               </div>
-            )}
-          </div>
-        </div>
+              <button
+                className="settings-btn"
+                onClick={() => setShowSettings(true)}
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                title="자동매수 설정"
+              >
+                ⚙️
+                {showTooltip && autoTradingConfig && (
+                  <div className="settings-tooltip">
+                    <div className="tooltip-content">
+                      <div className="tooltip-title">🤖 자동매수 설정</div>
+                      
+                      <div className="tooltip-section">
+                        <div className="tooltip-section-title">매수 조건</div>
+                        <div className="tooltip-row">
+                          <span className="tooltip-label">호재 점수 임계값:</span>
+                          <span className="tooltip-value">{autoTradingConfig.bullishThreshold}%</span>
+                        </div>
+                        <div className="tooltip-row">
+                          <span className="tooltip-label">즉시 영향 점수 임계값:</span>
+                          <span className="tooltip-value">{autoTradingConfig.immediateImpactThreshold}%</span>
+                        </div>
+                      </div>
 
-        <div className="header-right">
+                      <div className="tooltip-section">
+                        <div className="tooltip-section-title">익절 / 손절</div>
+                        <div className="tooltip-row">
+                          <span className="tooltip-label">익절 비율:</span>
+                          <span className="tooltip-value">{autoTradingConfig.takeProfitPercent}%</span>
+                        </div>
+                        <div className="tooltip-row">
+                          <span className="tooltip-label">손절 비율:</span>
+                          <span className="tooltip-value">{autoTradingConfig.stopLossPercent}%</span>
+                        </div>
+                      </div>
+
+                      <div className="tooltip-section">
+                        <div className="tooltip-section-title">투자 금액</div>
+                        <div className="tooltip-row">
+                          <span className="tooltip-label">거래당 최대 투자 금액:</span>
+                          <span className="tooltip-value">${autoTradingConfig.maxInvestmentPerTrade}</span>
+                        </div>
+                        <div className="tooltip-row">
+                          <span className="tooltip-label">하루 최대 거래 횟수:</span>
+                          <span className="tooltip-value">{autoTradingConfig.maxDailyTrades}회</span>
+                        </div>
+                      </div>
+
+                      <div className="tooltip-status">
+                        현재 상태: <span className={autoTradingEnabled ? 'status-on' : 'status-off'}>
+                          {autoTradingEnabled ? 'ON' : 'OFF'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </button>
+            </div>
+          </div>
+
+
+        </div>
+        {/* 헤더 하단 */}
+        <div className='header_bottom'>
+          {/* 종목 정보 */}
+          <div className="stock-info">
+            <div className="stock-name-section">
+              <div className="stock-name-row">
+                <h2 className="stock-ticker">{selectedSymbol}</h2>
+                {stockNameKo && <span className="stock-name-ko">{stockNameKo}</span>}
+              </div>
+            </div>
+            <div className="stock-price">
+              <div className="current-price">
+                <span className="price-value">${quote ? formatPrice(quote.price) : '---'}</span>
+                <span className="price-krw">{quote ? formatKRW(quote.price) : '---'}원</span>
+
+              </div>
+              {quote && (
+                <div className={`price-change ${quote.change >= 0 ? 'positive' : 'negative'}`}>
+                  <span className="change-amount">
+                    {quote.change >= 0 ? '+' : ''}{formatPrice(quote.change)}
+                  </span>
+                  <span className="change-percent">
+                    ({quote.changesPercentage >= 0 ? '+' : ''}{formatChangePercent(quote.changesPercentage)}%)
+                  </span>
+                  <span className="previous-close" title="전일 종가">
+                    (전일: ${formatPrice(quote.previousClose)})
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
           {/* 계정 전환 */}
           <AccountSwitcher />
-          
           {/* 시장 상태 표시 */}
           <MarketStatus />
           
+          {/* 정보 */}
           <div className="balance-info">
             <span className="balance-label">매수 가능</span>
             <span className="balance-amount">${balance.toLocaleString()}</span>
             <span className="balance-krw">
               {(balance * exchangeRate).toLocaleString('ko-KR', { maximumFractionDigits: 0 })}원
             </span>
+            <p className="balance-time">/ {currentTime} 기준</p>
             <button 
               className="refresh-balance-btn"
               onClick={fetchBalance}
               disabled={isLoadingBalance}
               title="잔고 새로고침"
             >
-              {isLoadingBalance ? '⏳' : '🔄'}
+              {isLoadingBalance ? <span className="loading-icon"><Hourglass strokeWidth={2}/></span> : <span className="refresh-icon"><RefreshDouble strokeWidth={2}/></span>}
             </button>
           </div>
+
         </div>
       </header>
 

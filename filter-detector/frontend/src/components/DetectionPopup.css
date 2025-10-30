@@ -1,0 +1,132 @@
+/* 감지 팝업 */
+.detection-popup {
+  position: fixed;
+  top: 80px;
+  right: 30px;
+  width: 350px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  z-index: 2000;
+  opacity: 0;
+  transform: translateX(400px);
+  transition: all 0.3s ease;
+}
+
+.detection-popup.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* 헤더 */
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.popup-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.popup-icon {
+  font-size: 20px;
+}
+
+.popup-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 20px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.popup-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 컨텐츠 */
+.popup-content {
+  padding: 20px;
+}
+
+.popup-symbol {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.popup-price {
+  font-size: 24px;
+  color: #667eea;
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.popup-session {
+  font-size: 12px;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #666;
+  font-weight: normal;
+}
+
+.popup-score {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.popup-score strong {
+  color: #f5576c;
+  font-size: 20px;
+}
+
+.popup-reasons {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.reason-item {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+
+.reason-item:last-child {
+  margin-bottom: 0;
+}
+
+.popup-sec-event {
+  background: #fff3cd;
+  color: #856404;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  text-align: center;
+  font-weight: bold;
+}
+
