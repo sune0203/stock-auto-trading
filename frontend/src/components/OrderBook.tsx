@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { io, Socket } from 'socket.io-client'
+import { io } from 'socket.io-client'
 import './OrderBook.css'
 
 interface OrderBookProps {
@@ -34,8 +34,8 @@ const OrderBook: React.FC<OrderBookProps> = ({ symbol, currentPrice, onPriceClic
   const [asks, setAsks] = useState<OrderBookLevel[]>([])
   const [bids, setBids] = useState<OrderBookLevel[]>([])
   const [isMarketOpen, setIsMarketOpen] = useState(true)
-  const [socket, setSocket] = useState<Socket | null>(null)
   const [useRealTimeData, setUseRealTimeData] = useState(false)
+  const [lastDataReceived, setLastDataReceived] = useState<number>(Date.now())
 
   // 미국 장 시간 체크 함수
   const checkMarketOpen = useCallback(() => {
@@ -58,25 +58,24 @@ const OrderBook: React.FC<OrderBookProps> = ({ symbol, currentPrice, onPriceClic
 
   // 호가 데이터 생성 함수 (항상 최신 currentPrice 사용)
   const generateOrderBook = useCallback(() => {
-    if (!currentPrice || currentPrice === 0) return
+    if (!currentPrice || currentPrice === 0) {
+      console.log(`⚠️ [OrderBook] 호가 생성 불가: currentPrice = ${currentPrice}`)
+      return
+    }
 
-    // 가격 틱 단위 계산 (주가에 따라 다른 틱 사이즈)
+    // 🔥 US 주식 틱 사이즈 (실제 규정에 따름)
     const getTickSize = (price: number) => {
-      if (price < 1) return 0.01
-      if (price < 10) return 0.05
-      if (price < 100) return 0.10
-      if (price < 500) return 0.25
-      return 0.50
+      if (price < 1) return 0.0001  // $1 미만: $0.0001 단위
+      return 0.01                    // $1 이상: $0.01 단위
     }
 
     const tickSize = getTickSize(currentPrice)
 
-    // 매도 호가 (현재가 위) - 더 현실적인 데이터
+    // 🔥 매도 호가 (현재가보다 높은 가격) - 폴백 데이터 5개만
     const newAsks: OrderBookLevel[] = []
     let maxAskQty = 0
-    for (let i = 10; i >= 1; i--) {
+    for (let i = 1; i <= 5; i++) {
       const price = currentPrice + (i * tickSize)
-      // 현재가에서 멀수록 수량 감소 (더 현실적)
       const baseQty = Math.floor(Math.random() * 500) + 100
       const quantity = Math.floor(baseQty * (1 + (i / 20)))
       const total = price * quantity
@@ -88,12 +87,11 @@ const OrderBook: React.FC<OrderBookProps> = ({ symbol, currentPrice, onPriceClic
       ask.percentage = (ask.quantity / maxAskQty) * 100
     })
 
-    // 매수 호가 (현재가 아래) - 더 현실적인 데이터
+    // 🔥 매수 호가 (현재가보다 낮은 가격) - 폴백 데이터 5개만
     const newBids: OrderBookLevel[] = []
     let maxBidQty = 0
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 5; i++) {
       const price = currentPrice - (i * tickSize)
-      // 현재가에서 멀수록 수량 증가 (지지선 효과)
       const baseQty = Math.floor(Math.random() * 500) + 100
       const quantity = Math.floor(baseQty * (1 + (i / 15)))
       const total = price * quantity
@@ -113,14 +111,15 @@ const OrderBook: React.FC<OrderBookProps> = ({ symbol, currentPrice, onPriceClic
   useEffect(() => {
     // Socket.IO 연결
     const newSocket = io('http://localhost:3001')
-    setSocket(newSocket)
 
     newSocket.on('connect', () => {
       // 실시간 호가 구독 요청
+      console.log(`📡 [OrderBook] Socket 연결 성공, 호가 구독: ${symbol}`)
       newSocket.emit('subscribe-orderbook', symbol)
     })
 
     newSocket.on('orderbook-subscribed', (data: { symbol: string; success: boolean }) => {
+      console.log(`✅ [OrderBook] 호가 구독 ${data.success ? '성공' : '실패'}: ${symbol}`)
       if (data.success) {
         setUseRealTimeData(true)
       } else {
@@ -129,35 +128,40 @@ const OrderBook: React.FC<OrderBookProps> = ({ symbol, currentPrice, onPriceClic
     })
 
     newSocket.on('orderbook-update', (data: OrderBookUpdate) => {
+      // 🔥 현재 종목이 아닌 호가 데이터는 무시
+      if (data.symbol !== symbol) {
+        console.log(`⚠️ [OrderBook] 다른 종목 호가 무시: ${data.symbol} (현재: ${symbol})`)
+        return
+      }
+      
+      // 🔥 실시간 호가 수신 시간 업데이트
+      setLastDataReceived(Date.now())
+      
       // 실시간 호가 데이터 수신
+      console.log(`📊 [OrderBook] 실시간 호가 수신: ${symbol}`, {
+        bid: `$${data.bid.price} x ${data.bid.quantity}`,
+        ask: `$${data.ask.price} x ${data.ask.quantity}`
+      })
       
-      // 호가 데이터 업데이트
-      const newAsks: OrderBookLevel[] = []
-      const newBids: OrderBookLevel[] = []
+      // 🔥 KIS는 1호가만 제공 (매수 < 현재가 < 매도)
+      const newAsks: OrderBookLevel[] = [{
+        price: data.ask.price,
+        quantity: data.ask.quantity,
+        total: data.ask.price * data.ask.quantity,
+        percentage: 100
+      }]
       
-      // 매도 호가 (현재가 위)
-      for (let i = 10; i >= 1; i--) {
-        const price = data.ask.price + (i * 0.05)
-        const quantity = Math.floor(data.ask.quantity * (1 + (i / 20)))
-        newAsks.push({
-          price,
-          quantity,
-          total: price * quantity,
-          percentage: (quantity / data.ask.quantity) * 100
-        })
-      }
+      const newBids: OrderBookLevel[] = [{
+        price: data.bid.price,
+        quantity: data.bid.quantity,
+        total: data.bid.price * data.bid.quantity,
+        percentage: 100
+      }]
       
-      // 매수 호가 (현재가 아래)
-      for (let i = 1; i <= 10; i++) {
-        const price = data.bid.price - (i * 0.05)
-        const quantity = Math.floor(data.bid.quantity * (1 + (i / 15)))
-        newBids.push({
-          price,
-          quantity,
-          total: price * quantity,
-          percentage: (quantity / data.bid.quantity) * 100
-        })
-      }
+      console.log(`✅ [OrderBook] ${symbol} 실제 KIS 호가:`)
+      console.log(`   매도 1호가: $${data.ask.price} (${data.ask.quantity}주) ← 매도가능`)
+      console.log(`   매수 1호가: $${data.bid.price} (${data.bid.quantity}주) ← 매수가능`)
+      console.log(`   스프레드: $${(data.ask.price - data.bid.price).toFixed(4)}`)
       
       setAsks(newAsks)
       setBids(newBids)
@@ -168,8 +172,11 @@ const OrderBook: React.FC<OrderBookProps> = ({ symbol, currentPrice, onPriceClic
     })
 
     return () => {
-      // 구독 해제
-      newSocket.emit('unsubscribe-orderbook', symbol)
+      // 🔥 구독 해제 (연결된 경우만)
+      if (newSocket.connected) {
+        console.log(`🔻 호가 구독 해제: ${symbol}`)
+        newSocket.emit('unsubscribe-orderbook', symbol)
+      }
       newSocket.disconnect()
     }
   }, [symbol])
@@ -190,34 +197,53 @@ const OrderBook: React.FC<OrderBookProps> = ({ symbol, currentPrice, onPriceClic
     return () => clearInterval(statusInterval)
   }, [checkMarketOpen])
 
-  // 초기 호가 데이터 생성 및 짧은 주기로 업데이트 (실시간 데이터가 없을 때만)
+  // 🔥 실시간 데이터 타임아웃 체크 (5초 동안 데이터 없으면 폴백으로 전환)
   useEffect(() => {
-    // 실시간 데이터를 사용 중이면 폴백 데이터 생성 중지
-    if (useRealTimeData) {
+    if (!useRealTimeData) return
+    
+    const checkTimeout = setInterval(() => {
+      const timeSinceLastData = Date.now() - lastDataReceived
+      if (timeSinceLastData > 5000) { // 5초 초과
+        console.log(`⏱️ [OrderBook] 실시간 호가 타임아웃 (${timeSinceLastData}ms), 폴백으로 전환`)
+        setUseRealTimeData(false)
+      }
+    }, 1000)
+    
+    return () => clearInterval(checkTimeout)
+  }, [useRealTimeData, lastDataReceived])
+  
+  // 초기 호가 데이터 생성 및 짧은 주기로 업데이트
+  useEffect(() => {
+    // 🔥 가격이 없으면 대기
+    if (!currentPrice || currentPrice === 0) {
+      console.log(`⏳ [OrderBook] 가격 로딩 대기 중...`)
       return
     }
     
-    // 즉시 생성 (폴백)
+    // 🔥 실시간 데이터를 사용 중이면 폴백 생성 중지
+    if (useRealTimeData) {
+      console.log(`✋ [OrderBook] 실시간 호가 사용 중, 폴백 생성 중지`)
+      return
+    }
+    
+    // 실시간 데이터가 없으면 폴백 데이터 생성
+    console.log(`🔄 [OrderBook] 폴백 호가 생성 시작 (currentPrice: $${currentPrice})`)
     generateOrderBook()
     
-    // 장이 마감되면 업데이트 중지
-    if (!isMarketOpen) {
-      return
-    }
-    
-    // 1.5초마다 자동 업데이트 (장 시간에만, 실시간 데이터가 없을 때만)
+    // 1.5초마다 자동 업데이트 (실시간 데이터 없을 때만)
     const interval = setInterval(() => {
       generateOrderBook()
     }, 1500)
 
     return () => clearInterval(interval)
-  }, [generateOrderBook, isMarketOpen, useRealTimeData])
+  }, [currentPrice, generateOrderBook, useRealTimeData])
 
   const formatPrice = (price: number) => {
-    if (price >= 1) {
-      return price.toFixed(2)
-    } else {
+    // $10 미만: 소수점 4자리, $10 이상: 소수점 2자리
+    if (price < 10) {
       return price.toFixed(4)
+    } else {
+      return price.toFixed(2)
     }
   }
   const formatQuantity = (qty: number) => qty.toLocaleString()
@@ -238,27 +264,38 @@ const OrderBook: React.FC<OrderBookProps> = ({ symbol, currentPrice, onPriceClic
       </div>
 
       <div className="orderbook-content">
-        {/* 매도 호가 (빨간색) */}
+        {/* 매도 호가 (빨간색) - 높은 가격부터 아래로 */}
         <div className="orderbook-section">
-          {[...asks].reverse().map((ask, index) => (
-            <div 
-              key={`ask-${index}`} 
-              className="orderbook-row clickable"
-              onClick={() => onPriceClick && onPriceClick(ask.price)}
-            >
-              <div className="qty-cell left">
-                <span className="qty-text ask-qty">{formatQuantity(ask.quantity)}</span>
-                <div 
-                  className="qty-bar ask-bar" 
-                  style={{ width: `${ask.percentage}%` }}
-                />
-              </div>
-              <div className="price-cell">
-                <span className="price ask-price">${formatPrice(ask.price)}</span>
-              </div>
-              <div className="qty-cell right empty"></div>
+          {asks.length === 0 ? (
+            <div style={{ 
+              padding: '20px', 
+              textAlign: 'center', 
+              color: '#999',
+              fontSize: '14px'
+            }}>
+              호가 로딩 중...
             </div>
-          ))}
+          ) : (
+            [...asks].reverse().map((ask, index) => (
+              <div 
+                key={`ask-${index}`} 
+                className="orderbook-row clickable"
+                onClick={() => onPriceClick && onPriceClick(ask.price)}
+              >
+                <div className="qty-cell left">
+                  <span className="qty-text ask-qty">{formatQuantity(ask.quantity)}</span>
+                  <div 
+                    className="qty-bar ask-bar" 
+                    style={{ width: `${ask.percentage}%` }}
+                  />
+                </div>
+                <div className="price-cell">
+                  <span className="price ask-price">${formatPrice(ask.price)}</span>
+                </div>
+                <div className="qty-cell right empty"></div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* 현재가 - 클릭 가능, key 추가로 강제 리렌더링 */}
@@ -273,25 +310,36 @@ const OrderBook: React.FC<OrderBookProps> = ({ symbol, currentPrice, onPriceClic
 
         {/* 매수 호가 (파란색) */}
         <div className="orderbook-section">
-          {bids.map((bid, index) => (
-            <div 
-              key={`bid-${index}`} 
-              className="orderbook-row clickable"
-              onClick={() => onPriceClick && onPriceClick(bid.price)}
-            >
-              <div className="qty-cell left empty"></div>
-              <div className="price-cell">
-                <span className="price bid-price">${formatPrice(bid.price)}</span>
-              </div>
-              <div className="qty-cell right">
-                <div 
-                  className="qty-bar bid-bar" 
-                  style={{ width: `${bid.percentage}%` }}
-                />
-                <span className="qty-text bid-qty">{formatQuantity(bid.quantity)}</span>
-              </div>
+          {bids.length === 0 ? (
+            <div style={{ 
+              padding: '20px', 
+              textAlign: 'center', 
+              color: '#999',
+              fontSize: '14px'
+            }}>
+              호가 로딩 중...
             </div>
-          ))}
+          ) : (
+            bids.map((bid, index) => (
+              <div 
+                key={`bid-${index}`} 
+                className="orderbook-row clickable"
+                onClick={() => onPriceClick && onPriceClick(bid.price)}
+              >
+                <div className="qty-cell left empty"></div>
+                <div className="price-cell">
+                  <span className="price bid-price">${formatPrice(bid.price)}</span>
+                </div>
+                <div className="qty-cell right">
+                  <div 
+                    className="qty-bar bid-bar" 
+                    style={{ width: `${bid.percentage}%` }}
+                  />
+                  <span className="qty-text bid-qty">{formatQuantity(bid.quantity)}</span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

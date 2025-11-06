@@ -1,0 +1,409 @@
+{
+  "symbols": [
+    "SLMT",
+    "SLNH",
+    "STI",
+    "TAOX",
+    "TRON",
+    "SOLT",
+    "SONN",
+    "TCRX",
+    "THRY",
+    "TRUE",
+    "SKBL",
+    "SKYT",
+    "SKYX",
+    "SLDB",
+    "SLDP",
+    "SLS",
+    "SPAI",
+    "STEX",
+    "STIM",
+    "STRO",
+    "SUIG",
+    "SWIN",
+    "SY",
+    "TALK",
+    "TARA",
+    "TDUP",
+    "TEAD",
+    "TKNO",
+    "TNYA",
+    "TONX",
+    "TSDD",
+    "TSHA",
+    "SGMT",
+    "SHOT",
+    "TLRY"
+  ],
+  "detail": [
+    {
+      "symbol": "SLMT",
+      "score": 90,
+      "price": 8.26,
+      "mcap": 20304989,
+      "atr5_pct": 23.41,
+      "big_move_cnt20": 1,
+      "rvol_peak": 25.4,
+      "spread_est_pct": 0.73
+    },
+    {
+      "symbol": "SLNH",
+      "score": 90,
+      "price": 3.03,
+      "mcap": 91251035,
+      "atr5_pct": 19.54,
+      "big_move_cnt20": 2,
+      "rvol_peak": 25.12,
+      "spread_est_pct": 0.99
+    },
+    {
+      "symbol": "STI",
+      "score": 90,
+      "price": 10.38,
+      "mcap": 29026528,
+      "atr5_pct": 14.2,
+      "big_move_cnt20": 5,
+      "rvol_peak": 54.77,
+      "spread_est_pct": 1.62
+    },
+    {
+      "symbol": "TAOX",
+      "score": 90,
+      "price": 7.05,
+      "mcap": 24582990,
+      "atr5_pct": 15.91,
+      "big_move_cnt20": 2,
+      "rvol_peak": 5.99,
+      "spread_est_pct": 1.13
+    },
+    {
+      "symbol": "TRON",
+      "score": 90,
+      "price": 2.19,
+      "mcap": 73293451,
+      "atr5_pct": 11.23,
+      "big_move_cnt20": 1,
+      "rvol_peak": 65.51,
+      "spread_est_pct": 1.15
+    },
+    {
+      "symbol": "SOLT",
+      "score": 80,
+      "price": 11.06,
+      "mcap": 89463710,
+      "atr5_pct": 26.02,
+      "big_move_cnt20": 1,
+      "rvol_peak": 56.26,
+      "spread_est_pct": 1.54
+    },
+    {
+      "symbol": "SONN",
+      "score": 80,
+      "price": 3.2,
+      "mcap": 21419798,
+      "atr5_pct": 22.25,
+      "big_move_cnt20": 2,
+      "rvol_peak": 96.18,
+      "spread_est_pct": 1.53
+    },
+    {
+      "symbol": "TCRX",
+      "score": 80,
+      "price": 1.12,
+      "mcap": 63384714,
+      "atr5_pct": 29.11,
+      "big_move_cnt20": 1,
+      "rvol_peak": 13.78,
+      "spread_est_pct": 1.79
+    },
+    {
+      "symbol": "THRY",
+      "score": 80,
+      "price": 6.59,
+      "mcap": 287249395,
+      "atr5_pct": 19.7,
+      "big_move_cnt20": 1,
+      "rvol_peak": 17.25,
+      "spread_est_pct": 1.21
+    },
+    {
+      "symbol": "TRUE",
+      "score": 80,
+      "price": 2.19,
+      "mcap": 193704033,
+      "atr5_pct": 5.02,
+      "big_move_cnt20": 1,
+      "rvol_peak": 7.88,
+      "spread_est_pct": 0.0
+    },
+    {
+      "symbol": "SKBL",
+      "score": 75,
+      "price": 4.81,
+      "mcap": 138575946,
+      "atr5_pct": 13.31,
+      "big_move_cnt20": 0,
+      "rvol_peak": 139.42,
+      "spread_est_pct": 0.52
+    },
+    {
+      "symbol": "SKYT",
+      "score": 75,
+      "price": 14.36,
+      "mcap": 691804703,
+      "atr5_pct": 9.09,
+      "big_move_cnt20": 0,
+      "rvol_peak": 171.22,
+      "spread_est_pct": 0.63
+    },
+    {
+      "symbol": "SKYX",
+      "score": 75,
+      "price": 1.54,
+      "mcap": 172032114,
+      "atr5_pct": 8.7,
+      "big_move_cnt20": 0,
+      "rvol_peak": 54.65,
+      "spread_est_pct": 0.65
+    },
+    {
+      "symbol": "SLDB",
+      "score": 75,
+      "price": 4.41,
+      "mcap": 343013386,
+      "atr5_pct": 12.74,
+      "big_move_cnt20": 0,
+      "rvol_peak": 58.42,
+      "spread_est_pct": 0.23
+    },
+    {
+      "symbol": "SLDP",
+      "score": 75,
+      "price": 5.62,
+      "mcap": 1017911794,
+      "atr5_pct": 11.85,
+      "big_move_cnt20": 0,
+      "rvol_peak": 35.63,
+      "spread_est_pct": 0.53
+    },
+    {
+      "symbol": "SLS",
+      "score": 75,
+      "price": 1.66,
+      "mcap": 174970916,
+      "atr5_pct": 10.48,
+      "big_move_cnt20": 0,
+      "rvol_peak": 47.43,
+      "spread_est_pct": 0.6
+    },
+    {
+      "symbol": "SPAI",
+      "score": 75,
+      "price": 5.55,
+      "mcap": 89421156,
+      "atr5_pct": 9.77,
+      "big_move_cnt20": 0,
+      "rvol_peak": 67.99,
+      "spread_est_pct": 0.72
+    },
+    {
+      "symbol": "STEX",
+      "score": 75,
+      "price": 4.54,
+      "mcap": 160130086,
+      "atr5_pct": 8.85,
+      "big_move_cnt20": 0,
+      "rvol_peak": 13.57,
+      "spread_est_pct": 0.66
+    },
+    {
+      "symbol": "STIM",
+      "score": 75,
+      "price": 2.87,
+      "mcap": 189778173,
+      "atr5_pct": 11.5,
+      "big_move_cnt20": 0,
+      "rvol_peak": 64.29,
+      "spread_est_pct": 1.05
+    },
+    {
+      "symbol": "STRO",
+      "score": 75,
+      "price": 1.02,
+      "mcap": 86469661,
+      "atr5_pct": 10.78,
+      "big_move_cnt20": 0,
+      "rvol_peak": 15.83,
+      "spread_est_pct": 0.0
+    },
+    {
+      "symbol": "SUIG",
+      "score": 75,
+      "price": 2.53,
+      "mcap": 207029106,
+      "atr5_pct": 12.73,
+      "big_move_cnt20": 0,
+      "rvol_peak": 14.87,
+      "spread_est_pct": 0.79
+    },
+    {
+      "symbol": "SWIN",
+      "score": 75,
+      "price": 3.29,
+      "mcap": 160871077,
+      "atr5_pct": 8.69,
+      "big_move_cnt20": 0,
+      "rvol_peak": 15.29,
+      "spread_est_pct": 0.3
+    },
+    {
+      "symbol": "SY",
+      "score": 75,
+      "price": 3.52,
+      "mcap": 468156730,
+      "atr5_pct": 9.55,
+      "big_move_cnt20": 0,
+      "rvol_peak": 97.68,
+      "spread_est_pct": 0.71
+    },
+    {
+      "symbol": "TALK",
+      "score": 75,
+      "price": 3.35,
+      "mcap": 561014859,
+      "atr5_pct": 8.72,
+      "big_move_cnt20": 0,
+      "rvol_peak": 56.12,
+      "spread_est_pct": 0.9
+    },
+    {
+      "symbol": "TARA",
+      "score": 75,
+      "price": 4.64,
+      "mcap": 179212754,
+      "atr5_pct": 8.36,
+      "big_move_cnt20": 0,
+      "rvol_peak": 77.1,
+      "spread_est_pct": 0.22
+    },
+    {
+      "symbol": "TDUP",
+      "score": 75,
+      "price": 7.86,
+      "mcap": 968755179,
+      "atr5_pct": 8.17,
+      "big_move_cnt20": 0,
+      "rvol_peak": 15.82,
+      "spread_est_pct": 1.15
+    },
+    {
+      "symbol": "TEAD",
+      "score": 75,
+      "price": 1.36,
+      "mcap": 129161523,
+      "atr5_pct": 8.09,
+      "big_move_cnt20": 0,
+      "rvol_peak": 43.04,
+      "spread_est_pct": 1.09
+    },
+    {
+      "symbol": "TKNO",
+      "score": 75,
+      "price": 4.75,
+      "mcap": 254197043,
+      "atr5_pct": 8.51,
+      "big_move_cnt20": 0,
+      "rvol_peak": 18.56,
+      "spread_est_pct": 0.63
+    },
+    {
+      "symbol": "TNYA",
+      "score": 75,
+      "price": 1.38,
+      "mcap": 224907021,
+      "atr5_pct": 13.33,
+      "big_move_cnt20": 0,
+      "rvol_peak": 58.68,
+      "spread_est_pct": 1.08
+    },
+    {
+      "symbol": "TONX",
+      "score": 75,
+      "price": 3.46,
+      "mcap": 206067694,
+      "atr5_pct": 15.03,
+      "big_move_cnt20": 0,
+      "rvol_peak": 157.9,
+      "spread_est_pct": 0.73
+    },
+    {
+      "symbol": "TSDD",
+      "score": 75,
+      "price": 9.33,
+      "mcap": 51767906,
+      "atr5_pct": 8.08,
+      "big_move_cnt20": 0,
+      "rvol_peak": 45.68,
+      "spread_est_pct": 0.54
+    },
+    {
+      "symbol": "TSHA",
+      "score": 75,
+      "price": 4.27,
+      "mcap": 1117303914,
+      "atr5_pct": 11.76,
+      "big_move_cnt20": 0,
+      "rvol_peak": 20.14,
+      "spread_est_pct": 1.17
+    },
+    {
+      "symbol": "SGMT",
+      "score": 70,
+      "price": 7.61,
+      "mcap": 235918439,
+      "atr5_pct": 6.31,
+      "big_move_cnt20": 1,
+      "rvol_peak": 20.94,
+      "spread_est_pct": 1.31
+    },
+    {
+      "symbol": "SHOT",
+      "score": 70,
+      "price": 0.21,
+      "mcap": 47414893,
+      "atr5_pct": 10.51,
+      "big_move_cnt20": 1,
+      "rvol_peak": 22.38,
+      "spread_est_pct": 2.31
+    },
+    {
+      "symbol": "TLRY",
+      "score": 70,
+      "price": 1.24,
+      "mcap": 1385597974,
+      "atr5_pct": 6.29,
+      "big_move_cnt20": 1,
+      "rvol_peak": 4.31,
+      "spread_est_pct": 1.62
+    }
+  ],
+  "total": 35,
+  "config": {
+    "price_min": 0.15,
+    "price_max": 15.0,
+    "mcap_min": 20000000,
+    "mcap_max": 1500000000,
+    "min_score": 70
+  },
+  "stats": {
+    "total": 486,
+    "no_profile": 12,
+    "mcap_filtered": 196,
+    "no_daily_data": 1,
+    "price_filtered": 99,
+    "no_1min_data": 66,
+    "score_low": 77,
+    "passed": 35
+  }
+}

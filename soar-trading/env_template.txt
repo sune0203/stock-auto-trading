@@ -1,0 +1,55 @@
+# KIS API 설정
+KIS_APP_KEY=your_app_key_here
+KIS_APP_SECRET=your_app_secret_here
+KIS_ACCOUNT_NO=12345678-01
+KIS_USE_MOCK=true  # 모의투자: true, 실전투자: false
+KIS_BASE_URL=https://openapi.koreainvestment.com:9443
+
+# FMP API 설정
+FMP_API_KEY=your_fmp_api_key_here
+FMP_BASE_URL=https://financialmodelingprep.com/stable
+
+# MySQL DB 설정 (뉴스)
+DB_HOST=116.122.37.82
+DB_USER=nasdaq
+DB_PASS=core1601!
+DB_NAME=nasdaq
+DB_PORT=3306
+
+# Trading 설정
+MAX_POSITION_SIZE=0.10           # 계좌의 10% 이하
+MAX_DAILY_LOSS=0.05              # 일일 최대 손실 5%
+MAX_CONCURRENT_TRADES=5          # 동시 보유 종목 수
+MIN_SCORE=70                     # 최소 진입 점수
+MIN_DAILY_VOLUME=500000          # 최소 일 거래량 (주)
+MIN_DOLLAR_VOLUME=10000000       # 최소 거래 대금 (달러)
+
+# Risk Management
+FIXED_STOP_LOSS_PERCENT=2.0      # 고정 손절: -2%
+TRAILING_STOP_PERCENT=0.70       # 트레일링 스톱: 최대 수익의 70%
+MAX_SLIPPAGE_PERCENT=0.5         # 최대 슬리피지: 0.5%
+
+# Market Hours (ET)
+PRE_MARKET_START=04:00
+MARKET_OPEN=09:30
+MARKET_CLOSE=16:00
+AFTER_MARKET_END=20:00
+
+# Scanner 설정
+SCAN_INTERVAL=60                 # 스캔 주기 (초)
+MAX_SCAN_SYMBOLS=100             # 최대 스캔 종목 수
+SURGE_MIN_VOLUME_MULTIPLE=3.0   # 거래량 급증 최소 배수
+
+# API Rate Limits
+FMP_REQUESTS_PER_MINUTE=3000     # FMP 분당 요청 수
+KIS_REQUESTS_PER_SECOND=20       # KIS 초당 요청 수
+
+# Server 설정
+API_HOST=0.0.0.0
+API_PORT=8000
+DEBUG=true
+
+# Logging
+LOG_LEVEL=INFO
+LOG_FILE=logs/soar_trading.log
+

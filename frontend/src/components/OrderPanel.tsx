@@ -34,7 +34,7 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
   const [stopLossPercent, setStopLossPercent] = useState<number>(0) // 손절 %
   const [takeProfitEnabled, setTakeProfitEnabled] = useState<boolean>(false) // 익절 활성화
   const [stopLossEnabled, setStopLossEnabled] = useState<boolean>(false) // 손절 활성화
-  const [accountType, setAccountType] = useState<'REAL' | 'VIRTUAL' | null>(null) // 계정 타입
+  const [accountType, setAccountType] = useState<'REAL' | null>(null) // 실전투자만 지원
   const [pendingSellQuantity, setPendingSellQuantity] = useState<number>(0) // 대기 중 매도 수량
 
   // 현재 계정 정보 로드
@@ -269,8 +269,8 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
         <div className="order-header-left">
           <h3>주문</h3>
           {accountType && (
-            <span className={`account-type-badge ${accountType === 'REAL' ? 'real' : 'virtual'}`}>
-              {accountType === 'REAL' ? '🔴 실전투자' : '🟢 모의투자'}
+            <span className="account-type-badge real">
+              🔴 실전투자
             </span>
           )}
         </div>

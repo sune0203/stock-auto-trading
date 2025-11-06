@@ -10,7 +10,7 @@ interface TokenResponse {
 }
 
 export class KISApiManager {
-  private currentAccountType: 'REAL' | 'VIRTUAL' = 'REAL' // 기본값: 실전투자
+  private currentAccountType: 'REAL' = 'REAL' // 실전투자만 지원
   private currentAccount: KISAccount | null = null
   private tokenRefreshPromise: Map<number, Promise<string>> = new Map()
   private initialized: boolean = false
@@ -42,7 +42,7 @@ export class KISApiManager {
   }
 
   // 계정 타입 전환 (실전/모의)
-  async switchAccountType(type: 'REAL' | 'VIRTUAL') {
+  async switchAccountType(type: 'REAL') {
     this.currentAccountType = type
     
     // 먼저 기본 계정 시도
@@ -74,7 +74,7 @@ export class KISApiManager {
       const account = await getAccountById(accountId)
       if (account) {
         this.currentAccount = account
-        this.currentAccountType = account.ka_type
+        this.currentAccountType = 'REAL' // 실전투자만 지원
         console.log(`🔄 계정 전환: ${account.ka_name} (${account.ka_type})`)
       } else {
         throw new Error('계정을 찾을 수 없습니다')
@@ -91,29 +91,21 @@ export class KISApiManager {
   }
 
   // 현재 계정 타입 반환
-  getCurrentAccountType(): 'REAL' | 'VIRTUAL' {
+  getCurrentAccountType(): 'REAL' {
     return this.currentAccountType
   }
 
-  // Base URL 반환
+  // Base URL 반환 (실전투자만)
   getBaseUrl(): string {
     if (!this.currentAccount) {
       throw new Error('계정이 설정되지 않았습니다')
     }
-    return this.currentAccountType === 'REAL'
-      ? 'https://openapi.koreainvestment.com:9443'
-      : 'https://openapivts.koreainvestment.com:29443'
+    return 'https://openapi.koreainvestment.com:9443' // 실전투자만 지원
   }
 
-  // TR ID 변환 (실전/모의)
+  // TR ID 반환 (실전투자만)
   getTrId(baseTrId: string): string {
-    if (this.currentAccountType === 'VIRTUAL') {
-      // 실전 TR ID를 모의 TR ID로 변환 (첫 글자를 V로)
-      if (baseTrId.startsWith('T') || baseTrId.startsWith('C')) {
-        return 'V' + baseTrId.substring(1)
-      }
-    }
-    return baseTrId
+    return baseTrId // 실전투자만 지원하므로 변환 불필요
   }
 
   // 접근 토큰 발급
@@ -279,12 +271,12 @@ export class KISApiManager {
           params: {
             CANO: this.currentAccount.ka_account_no.substring(0, 8),
             ACNT_PRDT_CD: this.currentAccount.ka_account_no.substring(8),
-            PDNO: '', // 종목코드 (전체 조회, 모의투자는 "" 필수)
+            PDNO: '', // 종목코드 (전체 조회)
             ORD_STRT_DT: formattedStartDate, // 조회시작일자 YYYYMMDD
             ORD_END_DT: formattedEndDate,   // 조회종료일자 YYYYMMDD
-            SLL_BUY_DVSN: '00', // 00:전체, 01:매도, 02:매수 (모의투자는 00만 가능)
-            CCLD_NCCS_DVSN: '00', // 00:전체, 01:체결, 02:미체결 (모의투자는 00만 가능)
-            OVRS_EXCG_CD: '', // 거래소코드 (전체, 모의투자는 "" 필수)
+            SLL_BUY_DVSN: '00', // 00:전체, 01:매도, 02:매수
+            CCLD_NCCS_DVSN: '00', // 00:전체, 01:체결, 02:미체결
+            OVRS_EXCG_CD: '', // 거래소코드 (전체)
             SORT_SQN: 'DS', // DS:정순, AS:역순
             ORD_DT: '', // 주문일자 (빈값)
             ORD_GNO_BRNO: '', // 주문채번지점번호 (빈값)
@@ -351,7 +343,7 @@ export class KISApiManager {
       ORD_QTY: quantity.toString(),
       OVRS_ORD_UNPR: orderPrice.toFixed(2),
       ORD_SVR_DVSN_CD: '0',
-      ORD_DVSN: '00' // 00: 지정가 (모의투자는 지정가만 지원)
+      ORD_DVSN: '00' // 00: 지정가
     }
 
     // 매수 주문 API 호출
@@ -375,11 +367,104 @@ export class KISApiManager {
     
     if (response.data.rt_cd === '0') {
       console.log(`✅ 매수 주문 성공: ${ticker} x ${quantity}주`)
+      
+      // 🔥 주문 성공 시 체결 내역 조회 및 DB 저장
+      setTimeout(async () => {
+        try {
+          await this.saveOrderExecutionToDB(ticker, quantity, orderPrice, 'BUY', response.data)
+        } catch (error) {
+          console.error('❌ 체결 내역 DB 저장 실패:', error)
+        }
+      }, 2000) // 2초 후 체결 내역 조회 (체결 완료 대기)
+      
       return response.data
     } else {
       const errorMsg = response.data.msg1 || '매수 주문 실패'
       console.log(`❌ 매수 주문 실패: ${errorMsg}`)
       throw new Error(errorMsg)
+    }
+  }
+
+  // 🔥 H0GSCNI0: 해외주식 주문체결내역조회 및 DB 저장
+  async saveOrderExecutionToDB(ticker: string, quantity: number, orderPrice: number, orderType: 'BUY' | 'SELL', orderResponse: any): Promise<void> {
+    try {
+      console.log(`\n🔍 [H0GSCNI0] ${ticker} 체결 내역 조회 시작...`)
+      
+      const token = await this.getAccessToken()
+      const cano = this.currentAccount!.ka_account_no.replace(/-/g, '').substring(0, 8)
+      const acntPrdtCd = this.currentAccount!.ka_account_no.replace(/-/g, '').substring(8)
+      
+      // H0GSCNI0: 해외주식 주문체결내역조회
+      const response = await axios.get(
+        `${this.getBaseUrl()}/uapi/overseas-stock/v1/trading/inquire-ccnl`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${token}`,
+            appkey: this.currentAccount!.ka_app_key,
+            appsecret: this.currentAccount!.ka_app_secret,
+            tr_id: this.getTrId('H0GSCNI0'), // 체결내역조회 TR ID
+            custtype: 'P'
+          },
+          params: {
+            CANO: cano,
+            ACNT_PRDT_CD: acntPrdtCd,
+            OVRS_EXCG_CD: 'NASD',
+            SORT_SQN: 'DS', // 내림차순 (최신순)
+            CTX_AREA_FK200: '',
+            CTX_AREA_NK200: ''
+          }
+        }
+      )
+      
+      if (response.data.rt_cd === '0' && response.data.output1) {
+        const executions = response.data.output1
+        
+        // 방금 주문한 종목의 체결 내역 찾기 (최근 5분 이내)
+        const recentExecution = executions.find((exec: any) => 
+          exec.pdno === ticker && 
+          exec.sll_buy_dvsn_cd === (orderType === 'BUY' ? '02' : '01') &&
+          exec.ccld_qty && parseInt(exec.ccld_qty) > 0
+        )
+        
+        if (recentExecution) {
+          const executedPrice = parseFloat(recentExecution.ft_ccld_unpr || recentExecution.ccld_unpr || '0')
+          const executedQty = parseInt(recentExecution.ccld_qty || '0')
+          const executedAmount = parseFloat(recentExecution.ft_ccld_amt || recentExecution.ccld_amt || '0')
+          const executionTime = recentExecution.ord_tmd || new Date().toISOString()
+          const orderNo = recentExecution.odno || ''
+          
+          console.log(`✅ [H0GSCNI0] 체결 내역 발견:`)
+          console.log(`   주문번호: ${orderNo}`)
+          console.log(`   체결가: $${executedPrice}`)
+          console.log(`   체결수량: ${executedQty}주`)
+          console.log(`   체결금액: $${executedAmount}`)
+          console.log(`   체결시간: ${executionTime}`)
+          
+          // 🔥 실제 체결 정보로 DB 저장
+          const { saveTradingRecord } = await import('./db.js')
+          await saveTradingRecord({
+            th_account_type: this.currentAccountType,
+            th_ticker: ticker,
+            th_type: orderType,
+            th_price: executedPrice, // 실제 체결가
+            th_quantity: executedQty, // 실제 체결수량
+            th_amount: executedAmount, // 실제 체결금액
+            th_order_no: orderNo, // 주문번호 추가
+            th_execution_time: executionTime, // 실제 체결시간
+            th_status: 'COMPLETED',
+            th_reason: `${orderType === 'BUY' ? '매수' : '매도'} 체결 (H0GSCNI0)`
+          })
+          
+          console.log(`💾 [H0GSCNI0] 실제 체결 내역 DB 저장 완료: ${ticker}`)
+        } else {
+          console.log(`⚠️ [H0GSCNI0] ${ticker} 체결 내역 없음 (아직 미체결 또는 조회 시점 문제)`)
+        }
+      } else {
+        console.log(`❌ [H0GSCNI0] 체결 내역 조회 실패:`, response.data.msg1)
+      }
+    } catch (error) {
+      console.error(`❌ [H0GSCNI0] 체결 내역 조회 중 오류:`, error)
     }
   }
 
@@ -463,6 +548,16 @@ export class KISApiManager {
     
     if (response.data.rt_cd === '0') {
       console.log(`✅ 매도 주문 성공: ${ticker} x ${quantity}주`)
+      
+      // 🔥 주문 성공 시 체결 내역 조회 및 DB 저장
+      setTimeout(async () => {
+        try {
+          await this.saveOrderExecutionToDB(ticker, quantity, orderPrice, 'SELL', response.data)
+        } catch (error) {
+          console.error('❌ 체결 내역 DB 저장 실패:', error)
+        }
+      }, 2000) // 2초 후 체결 내역 조회 (체결 완료 대기)
+      
       return response.data
     } else {
       const errorMsg = response.data.msg1 || '매도 주문 실패'

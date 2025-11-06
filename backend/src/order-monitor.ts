@@ -57,7 +57,7 @@ export class OrderMonitor {
     console.log('⏹️ 주문 감시 서비스 중지')
   }
 
-  // 미국 시장 오픈 여부 확인 (Summer Time 자동 적용)
+  // 미국 시장 거래 가능 시간 확인 (프리마켓, 정규장, 애프터마켓 포함)
   private checkMarketStatus() {
     const now = new Date()
     const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
@@ -72,19 +72,80 @@ export class OrderMonitor {
     if (day === 0 || day === 6) {
       this.isMarketOpen = false
     } else {
-      // 정규장: 9:30 AM ~ 4:00 PM (EST/EDT 자동 적용)
-      const marketOpen = 9 * 60 + 30 // 9:30 AM = 570분
-      const marketClose = 16 * 60 // 4:00 PM = 960분
-      this.isMarketOpen = currentMinutes >= marketOpen && currentMinutes < marketClose
+      // 거래 가능 시간: 프리마켓 + 정규장 + 애프터마켓
+      const preMarketStart = 4 * 60      // 4:00 AM (프리마켓 시작)
+      const afterMarketEnd = 20 * 60     // 8:00 PM (애프터마켓 종료)
+      this.isMarketOpen = currentMinutes >= preMarketStart && currentMinutes < afterMarketEnd
     }
 
-    // 장이 막 열렸을 때 예약 주문 실행
+    // 거래 시간이 막 시작되었을 때 예약 주문 실행
     if (!wasOpen && this.isMarketOpen) {
       const koreaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
-      console.log(`🔔 미국 정규장 오픈 (한국시간: ${koreaTime.toLocaleTimeString('ko-KR')})`)
+      
+      // 현재 시간대 확인
+      let currentPhase = ''
+      const regularStart = 9 * 60 + 30   // 9:30 AM
+      const regularEnd = 16 * 60         // 4:00 PM
+      
+      if (currentMinutes >= 4 * 60 && currentMinutes < regularStart) {
+        currentPhase = '프리마켓'
+      } else if (currentMinutes >= regularStart && currentMinutes < regularEnd) {
+        currentPhase = '정규장'
+      } else {
+        currentPhase = '애프터마켓'
+      }
+      
+      console.log(`🔔 미국 ${currentPhase} 오픈 (한국시간: ${koreaTime.toLocaleTimeString('ko-KR')})`)
       console.log('   → 예약 주문 실행 시작')
       this.executePendingOrders()
     }
+  }
+
+  // 거래 가능한 시간인지 확인 (프리마켓, 정규장, 애프터마켓만 허용)
+  private isTradingAllowed(): boolean {
+    const now = new Date()
+    const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
+    const day = nyTime.getDay() // 0=일요일, 6=토요일
+    const hours = nyTime.getHours()
+    const minutes = nyTime.getMinutes()
+    const currentMinutes = hours * 60 + minutes
+
+    // 주말은 거래 불가
+    if (day === 0 || day === 6) {
+      return false
+    }
+
+    // 거래 가능 시간대 (EST/EDT 자동 적용)
+    const preMarketStart = 4 * 60      // 4:00 AM (프리마켓 시작)
+    const regularStart = 9 * 60 + 30   // 9:30 AM (정규장 시작)  
+    const regularEnd = 16 * 60         // 4:00 PM (정규장 종료)
+    const afterMarketEnd = 20 * 60     // 8:00 PM (애프터마켓 종료)
+
+    // 🔥 거의 모든 시간 거래 허용 (KIS 문서상 주간거래에서도 호가/매매 가능)
+    // 프리마켓: 4:00 AM ~ 9:30 AM
+    // 정규장: 9:30 AM ~ 4:00 PM  
+    // 애프터마켓: 4:00 PM ~ 8:00 PM
+    // 주간거래: 8:00 PM ~ 4:00 AM (다음날) - 현재는 제외 (야간 휴장)
+    const isTradingTime = (currentMinutes >= preMarketStart && currentMinutes < afterMarketEnd) // 4:00 AM ~ 8:00 PM
+
+    // 현재 시간대 확인 (디버깅용)
+    let currentPhase = ''
+    if (currentMinutes >= preMarketStart && currentMinutes < regularStart) {
+      currentPhase = '프리마켓 (거래가능)'
+    } else if (currentMinutes >= regularStart && currentMinutes < regularEnd) {
+      currentPhase = '정규장 (거래가능)'
+    } else if (currentMinutes >= regularEnd && currentMinutes < afterMarketEnd) {
+      currentPhase = '애프터마켓 (거래가능)'
+    } else {
+      currentPhase = '야간휴장 (거래불가)'
+    }
+
+    if (!isTradingTime) {
+      const koreaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+      console.log(`🚫 익절/손절 대기: ${currentPhase} (NY: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}, 한국: ${koreaTime.toLocaleTimeString('ko-KR')})`)
+    }
+
+    return isTradingTime
   }
 
   // 예약 주문 실행
@@ -276,6 +337,11 @@ export class OrderMonitor {
   // 익절/손절 감시
   private async monitorProfitLoss() {
     try {
+      // 🚫 거래 불가능한 시간(주간거래)에는 익절/손절 실행하지 않음
+      if (!this.isTradingAllowed()) {
+        return
+      }
+
       // 🔥 중요: 현재 계정 타입 확인
       const kisApiManager = (await import('./kis-api-manager.js')).kisApiManager
       const currentAccountType = kisApiManager.getCurrentAccountType()

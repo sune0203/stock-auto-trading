@@ -32,6 +32,7 @@ export class KISWebSocketService {
   private onDataCallback: ((data: AskingPriceData) => void) | null = null
   private pingInterval: NodeJS.Timeout | null = null
   private approvalKey: string | null = null
+  private pendingResubscribe: Set<string> = new Set() // 🔥 재연결 시 재구독할 종목
 
   constructor() {}
 
@@ -58,7 +59,7 @@ export class KISWebSocketService {
         })
       })
 
-      const data = await response.json()
+      const data = await response.json() as { approval_key?: string }
       if (data.approval_key) {
         this.approvalKey = data.approval_key
         console.log('✅ WebSocket 승인키 발급 완료')
@@ -97,11 +98,20 @@ export class KISWebSocketService {
 
       this.ws = new WebSocket(wsUrl)
 
-      this.ws.on('open', () => {
+      this.ws.on('open', async () => {
         console.log('✅ KIS WebSocket 연결 성공')
         this.isConnected = true
         this.reconnectAttempts = 0
         this.startPing()
+        
+        // 🔥 재연결 후 자동 재구독
+        if (this.pendingResubscribe.size > 0) {
+          console.log(`🔄 재연결 후 ${this.pendingResubscribe.size}개 종목 재구독...`)
+          for (const symbol of this.pendingResubscribe) {
+            await this.subscribe(symbol)
+          }
+          this.pendingResubscribe.clear()
+        }
       })
 
       this.ws.on('message', (data: Buffer) => {
@@ -116,6 +126,13 @@ export class KISWebSocketService {
         console.log('🔌 KIS WebSocket 연결 종료')
         this.isConnected = false
         this.stopPing()
+        
+        // 🔥 재구독 목록에 추가 (재연결 시 자동 재구독)
+        this.subscribedSymbols.forEach(symbol => {
+          this.pendingResubscribe.add(symbol)
+        })
+        this.subscribedSymbols.clear()
+        
         this.attemptReconnect()
       })
     } catch (error) {
@@ -127,6 +144,9 @@ export class KISWebSocketService {
   // 메시지 처리
   private handleMessage(message: string): void {
     try {
+      // 🔥 모든 메시지 로그 (디버깅)
+      console.log(`📩 [KIS 원본] ${message.substring(0, 200)}${message.length > 200 ? '...' : ''}`)
+      
       // KIS WebSocket 메시지 형식: "0|HEADER|BODY" 또는 "1|HEADER|BODY" 또는 JSON
       
       // JSON 형식인 경우 (PINGPONG 등)
@@ -177,7 +197,9 @@ export class KISWebSocketService {
             dask1: bodyData[15] || ''
           }
 
-          // 호가 수신 로그 제거 (너무 빈번함, 필요시 디버그용으로만 사용)
+          // 🔥 호가 수신 로그 (디버깅용)
+          const symbol = askingPriceData.symb.replace(/^[A-Z]{4}/, '')
+          console.log(`📊 [KIS 호가] ${symbol} | 매수: $${askingPriceData.pbid1} (${askingPriceData.vbid1}) | 매도: $${askingPriceData.pask1} (${askingPriceData.vask1})`)
 
           if (this.onDataCallback) {
             this.onDataCallback(askingPriceData)
@@ -189,6 +211,41 @@ export class KISWebSocketService {
       }
     } catch (error) {
       console.error('❌ 메시지 처리 실패:', error, 'Message:', message)
+    }
+  }
+
+  // TR Key 생성 (시간대별)
+  private generateTrKey(symbol: string): string {
+    const now = new Date()
+    const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
+    const day = nyTime.getDay() // 0=일요일, 6=토요일
+    const hours = nyTime.getHours()
+    const minutes = nyTime.getMinutes()
+    const currentMinutes = hours * 60 + minutes
+
+    // 주말은 야간거래 모드
+    if (day === 0 || day === 6) {
+      return `D${symbol}` // D = 야간거래
+    }
+
+    // 거래 시간대별 TR Key 설정
+    const preMarketStart = 4 * 60      // 4:00 AM (프리마켓)
+    const regularStart = 9 * 60 + 30   // 9:30 AM (정규장)
+    const regularEnd = 16 * 60         // 4:00 PM (정규장 종료)
+    const afterMarketEnd = 20 * 60     // 8:00 PM (애프터마켓 종료)
+
+    if (currentMinutes >= preMarketStart && currentMinutes < regularStart) {
+      // 프리마켓: 야간거래 모드
+      return `D${symbol}`
+    } else if (currentMinutes >= regularStart && currentMinutes < regularEnd) {
+      // 정규장: 야간거래 모드 (KIS 문서상 D로 통일)
+      return `D${symbol}`
+    } else if (currentMinutes >= regularEnd && currentMinutes < afterMarketEnd) {
+      // 애프터마켓: 야간거래 모드
+      return `D${symbol}`
+    } else {
+      // 주간거래: R + 시장구분 + 종목코드 (예: RBAQAAPL)
+      return `RBAQ${symbol}` // BAQ = 나스닥 주간거래
     }
   }
 
@@ -217,8 +274,8 @@ export class KISWebSocketService {
         throw new Error('계정이 설정되지 않았습니다')
       }
 
-      // TR Key 생성: 거래소코드 + 종목코드
-      const trKey = `D${symbol}` // D = 미국 (DNAS = 나스닥, DNYS = 뉴욕, DAMS = 아멕스)
+      // TR Key 생성: 시간대별 거래소코드 + 종목코드
+      const trKey = this.generateTrKey(symbol)
 
       // KIS WebSocket 메시지 형식: 단순 JSON 객체 (파이프 없음)
       const message = {
@@ -249,7 +306,8 @@ export class KISWebSocketService {
   // 종목 구독 해제
   async unsubscribe(symbol: string): Promise<void> {
     if (!this.isConnected || !this.ws) {
-      console.error('❌ WebSocket이 연결되지 않았습니다')
+      console.log(`⚠️ WebSocket 연결 끊김 - ${symbol} 구독 해제 건너뜀`)
+      this.subscribedSymbols.delete(symbol)
       return
     }
 
@@ -259,14 +317,9 @@ export class KISWebSocketService {
     }
 
     try {
-      const account = kisApiManager.getCurrentAccount()
-      if (!account) {
-        throw new Error('계정이 설정되지 않았습니다')
-      }
-
       const trKey = `D${symbol}`
 
-      // KIS WebSocket 메시지 형식: 단순 JSON 객체
+      // 🔥 구독 해제 메시지 (tr_type: '2')
       const message = {
         header: {
           approval_key: this.approvalKey,
@@ -282,11 +335,13 @@ export class KISWebSocketService {
         }
       }
 
+      console.log(`📤 구독 해제 메시지:`, JSON.stringify(message))
       this.ws.send(JSON.stringify(message))
       this.subscribedSymbols.delete(symbol)
       console.log(`✅ ${symbol} 실시간 호가 구독 해제`)
     } catch (error) {
       console.error(`❌ ${symbol} 구독 해제 실패:`, error)
+      this.subscribedSymbols.delete(symbol)
     }
   }
 

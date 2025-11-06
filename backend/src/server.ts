@@ -428,8 +428,7 @@ app.post('/api/trading/sync', async (req, res) => {
 app.get('/api/trading/history', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit as string) || 100
-    const currentAccount = kisApiManager.getCurrentAccount()
-    const accountType = currentAccount?.ka_type
+    const accountType = 'REAL' // 실전투자만 지원
     
     console.log(`📜 거래내역 조회 요청 (${accountType})`)
     const history = await getTradingHistory(limit, accountType)
@@ -492,12 +491,10 @@ app.post('/api/trading/manual-buy', async (req, res) => {
       return res.status(400).json({ error: 'Ticker and quantity are required' })
     }
 
-    // 현재 계정 타입 확인
-    const accountType = tradingManager.getKISApi().getCurrentAccountType()
     const accountName = tradingManager.getKISApi().getCurrentAccount()?.ka_name || '알 수 없음'
     
     console.log(`\n📈 수동 매수 요청`)
-    console.log(`   🔰 계정: [${accountType === 'REAL' ? '실전투자' : '모의투자'}] ${accountName}`)
+    console.log(`   🔰 계정: [실전투자] ${accountName}`)
     console.log(`   종목: ${ticker}`)
     console.log(`   수량: ${quantity}`)
     console.log(`   주문 타입: ${orderType}`)
@@ -509,7 +506,7 @@ app.post('/api/trading/manual-buy', async (req, res) => {
     if (isReservation) {
       const orderId = await savePendingOrder({
         po_ticker: ticker,
-        po_account_type: accountType, // 계정 타입 추가
+        po_account_type: 'REAL',
         po_order_type: 'buy',
         po_quantity: quantity,
         po_price_type: orderType,
@@ -530,85 +527,10 @@ app.post('/api/trading/manual-buy', async (req, res) => {
       })
     }
 
-    // 즉시 주문 (장 오픈 시)
+    // 즉시 주문 (장 오픈 시) - 실전투자만
     const orderPrice = orderType === 'market' ? currentPrice : price
 
     try {
-      // 모의투자: KIS API 기반으로 처리
-      if (accountType === 'VIRTUAL') {
-        console.log(`🔵 [모의투자] KIS API 기반 매수 처리 시작`)
-        
-        try {
-          await tradingManager.getKISApi().buyStock(ticker, quantity, orderPrice)
-          console.log(`✅ [모의투자] KIS API 매수 성공: ${ticker} x ${quantity}주`)
-          
-          // 잔고 캐시 무효화 (다음 조회 시 최신 잔고 반영)
-          await accountCacheService.invalidateCache()
-          console.log(`🔄 [모의투자] 잔고 캐시 무효화 완료`)
-        } catch (buyError: any) {
-          // 장 마감 OR 모의투자 미지원 → 자동 예약 주문 처리
-          const isMarketClosed = buyError.message?.includes('장중이 아니거나') || 
-                                 buyError.message?.includes('거래시간이 아닙니다') ||
-                                 buyError.message?.includes('해당 시장은 거래 불가능한 시간입니다')
-          
-          const isVirtualUnsupported = buyError.message?.includes('모의투자에서는') || 
-                                       buyError.message?.includes('해당업무가 제공되지')
-          
-          if (isMarketClosed || isVirtualUnsupported) {
-            const reason = isMarketClosed ? '장 마감' : '모의투자 API 미지원'
-            console.log(`⏰ [모의투자] ${reason} - 자동 예약 주문 처리`)
-            
-            // 예약 주문으로 저장
-            const orderId = await savePendingOrder({
-              po_account_type: 'VIRTUAL',
-              po_ticker: ticker,
-              po_order_type: 'buy',
-              po_quantity: quantity,
-              po_price_type: orderType, // 'market' or 'limit'
-              po_limit_price: orderType === 'limit' ? price : null,
-              po_reservation_type: 'opening', // 장 시작 시 실행
-              po_take_profit_percent: takeProfitPercent,
-              po_stop_loss_percent: stopLossPercent,
-              po_reason: `${orderType === 'market' ? '시장가' : '지정가'} 매수 (${reason})`,
-              po_news_title: newsTitle || '',
-              po_status: 'pending'
-            })
-            
-            return res.json({
-              success: true,
-              message: `${orderType === 'market' ? '시장가' : '지정가'} 매수 예약이 완료되었습니다. 장 시작 시 자동으로 실행됩니다.`,
-              reservation: true,
-              orderId
-            })
-          }
-          
-          // 그 외 에러는 그대로 던짐
-          throw buyError
-        }
-        
-        // 거래 이력 저장 (계정 타입 포함)
-        await saveTradingRecord({
-          t_ticker: ticker,
-          t_account_type: 'VIRTUAL', // 계정 타입 추가
-          t_type: 'BUY',
-          t_quantity: quantity,
-          t_price: orderPrice,
-          t_total_amount: orderPrice * quantity,
-          t_status: 'COMPLETED',
-          t_reason: (newsTitle || '수동 매수')
-        })
-        
-        return res.json({
-          success: true,
-          message: `${ticker} ${quantity}주 매수 완료 (모의투자)`,
-          price: orderPrice,
-          quantity,
-          isReservation: false,
-          virtual: true
-        })
-      }
-      
-      // 실전투자: KIS API 매수
       console.log(`🔴 [실전투자] KIS API 매수 처리 시작`)
       
       try {
@@ -677,17 +599,7 @@ app.post('/api/trading/manual-buy', async (req, res) => {
         }
       }
 
-      // 거래 이력 저장 (계정 타입 포함)
-      await saveTradingRecord({
-        t_ticker: ticker,
-        t_account_type: 'REAL', // 계정 타입 추가
-        t_type: 'BUY',
-        t_quantity: quantity,
-        t_price: orderPrice,
-        t_total_amount: orderPrice * quantity,
-        t_status: 'COMPLETED',
-        t_reason: newsTitle || '수동 매수'
-      })
+      // 🔥 거래 이력은 H0GSCNI0 API에서 실제 체결 후 자동 저장됨 (중복 저장 방지)
 
       return res.json({
         success: true,
@@ -706,7 +618,7 @@ app.post('/api/trading/manual-buy', async (req, res) => {
         
         const orderId = await savePendingOrder({
           po_ticker: ticker,
-          po_account_type: accountType, // 계정 타입 추가
+          po_account_type: 'REAL',
           po_order_type: 'buy',
           po_quantity: quantity,
           po_price_type: orderType,
@@ -760,12 +672,10 @@ app.post('/api/trading/sell', async (req, res) => {
       return res.status(400).json({ error: 'Ticker and quantity are required' })
     }
 
-    // 현재 계정 타입 확인
-    const accountType = tradingManager.getKISApi().getCurrentAccountType()
     const accountName = tradingManager.getKISApi().getCurrentAccount()?.ka_name || '알 수 없음'
     
     console.log(`\n📉 수동 매도 요청`)
-    console.log(`   🔰 계정: [${accountType === 'REAL' ? '실전투자' : '모의투자'}] ${accountName}`)
+    console.log(`   🔰 계정: [실전투자] ${accountName}`)
     console.log(`   종목: ${ticker}`)
     console.log(`   수량: ${quantity}`)
     console.log(`   주문 타입: ${orderType}`)
@@ -777,7 +687,7 @@ app.post('/api/trading/sell', async (req, res) => {
     if (isReservation) {
       const orderId = await savePendingOrder({
         po_ticker: ticker,
-        po_account_type: accountType, // 계정 타입 추가
+        po_account_type: 'REAL',
         po_order_type: 'sell',
         po_quantity: quantity,
         po_price_type: orderType,
@@ -796,203 +706,58 @@ app.post('/api/trading/sell', async (req, res) => {
       })
     }
 
-    // 즉시 주문 (장 오픈 시)
+    // 즉시 주문 (장 오픈 시) - 실전투자만
     const orderPrice = orderType === 'market' ? currentPrice : price
 
     try {
-      // 모의투자: KIS API로 실제 보유 수량 확인 후 매도
-      if (accountType === 'VIRTUAL') {
-        console.log(`🔵 [모의투자] KIS API 기반 매도 처리 시작`)
-        
-        // 1. 보유 수량 확인 (캐시 우선, KIS API 폴백)
-        let currentHolding = 0
-        
-        // 1-1. 캐시에서 먼저 확인 (빠르고 안정적)
+      console.log(`🔴 [실전투자] KIS API 매도 처리 시작`)
+      
+      // 1. 보유 수량 확인 (캐시 우선)
+      let currentHolding = 0
+      try {
+        const positions = await accountCacheService.getPositions()
+        const position = positions.find(p => p.ticker === ticker)
+        if (position) {
+          currentHolding = position.quantity
+          console.log(`✓ [실전투자] ${ticker} 보유 수량: ${currentHolding}주 (캐시)`)
+        }
+      } catch (cacheError) {
+        console.log(`⚠️ 캐시 조회 실패, KIS API 직접 조회 시도`)
         try {
-          const positions = await accountCacheService.getPositions()
-          const position = positions.find(p => p.ticker === ticker)
-          if (position) {
-            currentHolding = position.quantity
-            console.log(`✓ [모의투자] ${ticker} 보유 수량: ${currentHolding}주 (캐시)`)
-          }
-        } catch (cacheError) {
-          console.log(`⚠️ 캐시 조회 실패, KIS API 직접 조회 시도`)
-        }
-        
-        // 1-2. 캐시에 없으면 KIS API 직접 조회
-        if (currentHolding === 0) {
-          try {
-            const balance = await tradingManager.getKISApi().getBalance()
-            console.log(`📊 [모의투자] KIS API 잔고 조회 성공`)
-            
-            // 🔍 디버깅: 전체 응답 구조 확인
-            console.log(`🔍 output1 타입: ${typeof balance.output1}, 길이: ${balance.output1?.length || 0}`)
-            if (balance.output1 && balance.output1.length > 0) {
-              console.log(`🔍 첫 번째 항목 샘플:`, JSON.stringify(balance.output1[0], null, 2))
+          const balance = await tradingManager.getKISApi().getBalance()
+          if (balance.output1 && Array.isArray(balance.output1)) {
+            const holding = balance.output1.find((item: any) => item.pdno === ticker)
+            if (holding) {
+              currentHolding = parseInt(holding.ord_psbl_qty || holding.hldg_qty || '0')
+              console.log(`✓ [실전투자] ${ticker} 보유 수량: ${currentHolding}주 (KIS API)`)
             }
-            
-            // output1: 해외주식 잔고 (각 종목별 보유 정보)
-            if (balance.output1 && Array.isArray(balance.output1)) {
-              console.log(`🔍 ${ticker} 검색 중... (총 ${balance.output1.length}개 종목)`)
-              
-              // 모든 종목 티커 출력
-              const allTickers = balance.output1.map((item: any) => item.pdno || item.ticker || 'unknown')
-              console.log(`🔍 보유 종목 티커: ${allTickers.join(', ')}`)
-              
-              const holding = balance.output1.find((item: any) => item.pdno === ticker)
-              if (holding) {
-                currentHolding = parseInt(holding.ord_psbl_qty || holding.hldg_qty || '0') // 주문가능수량 or 보유수량
-                console.log(`✓ [모의투자] ${ticker} 보유 수량: ${currentHolding}주 (KIS API)`)
-                console.log(`   상세:`, JSON.stringify(holding, null, 2))
-  } else {
-                console.log(`⚠️ [모의투자] ${ticker} 보유 내역 없음 (KIS API)`)
-              }
-            } else {
-              console.log(`⚠️ output1이 배열이 아니거나 비어있음`)
-            }
-          } catch (balanceError: any) {
-            console.warn(`⚠️ [모의투자] KIS 잔고 조회 실패: ${balanceError.message}`)
           }
+        } catch (balanceError: any) {
+          console.warn(`⚠️ [실전투자] KIS 잔고 조회 실패: ${balanceError.message}`)
         }
-        
-        // 2. 대기 중인 매도 주문 수량 확인
-        const pendingOrders = await getPendingOrders(accountType)
-        const pendingSellQuantity = pendingOrders
-          .filter((order: any) => order.po_ticker === ticker && order.po_order_type === 'sell' && order.po_status === 'pending')
-          .reduce((sum: number, order: any) => sum + order.po_quantity, 0)
-        
-        const availableToSell = currentHolding - pendingSellQuantity
-        
-        console.log(`📊 [모의투자] ${ticker} 수량 현황:`)
-        console.log(`   전체 보유: ${currentHolding}주`)
-        console.log(`   대기 중 매도: ${pendingSellQuantity}주`)
-        console.log(`   실제 판매 가능: ${availableToSell}주`)
-        console.log(`   요청 수량: ${quantity}주`)
-        
-        // 3. 수량 검증
-        if (availableToSell < quantity) {
-          throw new Error(`매도 가능한 수량이 부족합니다.\n\n전체 보유: ${currentHolding}주\n대기 중 매도: ${pendingSellQuantity}주\n판매 가능: ${availableToSell}주\n요청 수량: ${quantity}주`)
-        }
-        
-        // 4. KIS API 매도 시도
-        try {
-          await tradingManager.getKISApi().sellStock(ticker, quantity, orderPrice)
-          console.log(`✅ [모의투자] KIS API 매도 성공: ${ticker} x ${quantity}주`)
-          
-          // 잔고 캐시 무효화 (다음 조회 시 최신 잔고 반영)
-          await accountCacheService.invalidateCache()
-          console.log(`🔄 [모의투자] 잔고 캐시 무효화 완료`)
-        } catch (sellError: any) {
-          // 장 마감 OR 모의투자 미지원 → 자동 예약 주문 처리
-          const isMarketClosed = sellError.message?.includes('장중이 아니거나') || 
-                                 sellError.message?.includes('거래시간이 아닙니다') ||
-                                 sellError.message?.includes('해당 시장은 거래 불가능한 시간입니다')
-          
-          const isVirtualUnsupported = sellError.message?.includes('모의투자에서는') || 
-                                       sellError.message?.includes('해당업무가 제공되지')
-          
-          if (isMarketClosed || isVirtualUnsupported) {
-            const reason = isMarketClosed ? '장 마감' : '모의투자 API 미지원'
-            console.log(`⏰ [모의투자] ${reason} - 자동 예약 주문 처리`)
-            
-            // 예약 주문으로 저장
-            await savePendingOrder({
-              po_account_type: 'VIRTUAL',
-              po_ticker: ticker,
-              po_order_type: 'sell',
-              po_quantity: quantity,
-              po_price_type: orderType, // 'market' or 'limit'
-              po_limit_price: orderType === 'limit' ? price : null,
-              po_reservation_type: 'opening', // 장 시작 시 실행
-              po_take_profit_percent: undefined,
-              po_stop_loss_percent: undefined,
-              po_reason: `${orderType === 'market' ? '시장가' : '지정가'} 매도 (${reason})`,
-              po_news_title: '',
-              po_status: 'pending'
-            })
-            
-            return res.json({
-              success: true,
-              message: `${orderType === 'market' ? '시장가' : '지정가'} 매도 예약이 완료되었습니다. 장 시작 시 자동으로 실행됩니다.`,
-              reservation: true
-            })
-          }
-          
-          // 그 외 에러는 그대로 던짐
-          throw sellError
-        }
-        
-        // 4. 거래 이력 저장
-        await saveTradingRecord({
-          t_ticker: ticker,
-          t_account_type: 'VIRTUAL',
-          t_type: 'SELL',
-          t_quantity: quantity,
-          t_price: orderPrice,
-          t_total_amount: orderPrice * quantity,
-          t_status: 'COMPLETED',
-          t_reason: newsTitle || '수동 매도'
-        })
-        
-        return res.json({
-          success: true,
-          message: `${ticker} ${quantity}주 매도 완료 (모의투자)`,
-          price: orderPrice,
-          quantity,
-          isReservation: false,
-          virtual: true
-        })
-  } else {
-        // 실전투자: KIS API 매도
-        console.log(`🔴 [실전투자] KIS API 매도 처리 시작`)
-        
-        // 1. 보유 수량 확인 (캐시 우선)
-        let currentHolding = 0
-        try {
-          const positions = await accountCacheService.getPositions()
-          const position = positions.find(p => p.ticker === ticker)
-          if (position) {
-            currentHolding = position.quantity
-            console.log(`✓ [실전투자] ${ticker} 보유 수량: ${currentHolding}주 (캐시)`)
-          }
-        } catch (cacheError) {
-          console.log(`⚠️ 캐시 조회 실패, KIS API 직접 조회 시도`)
-          try {
-            const balance = await tradingManager.getKISApi().getBalance()
-            if (balance.output1 && Array.isArray(balance.output1)) {
-              const holding = balance.output1.find((item: any) => item.pdno === ticker)
-              if (holding) {
-                currentHolding = parseInt(holding.ord_psbl_qty || holding.hldg_qty || '0')
-                console.log(`✓ [실전투자] ${ticker} 보유 수량: ${currentHolding}주 (KIS API)`)
-              }
-            }
-          } catch (balanceError: any) {
-            console.warn(`⚠️ [실전투자] KIS 잔고 조회 실패: ${balanceError.message}`)
-          }
-        }
-        
-        // 2. 대기 중인 매도 주문 수량 확인
-        const pendingOrders = await getPendingOrders(accountType)
-        const pendingSellQuantity = pendingOrders
-          .filter((order: any) => order.po_ticker === ticker && order.po_order_type === 'sell' && order.po_status === 'pending')
-          .reduce((sum: number, order: any) => sum + order.po_quantity, 0)
-        
-        const availableToSell = currentHolding - pendingSellQuantity
-        
-        console.log(`📊 [실전투자] ${ticker} 수량 현황:`)
-        console.log(`   전체 보유: ${currentHolding}주`)
-        console.log(`   대기 중 매도: ${pendingSellQuantity}주`)
-        console.log(`   실제 판매 가능: ${availableToSell}주`)
-        console.log(`   요청 수량: ${quantity}주`)
-        
-        // 3. 수량 검증
-        if (availableToSell < quantity) {
-          throw new Error(`매도 가능한 수량이 부족합니다.\n\n전체 보유: ${currentHolding}주\n대기 중 매도: ${pendingSellQuantity}주\n판매 가능: ${availableToSell}주\n요청 수량: ${quantity}주`)
-        }
-        
-        // 4. KIS API 매도 실행
-        await tradingManager.getKISApi().sellStock(ticker, quantity, orderPrice)
       }
+      
+      // 2. 대기 중인 매도 주문 수량 확인
+      const pendingOrders = await getPendingOrders('REAL')
+      const pendingSellQuantity = pendingOrders
+        .filter((order: any) => order.po_ticker === ticker && order.po_order_type === 'sell' && order.po_status === 'pending')
+        .reduce((sum: number, order: any) => sum + order.po_quantity, 0)
+      
+      const availableToSell = currentHolding - pendingSellQuantity
+      
+      console.log(`📊 [실전투자] ${ticker} 수량 현황:`)
+      console.log(`   전체 보유: ${currentHolding}주`)
+      console.log(`   대기 중 매도: ${pendingSellQuantity}주`)
+      console.log(`   실제 판매 가능: ${availableToSell}주`)
+      console.log(`   요청 수량: ${quantity}주`)
+      
+      // 3. 수량 검증
+      if (availableToSell < quantity) {
+        throw new Error(`매도 가능한 수량이 부족합니다.\n\n전체 보유: ${currentHolding}주\n대기 중 매도: ${pendingSellQuantity}주\n판매 가능: ${availableToSell}주\n요청 수량: ${quantity}주`)
+      }
+      
+      // 4. KIS API 매도 실행
+      await tradingManager.getKISApi().sellStock(ticker, quantity, orderPrice)
 
       // 실전투자 매도 성공 후 처리
       console.log(`✅ [실전투자] KIS API 매도 성공`)
@@ -1004,7 +769,7 @@ app.post('/api/trading/sell', async (req, res) => {
       // 익절/손절 설정 삭제 (실전투자)
       try {
         const { deleteDBPosition } = await import('./db.js')
-        await deleteDBPosition(ticker, 'REAL') // 계정 타입 전달
+        await deleteDBPosition(ticker, 'REAL')
         console.log(`🗑️ [실전투자] 익절/손절 설정 삭제: ${ticker}`)
       } catch (error: any) {
         if (error.code !== 'ER_NO_SUCH_TABLE' && error.code !== 'ER_BAD_FIELD_ERROR') {
@@ -1012,17 +777,7 @@ app.post('/api/trading/sell', async (req, res) => {
         }
       }
 
-      // 거래 이력 저장 (계정 타입 포함)
-      await saveTradingRecord({
-        t_ticker: ticker,
-        t_account_type: 'REAL', // 계정 타입 추가
-        t_type: 'SELL',
-        t_quantity: quantity,
-        t_price: orderPrice,
-        t_total_amount: orderPrice * quantity,
-        t_status: 'COMPLETED',
-        t_reason: newsTitle || '수동 매도'
-      })
+      // 🔥 거래 이력은 H0GSCNI0 API에서 실제 체결 후 자동 저장됨 (중복 저장 방지)
 
       return res.json({
         success: true,
@@ -1036,12 +791,12 @@ app.post('/api/trading/sell', async (req, res) => {
       
       // 장 마감 에러인 경우 자동으로 예약 주문으로 전환 (실전투자만)
       const errorMsg = error.message || ''
-      if (accountType === 'REAL' && (errorMsg.includes('장시작전') || errorMsg.includes('장마감') || errorMsg.includes('거래시간'))) {
+      if (errorMsg.includes('장시작전') || errorMsg.includes('장마감') || errorMsg.includes('거래시간')) {
         console.log(`⏰ [실전투자] 장 마감 감지 → 예약 주문으로 자동 전환`)
         
         const orderId = await savePendingOrder({
           po_ticker: ticker,
-          po_account_type: accountType, // 계정 타입 추가
+          po_account_type: 'REAL',
           po_order_type: 'sell',
           po_quantity: quantity,
           po_price_type: orderType,
@@ -1079,8 +834,7 @@ app.post('/api/trading/sell', async (req, res) => {
 // 예약 주문 조회 API
 app.get('/api/trading/pending-orders', async (req, res) => {
   try {
-    const currentAccount = kisApiManager.getCurrentAccount()
-    const accountType = currentAccount?.ka_type
+    const accountType = 'REAL' // 실전투자만 지원
     
     console.log(`⏰ 예약 주문 조회 요청 (${accountType})`)
     const orders = await getPendingOrders(accountType)
@@ -1095,8 +849,7 @@ app.get('/api/trading/pending-orders', async (req, res) => {
 app.delete('/api/trading/pending-orders/:orderId', async (req, res) => {
   try {
     const orderId = parseInt(req.params.orderId)
-    const currentAccount = kisApiManager.getCurrentAccount()
-    const accountType = currentAccount?.ka_type
+    const accountType = 'REAL' // 실전투자만 지원
     
     console.log(`❌ 예약 주문 취소 요청 (ID: ${orderId}, 계정: ${accountType})`)
     
@@ -1276,13 +1029,10 @@ app.get('/api/accounts', async (req, res) => {
   }
 })
 
-// 특정 타입의 계정 조회
-app.get('/api/accounts/:type', async (req, res) => {
+// 실전투자 계정 조회
+app.get('/api/accounts/real', async (req, res) => {
   try {
-    const type = req.params.type.toUpperCase() as 'REAL' | 'VIRTUAL'
-    if (type !== 'REAL' && type !== 'VIRTUAL') {
-      return res.status(400).json({ error: 'Invalid account type' })
-    }
+    const type = 'REAL'
     
     const accounts = await getAccountsByType(type)
     const safeAccounts = accounts.map(acc => ({
@@ -1300,13 +1050,10 @@ app.get('/api/accounts/:type', async (req, res) => {
   }
 })
 
-// 계정 타입 전환 (실전/모의)
+// 실전투자 계정으로 전환 (모의투자 제거)
 app.post('/api/accounts/switch-type', async (req, res) => {
   try {
-    const { type } = req.body
-    if (type !== 'REAL' && type !== 'VIRTUAL') {
-      return res.status(400).json({ error: 'Invalid account type' })
-    }
+    const type = 'REAL' // 실전투자만 지원
     
     await kisApiManager.switchAccountType(type)
     const currentAccount = kisApiManager.getCurrentAccount()
@@ -1325,7 +1072,7 @@ app.post('/api/accounts/switch-type', async (req, res) => {
     
     res.json({
       success: true,
-      message: `${type === 'REAL' ? '실전투자' : '모의투자'}로 전환되었습니다`,
+      message: '실전투자로 전환되었습니다',
       currentAccount: currentAccount ? {
         ka_id: currentAccount.ka_id,
         ka_type: currentAccount.ka_type,
@@ -1401,8 +1148,8 @@ app.post('/api/accounts/add', async (req, res) => {
       return res.status(400).json({ error: 'All fields are required' })
     }
     
-    if (ka_type !== 'REAL' && ka_type !== 'VIRTUAL') {
-      return res.status(400).json({ error: 'Invalid account type' })
+    if (ka_type !== 'REAL') {
+      return res.status(400).json({ error: 'Only REAL account type is supported' })
     }
     
     const accountId = await addAccount({

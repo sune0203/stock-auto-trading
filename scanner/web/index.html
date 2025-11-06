@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP Scanner Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 헤더 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+        }
+
+        /* 상태 카드 그리드 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #a0a0a0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .stat-card.connected .value { color: #4CAF50; }
+        .stat-card.disconnected .value { color: #f44336; }
+
+        /* 연결 상태 */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.connected { background: #4CAF50; }
+        .status-indicator.disconnected { background: #f44336; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* 신호 리스트 */
+        .signals-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .signals-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .signals-header h2 {
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* 신호 카드 */
+        .signal-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .signal-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .signal-symbol {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .signal-price {
+            font-size: 24px;
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .signal-time {
+            color: #888;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .signal-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .metric {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .metric-value.good { color: #4CAF50; }
+        .metric-value.warning { color: #FF9800; }
+        .metric-value.danger { color: #f44336; }
+
+        /* 빈 상태 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* 로딩 애니메이션 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1>📊 FMP Scanner Dashboard</h1>
+            <p>실시간 패턴형 종목 모니터링 시스템</p>
+        </div>
+
+        <!-- 통계 카드 -->
+        <div class="stats-grid">
+            <div class="stat-card" id="statusCard">
+                <h3>연결 상태</h3>
+                <div class="value">
+                    <span class="status-indicator disconnected"></span>
+                    <span id="statusText">연결 중...</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Watchlist 종목</h3>
+                <div class="value" id="watchlistCount">-</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>금일 신호 수</h3>
+                <div class="value" id="signalCount">0</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>마지막 신호</h3>
+                <div class="value" id="lastSignalTime" style="font-size: 16px;">-</div>
+            </div>
+        </div>
+
+        <!-- 신호 섹션 -->
+        <div class="signals-section">
+            <div class="signals-header">
+                <h2>🔔 실시간 신호</h2>
+                <div>
+                    <button class="btn btn-primary" onclick="reconnect()">
+                        재연결
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearSignals()">
+                        신호 지우기
+                    </button>
+                </div>
+            </div>
+
+            <div id="signalsList">
+                <div class="empty-state">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <h3>신호 대기 중</h3>
+                    <p>조건을 만족하는 종목이 발견되면 여기에 표시됩니다</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ws;
+        let signalCount = 0;
+
+        // WebSocket 연결
+        function connect() {
+            ws = new WebSocket('ws://localhost:8800/ws');
+            
+            ws.onopen = () => {
+                updateStatus('connected');
+                loadWatchlistInfo();
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                addSignal(data);
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateStatus('error');
+            };
+            
+            ws.onclose = () => {
+                updateStatus('disconnected');
+                setTimeout(connect, 5000); // 5초 후 재연결
+            };
+        }
+
+        // 상태 업데이트
+        function updateStatus(status) {
+            const statusCard = document.getElementById('statusCard');
+            const statusText = document.getElementById('statusText');
+            const indicator = document.querySelector('.status-indicator');
+            
+            if (status === 'connected') {
+                statusCard.className = 'stat-card connected';
+                statusText.textContent = '연결됨';
+                indicator.className = 'status-indicator connected';
+            } else if (status === 'disconnected') {
+                statusCard.className = 'stat-card disconnected';
+                statusText.textContent = '연결 끊김';
+                indicator.className = 'status-indicator disconnected';
+            } else if (status === 'error') {
+                statusCard.className = 'stat-card disconnected';
+                statusText.textContent = '에러';
+                indicator.className = 'status-indicator disconnected';
+            }
+        }
+
+        // Watchlist 정보 로드
+        async function loadWatchlistInfo() {
+            try {
+                const response = await fetch('http://localhost:8800/watchlist');
+                const data = await response.json();
+                document.getElementById('watchlistCount').textContent = data.count || 0;
+            } catch (error) {
+                console.error('Failed to load watchlist:', error);
+            }
+        }
+
+        // 신호 추가
+        function addSignal(data) {
+            signalCount++;
+            document.getElementById('signalCount').textContent = signalCount;
+            
+            const time = new Date(data.t).toLocaleTimeString('ko-KR');
+            document.getElementById('lastSignalTime').textContent = time;
+            
+            const signalsList = document.getElementById('signalsList');
+            
+            // 빈 상태 제거
+            const emptyState = signalsList.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+            
+            // ML 신호인지 룰 기반인지 구분
+            const isMLSignal = data.state === 'MLSignal';
+            const badgeColor = isMLSignal ? '#4CAF50' : '#FF9800';
+            const badgeText = isMLSignal ? 'ML' : 'RULE';
+            
+            // 신호 카드 생성
+            const card = document.createElement('div');
+            card.className = 'signal-card';
+            card.style.borderLeftColor = badgeColor;
+            card.innerHTML = `
+                <div class="signal-header">
+                    <div>
+                        <div class="signal-symbol">
+                            ${data.symbol}
+                            <span style="
+                                background: ${badgeColor};
+                                color: white;
+                                padding: 2px 8px;
+                                border-radius: 4px;
+                                font-size: 12px;
+                                margin-left: 10px;
+                                font-weight: 600;
+                            ">${badgeText} • 15분</span>
+                            ${isMLSignal && data.ml_score ? `
+                                <span style="
+                                    background: rgba(76, 175, 80, 0.2);
+                                    color: #4CAF50;
+                                    padding: 2px 8px;
+                                    border-radius: 4px;
+                                    font-size: 11px;
+                                    margin-left: 5px;
+                                ">확률: ${(data.ml_score * 100).toFixed(1)}%</span>
+                            ` : ''}
+                        </div>
+                        <div class="signal-time">${time}</div>
+                    </div>
+                    <div class="signal-price">$${data.price.toFixed(2)}</div>
+                </div>
+                <div class="signal-metrics">
+                    <div class="metric">
+                        <div class="metric-label">RVOL</div>
+                        <div class="metric-value ${data.rvol_15m >= 2 ? 'good' : 'warning'}">
+                            ${data.rvol_15m.toFixed(2)}x
+                        </div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">베이스 범위</div>
+                        <div class="metric-value ${data.base_range_pct <= 5 ? 'good' : 'warning'}">
+                            ${data.base_range_pct.toFixed(2)}%
+                        </div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">봉 변동</div>
+                        <div class="metric-value ${data.move_pct >= 2 ? 'good' : 'warning'}">
+                            ${data.move_pct >= 0 ? '+' : ''}${data.move_pct.toFixed(2)}%
+                        </div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">실시간 변동</div>
+                        <div class="metric-value ${data.realtime_move_pct >= 0 ? 'good' : 'danger'}">
+                            ${data.realtime_move_pct >= 0 ? '+' : ''}${data.realtime_move_pct.toFixed(2)}%
+                        </div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">스프레드</div>
+                        <div class="metric-value ${data.spread_pct <= 1.5 ? 'good' : 'warning'}">
+                            ${data.spread_pct.toFixed(2)}%
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            signalsList.insertBefore(card, signalsList.firstChild);
+            
+            // 소리 알림
+            playBeep();
+            
+            // 최대 50개만 유지
+            while (signalsList.children.length > 50) {
+                signalsList.removeChild(signalsList.lastChild);
+            }
+        }
+
+        // 신호 지우기
+        function clearSignals() {
+            const signalsList = document.getElementById('signalsList');
+            signalsList.innerHTML = `
+                <div class="empty-state">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <h3>신호 대기 중</h3>
+                    <p>조건을 만족하는 종목이 발견되면 여기에 표시됩니다</p>
+                </div>
+            `;
+            signalCount = 0;
+            document.getElementById('signalCount').textContent = '0';
+        }
+
+        // 재연결
+        function reconnect() {
+            if (ws) {
+                ws.close();
+            }
+            connect();
+        }
+
+        // 비프음
+        function playBeep() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (error) {
+                console.log('Audio not supported');
+            }
+        }
+
+        // 페이지 로드 시 연결
+        connect();
+        
+        // 주기적으로 watchlist 정보 갱신
+        setInterval(loadWatchlistInfo, 30000); // 30초마다
+    </script>
+</body>
+</html>
+

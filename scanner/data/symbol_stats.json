@@ -1,0 +1,1898 @@
+{
+  "AARD": {
+    "total_events": 17,
+    "success_events": 1,
+    "success_rate": 0.058823529411764705,
+    "rvol_success_q60": 3.230826012722309,
+    "spread_success_q90": 0.02327327327327331,
+    "score_success_q70": 0.65
+  },
+  "ABAT": {
+    "total_events": 24,
+    "success_events": 3,
+    "success_rate": 0.125,
+    "rvol_success_q60": 5.804026668139155,
+    "spread_success_q90": 0.06864093072448438,
+    "score_success_q70": 0.65
+  },
+  "ABOS": {
+    "total_events": 23,
+    "success_events": 7,
+    "success_rate": 0.30434782608695654,
+    "rvol_success_q60": 3.756554306069506,
+    "spread_success_q90": 0.07268170426065158,
+    "score_success_q70": 0.65
+  },
+  "ABSI": {
+    "total_events": 17,
+    "success_events": 4,
+    "success_rate": 0.23529411764705882,
+    "rvol_success_q60": 1.867315195758549,
+    "spread_success_q90": 0.05945623342175062,
+    "score_success_q70": 0.65
+  },
+  "ABTC": {
+    "total_events": 10,
+    "success_events": 2,
+    "success_rate": 0.2,
+    "rvol_success_q60": 3.405784284746513,
+    "spread_success_q90": 0.056226382165025054,
+    "score_success_q70": 0.65
+  },
+  "ABVE": {
+    "total_events": 15,
+    "success_events": 9,
+    "success_rate": 0.6,
+    "rvol_success_q60": 2.3996971263892406,
+    "spread_success_q90": 0.07747448979591841,
+    "score_success_q70": 0.65
+  },
+  "ACDC": {
+    "total_events": 13,
+    "success_events": 1,
+    "success_rate": 0.07692307692307693,
+    "rvol_success_q60": 2.050329786624073,
+    "spread_success_q90": 0.05276381909547738,
+    "score_success_q70": 0.65
+  },
+  "ACET": {
+    "total_events": 10,
+    "success_events": 1,
+    "success_rate": 0.1,
+    "rvol_success_q60": 5.588081833777853,
+    "spread_success_q90": 0.05481184779171491,
+    "score_success_q70": 0.65
+  },
+  "ACHV": {
+    "total_events": 9,
+    "success_events": 3,
+    "success_rate": 0.3333333333333333,
+    "rvol_success_q60": 7.614558836048051,
+    "spread_success_q90": 0.07243519847995765,
+    "score_success_q70": 0.65
+  },
+  "ACIU": {
+    "total_events": 24,
+    "success_events": 3,
+    "success_rate": 0.125,
+    "rvol_success_q60": 3.513579277738664,
+    "spread_success_q90": 0.06937488698277419,
+    "score_success_q70": 0.65
+  },
+  "ACRV": {
+    "total_events": 20,
+    "success_events": 2,
+    "success_rate": 0.1,
+    "rvol_success_q60": 3.4837911994985764,
+    "spread_success_q90": 0.037685987119698006,
+    "score_success_q70": 0.65
+  },
+  "AEVA": {
+    "total_events": 25,
+    "success_events": 5,
+    "success_rate": 0.2,
+    "rvol_success_q60": 2.5734148913125625,
+    "spread_success_q90": 0.06366831076831411,
+    "score_success_q70": 0.65
+  },
+  "AIIO": {
+    "total_events": 15,
+    "success_events": 2,
+    "success_rate": 0.13333333333333333,
+    "rvol_success_q60": 3.457363141376658,
+    "spread_success_q90": 0.07049751243781102,
+    "score_success_q70": 0.65
+  },
+  "AIRE": {
+    "total_events": 10,
+    "success_events": 3,
+    "success_rate": 0.3,
+    "rvol_success_q60": 3.4076043322453478,
+    "spread_success_q90": 0.07006515945645166,
+    "score_success_q70": 0.65
+  },
+  "AIRJ": {
+    "total_events": 16,
+    "success_events": 7,
+    "success_rate": 0.4375,
+    "rvol_success_q60": 4.684939330353533,
+    "spread_success_q90": 0.06535642340832531,
+    "score_success_q70": 0.65
+  },
+  "AIRS": {
+    "total_events": 16,
+    "success_events": 1,
+    "success_rate": 0.0625,
+    "rvol_success_q60": 2.2833543332676176,
+    "spread_success_q90": 0.06292749658002736,
+    "score_success_q70": 0.65
+  },
+  "AISP": {
+    "total_events": 13,
+    "success_events": 3,
+    "success_rate": 0.23076923076923078,
+    "rvol_success_q60": 4.70148543503639,
+    "spread_success_q90": 0.06387604070305279,
+    "score_success_q70": 0.65
+  },
+  "ALM": {
+    "total_events": 17,
+    "success_events": 3,
+    "success_rate": 0.17647058823529413,
+    "rvol_success_q60": 3.506423025196595,
+    "spread_success_q90": 0.06678734896316252,
+    "score_success_q70": 0.65
+  },
+  "ALTS": {
+    "total_events": 17,
+    "success_events": 2,
+    "success_rate": 0.11764705882352941,
+    "rvol_success_q60": 4.383010830672409,
+    "spread_success_q90": 0.06865898058252423,
+    "score_success_q70": 0.65
+  },
+  "AMPG": {
+    "total_events": 26,
+    "success_events": 1,
+    "success_rate": 0.038461538461538464,
+    "rvol_success_q60": 3.800179047966467,
+    "spread_success_q90": 0.038990825688073376,
+    "score_success_q70": 0.65
+  },
+  "APLT": {
+    "total_events": 21,
+    "success_events": 2,
+    "success_rate": 0.09523809523809523,
+    "rvol_success_q60": 4.3228301779343346,
+    "spread_success_q90": 0.05321877522777079,
+    "score_success_q70": 0.65
+  },
+  "AQMS": {
+    "total_events": 14,
+    "success_events": 5,
+    "success_rate": 0.35714285714285715,
+    "rvol_success_q60": 3.3460404986384122,
+    "spread_success_q90": 0.06769431126682653,
+    "score_success_q70": 0.65
+  },
+  "ARBE": {
+    "total_events": 17,
+    "success_events": 4,
+    "success_rate": 0.23529411764705882,
+    "rvol_success_q60": 4.716874284971904,
+    "spread_success_q90": 0.06652927627591224,
+    "score_success_q70": 0.65
+  },
+  "ARBK": {
+    "total_events": 17,
+    "success_events": 3,
+    "success_rate": 0.17647058823529413,
+    "rvol_success_q60": 6.359666176757171,
+    "spread_success_q90": 0.07002764610173275,
+    "score_success_q70": 0.65
+  },
+  "ARCT": {
+    "total_events": 20,
+    "success_events": 5,
+    "success_rate": 0.25,
+    "rvol_success_q60": 2.2264084535731503,
+    "spread_success_q90": 0.05949676208352885,
+    "score_success_q70": 0.65
+  },
+  "AREC": {
+    "total_events": 23,
+    "success_events": 5,
+    "success_rate": 0.21739130434782608,
+    "rvol_success_q60": 2.6342274435307047,
+    "spread_success_q90": 0.06782312925170061,
+    "score_success_q70": 0.65
+  },
+  "ARTV": {
+    "total_events": 20,
+    "success_events": 4,
+    "success_rate": 0.2,
+    "rvol_success_q60": 3.9797500100722862,
+    "spread_success_q90": 0.06626465661641544,
+    "score_success_q70": 0.65
+  },
+  "ASPI": {
+    "total_events": 26,
+    "success_events": 5,
+    "success_rate": 0.19230769230769232,
+    "rvol_success_q60": 3.675742997929469,
+    "spread_success_q90": 0.07284029735965138,
+    "score_success_q70": 0.65
+  },
+  "ASST": {
+    "total_events": 10,
+    "success_events": 3,
+    "success_rate": 0.3,
+    "rvol_success_q60": 1.816899290411011,
+    "spread_success_q90": 0.059136143309768616,
+    "score_success_q70": 0.65
+  },
+  "ASTL": {
+    "total_events": 9,
+    "success_events": 2,
+    "success_rate": 0.2222222222222222,
+    "rvol_success_q60": 4.681008402531331,
+    "spread_success_q90": 0.05336643931235286,
+    "score_success_q70": 0.65
+  },
+  "ATLX": {
+    "total_events": 25,
+    "success_events": 5,
+    "success_rate": 0.2,
+    "rvol_success_q60": 3.6480740720198437,
+    "spread_success_q90": 0.06868492228400294,
+    "score_success_q70": 0.65
+  },
+  "ATOM": {
+    "total_events": 18,
+    "success_events": 5,
+    "success_rate": 0.2777777777777778,
+    "rvol_success_q60": 2.338924335325883,
+    "spread_success_q90": 0.06624785836664757,
+    "score_success_q70": 0.65
+  },
+  "AVR": {
+    "total_events": 19,
+    "success_events": 6,
+    "success_rate": 0.3157894736842105,
+    "rvol_success_q60": 3.1668410632415265,
+    "spread_success_q90": 0.06768888969824996,
+    "score_success_q70": 0.65
+  },
+  "AXTI": {
+    "total_events": 20,
+    "success_events": 5,
+    "success_rate": 0.25,
+    "rvol_success_q60": 2.559191941221974,
+    "spread_success_q90": 0.06208078335373309,
+    "score_success_q70": 0.65
+  },
+  "BCAX": {
+    "total_events": 14,
+    "success_events": 2,
+    "success_rate": 0.14285714285714285,
+    "rvol_success_q60": 5.869373348623682,
+    "spread_success_q90": 0.04859602874754991,
+    "score_success_q70": 0.65
+  },
+  "BCYC": {
+    "total_events": 9,
+    "success_events": 1,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 2.9149270592854615,
+    "spread_success_q90": 0.050787037037037096,
+    "score_success_q70": 0.65
+  },
+  "BGL": {
+    "total_events": 25,
+    "success_events": 3,
+    "success_rate": 0.12,
+    "rvol_success_q60": 5.950719500745313,
+    "spread_success_q90": 0.0698777692658403,
+    "score_success_q70": 0.65
+  },
+  "BIOX": {
+    "total_events": 17,
+    "success_events": 8,
+    "success_rate": 0.47058823529411764,
+    "rvol_success_q60": 2.3171417608510945,
+    "spread_success_q90": 0.0618085064135658,
+    "score_success_q70": 0.65
+  },
+  "BLBX": {
+    "total_events": 23,
+    "success_events": 4,
+    "success_rate": 0.17391304347826086,
+    "rvol_success_q60": 5.266770389627195,
+    "spread_success_q90": 0.047336761784527524,
+    "score_success_q70": 0.65
+  },
+  "BLNE": {
+    "total_events": 16,
+    "success_events": 3,
+    "success_rate": 0.1875,
+    "rvol_success_q60": 2.972191069861753,
+    "spread_success_q90": 0.06912519250272327,
+    "score_success_q70": 0.65
+  },
+  "BNC": {
+    "total_events": 20,
+    "success_events": 4,
+    "success_rate": 0.2,
+    "rvol_success_q60": 3.7439280094141942,
+    "spread_success_q90": 0.05787966897785737,
+    "score_success_q70": 0.65
+  },
+  "BNKK": {
+    "total_events": 9,
+    "success_events": 2,
+    "success_rate": 0.2222222222222222,
+    "rvol_success_q60": 7.044823844377531,
+    "spread_success_q90": 0.06888051259609104,
+    "score_success_q70": 0.65
+  },
+  "BREA": {
+    "total_events": 9,
+    "success_events": 1,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 7.842753292724865,
+    "spread_success_q90": 0.028571428571428567,
+    "score_success_q70": 0.65
+  },
+  "BTBT": {
+    "total_events": 16,
+    "success_events": 1,
+    "success_rate": 0.0625,
+    "rvol_success_q60": 2.15348154229866,
+    "spread_success_q90": 0.05989583333333333,
+    "score_success_q70": 0.65
+  },
+  "BTQ": {
+    "total_events": 4,
+    "success_events": 3,
+    "success_rate": 0.75,
+    "rvol_success_q60": 4.890285763725384,
+    "spread_success_q90": 0.07261048513052656,
+    "score_success_q70": 0.65
+  },
+  "BYND": {
+    "total_events": 9,
+    "success_events": 2,
+    "success_rate": 0.2222222222222222,
+    "rvol_success_q60": 3.9357021498931566,
+    "spread_success_q90": 0.06494489318336225,
+    "score_success_q70": 0.65
+  },
+  "BZAI": {
+    "total_events": 20,
+    "success_events": 7,
+    "success_rate": 0.35,
+    "rvol_success_q60": 2.9882125805263406,
+    "spread_success_q90": 0.06689883632039412,
+    "score_success_q70": 0.65
+  },
+  "CABA": {
+    "total_events": 23,
+    "success_events": 7,
+    "success_rate": 0.30434782608695654,
+    "rvol_success_q60": 3.180372294734623,
+    "spread_success_q90": 0.06496956786366412,
+    "score_success_q70": 0.65
+  },
+  "CAN": {
+    "total_events": 9,
+    "success_events": 4,
+    "success_rate": 0.4444444444444444,
+    "rvol_success_q60": 1.6817539579804488,
+    "spread_success_q90": 0.07627970383042425,
+    "score_success_q70": 0.65
+  },
+  "CAPT": {
+    "total_events": 12,
+    "success_events": 2,
+    "success_rate": 0.16666666666666666,
+    "rvol_success_q60": 6.8194211482069065,
+    "spread_success_q90": 0.050946265638324814,
+    "score_success_q70": 0.65
+  },
+  "CCCC": {
+    "total_events": 18,
+    "success_events": 3,
+    "success_rate": 0.16666666666666666,
+    "rvol_success_q60": 3.9472516955861647,
+    "spread_success_q90": 0.07409710856519372,
+    "score_success_q70": 0.65
+  },
+  "CGEM": {
+    "total_events": 9,
+    "success_events": 1,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 3.4610500634211006,
+    "spread_success_q90": 0.07272727272727267,
+    "score_success_q70": 0.65
+  },
+  "CGEN": {
+    "total_events": 17,
+    "success_events": 1,
+    "success_rate": 0.058823529411764705,
+    "rvol_success_q60": 5.292030776572469,
+    "spread_success_q90": 0.04545454545454549,
+    "score_success_q70": 0.65
+  },
+  "CGTX": {
+    "total_events": 25,
+    "success_events": 5,
+    "success_rate": 0.2,
+    "rvol_success_q60": 3.6505423182879433,
+    "spread_success_q90": 0.06442612555485096,
+    "score_success_q70": 0.65
+  },
+  "CHRS": {
+    "total_events": 14,
+    "success_events": 1,
+    "success_rate": 0.07142857142857142,
+    "rvol_success_q60": 1.8290018594577915,
+    "spread_success_q90": 0.054216867469879436,
+    "score_success_q70": 0.65
+  },
+  "CJET": {
+    "total_events": 14,
+    "success_events": 2,
+    "success_rate": 0.14285714285714285,
+    "rvol_success_q60": 5.510621658824134,
+    "spread_success_q90": 0.052075471698113204,
+    "score_success_q70": 0.65
+  },
+  "CLNN": {
+    "total_events": 26,
+    "success_events": 4,
+    "success_rate": 0.15384615384615385,
+    "rvol_success_q60": 2.3874697124132487,
+    "spread_success_q90": 0.07397866955892994,
+    "score_success_q70": 0.65
+  },
+  "CLYM": {
+    "total_events": 12,
+    "success_events": 2,
+    "success_rate": 0.16666666666666666,
+    "rvol_success_q60": 3.1814463369977544,
+    "spread_success_q90": 0.04711297637582069,
+    "score_success_q70": 0.65
+  },
+  "CMBM": {
+    "total_events": 25,
+    "success_events": 3,
+    "success_rate": 0.12,
+    "rvol_success_q60": 3.2371818956004685,
+    "spread_success_q90": 0.05805075465534136,
+    "score_success_q70": 0.65
+  },
+  "CPSH": {
+    "total_events": 20,
+    "success_events": 4,
+    "success_rate": 0.2,
+    "rvol_success_q60": 4.506891890885203,
+    "spread_success_q90": 0.0725936751512198,
+    "score_success_q70": 0.65
+  },
+  "CRBP": {
+    "total_events": 18,
+    "success_events": 3,
+    "success_rate": 0.16666666666666666,
+    "rvol_success_q60": 5.690100122146654,
+    "spread_success_q90": 0.06486330698287222,
+    "score_success_q70": 0.65
+  },
+  "CRML": {
+    "total_events": 11,
+    "success_events": 5,
+    "success_rate": 0.45454545454545453,
+    "rvol_success_q60": 1.8953495211573141,
+    "spread_success_q90": 0.07037112213124205,
+    "score_success_q70": 0.65
+  },
+  "CSAI": {
+    "total_events": 22,
+    "success_events": 6,
+    "success_rate": 0.2727272727272727,
+    "rvol_success_q60": 2.8614641819296955,
+    "spread_success_q90": 0.06717074325924421,
+    "score_success_q70": 0.65
+  },
+  "CTMX": {
+    "total_events": 17,
+    "success_events": 4,
+    "success_rate": 0.23529411764705882,
+    "rvol_success_q60": 4.713753290491893,
+    "spread_success_q90": 0.0553696741854636,
+    "score_success_q70": 0.65
+  },
+  "CURR": {
+    "total_events": 17,
+    "success_events": 4,
+    "success_rate": 0.23529411764705882,
+    "rvol_success_q60": 5.660277111395927,
+    "spread_success_q90": 0.07254297827239002,
+    "score_success_q70": 0.65
+  },
+  "DFDV": {
+    "total_events": 17,
+    "success_events": 3,
+    "success_rate": 0.17647058823529413,
+    "rvol_success_q60": 2.130997514734015,
+    "spread_success_q90": 0.044954815265742694,
+    "score_success_q70": 0.65
+  },
+  "DFLI": {
+    "total_events": 15,
+    "success_events": 2,
+    "success_rate": 0.13333333333333333,
+    "rvol_success_q60": 2.4081880187141125,
+    "spread_success_q90": 0.06487629459148452,
+    "score_success_q70": 0.65
+  },
+  "DGXX": {
+    "total_events": 19,
+    "success_events": 5,
+    "success_rate": 0.2631578947368421,
+    "rvol_success_q60": 2.049794839600763,
+    "spread_success_q90": 0.07297480309348162,
+    "score_success_q70": 0.65
+  },
+  "DOMH": {
+    "total_events": 19,
+    "success_events": 3,
+    "success_rate": 0.15789473684210525,
+    "rvol_success_q60": 3.994119631208088,
+    "spread_success_q90": 0.06680578371738521,
+    "score_success_q70": 0.65
+  },
+  "DPRO": {
+    "total_events": 18,
+    "success_events": 5,
+    "success_rate": 0.2777777777777778,
+    "rvol_success_q60": 5.307247728342705,
+    "spread_success_q90": 0.07286666432395078,
+    "score_success_q70": 0.65
+  },
+  "DSGN": {
+    "total_events": 18,
+    "success_events": 1,
+    "success_rate": 0.05555555555555555,
+    "rvol_success_q60": 3.7251306245105003,
+    "spread_success_q90": 0.028649386084583898,
+    "score_success_q70": 0.65
+  },
+  "DTCK": {
+    "total_events": 14,
+    "success_events": 2,
+    "success_rate": 0.14285714285714285,
+    "rvol_success_q60": 5.030084429405189,
+    "spread_success_q90": 0.06146769623909778,
+    "score_success_q70": 0.65
+  },
+  "DTIL": {
+    "total_events": 19,
+    "success_events": 1,
+    "success_rate": 0.05263157894736842,
+    "rvol_success_q60": 3.4272906853054788,
+    "spread_success_q90": 0.0356037151702787,
+    "score_success_q70": 0.65
+  },
+  "DVLT": {
+    "total_events": 10,
+    "success_events": 6,
+    "success_rate": 0.6,
+    "rvol_success_q60": 2.42759336884232,
+    "spread_success_q90": 0.07471201466604638,
+    "score_success_q70": 0.65
+  },
+  "ECX": {
+    "total_events": 19,
+    "success_events": 3,
+    "success_rate": 0.15789473684210525,
+    "rvol_success_q60": 4.455583624126555,
+    "spread_success_q90": 0.05217181467181468,
+    "score_success_q70": 0.65
+  },
+  "EDIT": {
+    "total_events": 14,
+    "success_events": 1,
+    "success_rate": 0.07142857142857142,
+    "rvol_success_q60": 3.0170055148825425,
+    "spread_success_q90": 0.05449591280653956,
+    "score_success_q70": 0.65
+  },
+  "EHTH": {
+    "total_events": 15,
+    "success_events": 3,
+    "success_rate": 0.2,
+    "rvol_success_q60": 5.105481613989439,
+    "spread_success_q90": 0.06522480164560684,
+    "score_success_q70": 0.65
+  },
+  "ELDN": {
+    "total_events": 14,
+    "success_events": 3,
+    "success_rate": 0.21428571428571427,
+    "rvol_success_q60": 4.97219964173285,
+    "spread_success_q90": 0.05387545787545784,
+    "score_success_q70": 0.65
+  },
+  "EOSEW": {
+    "total_events": 9,
+    "success_events": 2,
+    "success_rate": 0.2222222222222222,
+    "rvol_success_q60": 6.525425823849132,
+    "spread_success_q90": 0.06014942467504791,
+    "score_success_q70": 0.65
+  },
+  "ESLA": {
+    "total_events": 23,
+    "success_events": 5,
+    "success_rate": 0.21739130434782608,
+    "rvol_success_q60": 7.633202072105013,
+    "spread_success_q90": 0.06362023070097597,
+    "score_success_q70": 0.65
+  },
+  "EU": {
+    "total_events": 24,
+    "success_events": 4,
+    "success_rate": 0.16666666666666666,
+    "rvol_success_q60": 4.487639107736646,
+    "spread_success_q90": 0.06209150326797381,
+    "score_success_q70": 0.65
+  },
+  "EVAX": {
+    "total_events": 23,
+    "success_events": 6,
+    "success_rate": 0.2608695652173913,
+    "rvol_success_q60": 2.7757988794620583,
+    "spread_success_q90": 0.0720124338015197,
+    "score_success_q70": 0.65
+  },
+  "FATE": {
+    "total_events": 18,
+    "success_events": 2,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 4.094194716933099,
+    "spread_success_q90": 0.05515904385469606,
+    "score_success_q70": 0.65
+  },
+  "FCEL": {
+    "total_events": 18,
+    "success_events": 7,
+    "success_rate": 0.3888888888888889,
+    "rvol_success_q60": 2.2639401717515,
+    "spread_success_q90": 0.06715897064037725,
+    "score_success_q70": 0.65
+  },
+  "FIP": {
+    "total_events": 13,
+    "success_events": 1,
+    "success_rate": 0.07692307692307693,
+    "rvol_success_q60": 1.5087908971790955,
+    "spread_success_q90": 0.02510460251046027,
+    "score_success_q70": 0.65
+  },
+  "FLUX": {
+    "total_events": 32,
+    "success_events": 11,
+    "success_rate": 0.34375,
+    "rvol_success_q60": 3.157080791873958,
+    "spread_success_q90": 0.07276119402985085,
+    "score_success_q70": 0.65
+  },
+  "FMFC": {
+    "total_events": 11,
+    "success_events": 3,
+    "success_rate": 0.2727272727272727,
+    "rvol_success_q60": 2.518868850089457,
+    "spread_success_q90": 0.06549402014820356,
+    "score_success_q70": 0.65
+  },
+  "FORR": {
+    "total_events": 7,
+    "success_events": 1,
+    "success_rate": 0.14285714285714285,
+    "rvol_success_q60": 2.935411330089212,
+    "spread_success_q90": 0.052064631956911876,
+    "score_success_q70": 0.65
+  },
+  "FULC": {
+    "total_events": 11,
+    "success_events": 1,
+    "success_rate": 0.09090909090909091,
+    "rvol_success_q60": 4.851081256400115,
+    "spread_success_q90": 0.05235042735042738,
+    "score_success_q70": 0.65
+  },
+  "GALT": {
+    "total_events": 18,
+    "success_events": 2,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 3.43836325850439,
+    "spread_success_q90": 0.046357053682896394,
+    "score_success_q70": 0.65
+  },
+  "GDYN": {
+    "total_events": 2,
+    "success_events": 1,
+    "success_rate": 0.5,
+    "rvol_success_q60": 2.6122173479108217,
+    "spread_success_q90": 0.06431273644388397,
+    "score_success_q70": 0.65
+  },
+  "GNLX": {
+    "total_events": 26,
+    "success_events": 2,
+    "success_rate": 0.07692307692307693,
+    "rvol_success_q60": 4.932099720403512,
+    "spread_success_q90": 0.06572789998633702,
+    "score_success_q70": 0.65
+  },
+  "GWAV": {
+    "total_events": 20,
+    "success_events": 6,
+    "success_rate": 0.3,
+    "rvol_success_q60": 2.9579851121132483,
+    "spread_success_q90": 0.06462694578636607,
+    "score_success_q70": 0.65
+  },
+  "HAIN": {
+    "total_events": 7,
+    "success_events": 2,
+    "success_rate": 0.2857142857142857,
+    "rvol_success_q60": 2.700330748159088,
+    "spread_success_q90": 0.050877697841726646,
+    "score_success_q70": 0.65
+  },
+  "HIMZ": {
+    "total_events": 19,
+    "success_events": 3,
+    "success_rate": 0.15789473684210525,
+    "rvol_success_q60": 4.384315558081105,
+    "spread_success_q90": 0.046010458369100414,
+    "score_success_q70": 0.65
+  },
+  "HIVE": {
+    "total_events": 9,
+    "success_events": 1,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 2.5492641307917614,
+    "spread_success_q90": 0.060037523452157654,
+    "score_success_q70": 0.65
+  },
+  "HOLO": {
+    "total_events": 21,
+    "success_events": 4,
+    "success_rate": 0.19047619047619047,
+    "rvol_success_q60": 5.897975109875984,
+    "spread_success_q90": 0.06261988647484826,
+    "score_success_q70": 0.65
+  },
+  "HOVR": {
+    "total_events": 26,
+    "success_events": 9,
+    "success_rate": 0.34615384615384615,
+    "rvol_success_q60": 3.593735771627777,
+    "spread_success_q90": 0.07675788405715413,
+    "score_success_q70": 0.65
+  },
+  "HOWL": {
+    "total_events": 16,
+    "success_events": 1,
+    "success_rate": 0.0625,
+    "rvol_success_q60": 2.098379955059384,
+    "spread_success_q90": 0.06796116504854365,
+    "score_success_q70": 0.65
+  },
+  "HSDT": {
+    "total_events": 11,
+    "success_events": 2,
+    "success_rate": 0.18181818181818182,
+    "rvol_success_q60": 6.127450390591806,
+    "spread_success_q90": 0.06541646624458866,
+    "score_success_q70": 0.65
+  },
+  "HYPD": {
+    "total_events": 3,
+    "success_events": 1,
+    "success_rate": 0.3333333333333333,
+    "rvol_success_q60": 5.011599901835079,
+    "spread_success_q90": 0.06060606060606066,
+    "score_success_q70": 0.65
+  },
+  "HYPR": {
+    "total_events": 21,
+    "success_events": 4,
+    "success_rate": 0.19047619047619047,
+    "rvol_success_q60": 6.316671836309098,
+    "spread_success_q90": 0.06139841243033269,
+    "score_success_q70": 0.65
+  },
+  "IART": {
+    "total_events": 2,
+    "success_events": 1,
+    "success_rate": 0.5,
+    "rvol_success_q60": 1.5753374838790795,
+    "spread_success_q90": 0.06308610400681998,
+    "score_success_q70": 0.65
+  },
+  "IBIO": {
+    "total_events": 16,
+    "success_events": 5,
+    "success_rate": 0.3125,
+    "rvol_success_q60": 6.440123911115828,
+    "spread_success_q90": 0.07452758881330317,
+    "score_success_q70": 0.65
+  },
+  "IHRT": {
+    "total_events": 16,
+    "success_events": 4,
+    "success_rate": 0.25,
+    "rvol_success_q60": 7.100037001640222,
+    "spread_success_q90": 0.06887947097292763,
+    "score_success_q70": 0.65
+  },
+  "IMAB": {
+    "total_events": 21,
+    "success_events": 4,
+    "success_rate": 0.19047619047619047,
+    "rvol_success_q60": 2.677980692403123,
+    "spread_success_q90": 0.06781792051571735,
+    "score_success_q70": 0.65
+  },
+  "IMPP": {
+    "total_events": 12,
+    "success_events": 2,
+    "success_rate": 0.16666666666666666,
+    "rvol_success_q60": 2.2902366410604835,
+    "spread_success_q90": 0.06066860465116283,
+    "score_success_q70": 0.65
+  },
+  "IMRX": {
+    "total_events": 14,
+    "success_events": 2,
+    "success_rate": 0.14285714285714285,
+    "rvol_success_q60": 2.655895924653706,
+    "spread_success_q90": 0.0646335447498239,
+    "score_success_q70": 0.65
+  },
+  "INDI": {
+    "total_events": 16,
+    "success_events": 3,
+    "success_rate": 0.1875,
+    "rvol_success_q60": 3.5944099752480674,
+    "spread_success_q90": 0.06473639455782315,
+    "score_success_q70": 0.65
+  },
+  "INTS": {
+    "total_events": 18,
+    "success_events": 2,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 2.7827751220098715,
+    "spread_success_q90": 0.06744459676502289,
+    "score_success_q70": 0.65
+  },
+  "INV": {
+    "total_events": 26,
+    "success_events": 3,
+    "success_rate": 0.11538461538461539,
+    "rvol_success_q60": 3.8501576666682054,
+    "spread_success_q90": 0.07363383760419881,
+    "score_success_q70": 0.65
+  },
+  "IOBT": {
+    "total_events": 11,
+    "success_events": 3,
+    "success_rate": 0.2727272727272727,
+    "rvol_success_q60": 2.483487993287926,
+    "spread_success_q90": 0.0740048003314644,
+    "score_success_q70": 0.65
+  },
+  "IRBT": {
+    "total_events": 24,
+    "success_events": 7,
+    "success_rate": 0.2916666666666667,
+    "rvol_success_q60": 2.5212489303864,
+    "spread_success_q90": 0.0693154833054427,
+    "score_success_q70": 0.65
+  },
+  "IRD": {
+    "total_events": 22,
+    "success_events": 4,
+    "success_rate": 0.18181818181818182,
+    "rvol_success_q60": 5.3566230527186685,
+    "spread_success_q90": 0.06081799591002048,
+    "score_success_q70": 0.65
+  },
+  "IRWD": {
+    "total_events": 25,
+    "success_events": 3,
+    "success_rate": 0.12,
+    "rvol_success_q60": 2.6752842928879432,
+    "spread_success_q90": 0.056647864625302226,
+    "score_success_q70": 0.65
+  },
+  "IZEA": {
+    "total_events": 17,
+    "success_events": 1,
+    "success_rate": 0.058823529411764705,
+    "rvol_success_q60": 3.2423545633958097,
+    "spread_success_q90": 0.048717948717948704,
+    "score_success_q70": 0.65
+  },
+  "JBIO": {
+    "total_events": 11,
+    "success_events": 1,
+    "success_rate": 0.09090909090909091,
+    "rvol_success_q60": 1.769973014959725,
+    "spread_success_q90": 0.03614457831325313,
+    "score_success_q70": 0.65
+  },
+  "KDK": {
+    "total_events": 13,
+    "success_events": 4,
+    "success_rate": 0.3076923076923077,
+    "rvol_success_q60": 2.350292013634001,
+    "spread_success_q90": 0.07534055186866923,
+    "score_success_q70": 0.65
+  },
+  "KLTO": {
+    "total_events": 17,
+    "success_events": 1,
+    "success_rate": 0.058823529411764705,
+    "rvol_success_q60": 18.931433755451053,
+    "spread_success_q90": 0.06169019532005412,
+    "score_success_q70": 0.65
+  },
+  "KOPN": {
+    "total_events": 14,
+    "success_events": 1,
+    "success_rate": 0.07142857142857142,
+    "rvol_success_q60": 2.7310871873337685,
+    "spread_success_q90": 0.07438016528925627,
+    "score_success_q70": 0.65
+  },
+  "KURA": {
+    "total_events": 7,
+    "success_events": 1,
+    "success_rate": 0.14285714285714285,
+    "rvol_success_q60": 7.344113919714929,
+    "spread_success_q90": 0.03192584963954691,
+    "score_success_q70": 0.65
+  },
+  "KXIN": {
+    "total_events": 20,
+    "success_events": 5,
+    "success_rate": 0.25,
+    "rvol_success_q60": 2.450874303497223,
+    "spread_success_q90": 0.07159139374020718,
+    "score_success_q70": 0.65
+  },
+  "KYTX": {
+    "total_events": 26,
+    "success_events": 6,
+    "success_rate": 0.23076923076923078,
+    "rvol_success_q60": 3.8540756291160516,
+    "spread_success_q90": 0.07267054590000771,
+    "score_success_q70": 0.65
+  },
+  "LAES": {
+    "total_events": 27,
+    "success_events": 9,
+    "success_rate": 0.3333333333333333,
+    "rvol_success_q60": 3.2746036523488047,
+    "spread_success_q90": 0.07299312239943162,
+    "score_success_q70": 0.65
+  },
+  "LAZR": {
+    "total_events": 28,
+    "success_events": 9,
+    "success_rate": 0.32142857142857145,
+    "rvol_success_q60": 2.29696337881365,
+    "spread_success_q90": 0.06167096061832898,
+    "score_success_q70": 0.65
+  },
+  "LGO": {
+    "total_events": 15,
+    "success_events": 3,
+    "success_rate": 0.2,
+    "rvol_success_q60": 6.775423393138624,
+    "spread_success_q90": 0.07812388113139991,
+    "score_success_q70": 0.65
+  },
+  "LITM": {
+    "total_events": 13,
+    "success_events": 2,
+    "success_rate": 0.15384615384615385,
+    "rvol_success_q60": 5.715307898137615,
+    "spread_success_q90": 0.06911353711790387,
+    "score_success_q70": 0.65
+  },
+  "LPRO": {
+    "total_events": 12,
+    "success_events": 2,
+    "success_rate": 0.16666666666666666,
+    "rvol_success_q60": 10.402949706859733,
+    "spread_success_q90": 0.05300151975683894,
+    "score_success_q70": 0.65
+  },
+  "LPSN": {
+    "total_events": 13,
+    "success_events": 5,
+    "success_rate": 0.38461538461538464,
+    "rvol_success_q60": 4.442130548898075,
+    "spread_success_q90": 0.07127743902439024,
+    "score_success_q70": 0.65
+  },
+  "LPTH": {
+    "total_events": 18,
+    "success_events": 4,
+    "success_rate": 0.2222222222222222,
+    "rvol_success_q60": 1.805559900713035,
+    "spread_success_q90": 0.06918452558039334,
+    "score_success_q70": 0.65
+  },
+  "LUNG": {
+    "total_events": 10,
+    "success_events": 4,
+    "success_rate": 0.4,
+    "rvol_success_q60": 4.362013368155133,
+    "spread_success_q90": 0.0599708525625456,
+    "score_success_q70": 0.65
+  },
+  "LWLG": {
+    "total_events": 27,
+    "success_events": 6,
+    "success_rate": 0.2222222222222222,
+    "rvol_success_q60": 3.870436379054714,
+    "spread_success_q90": 0.06770397666900271,
+    "score_success_q70": 0.65
+  },
+  "LXEO": {
+    "total_events": 14,
+    "success_events": 3,
+    "success_rate": 0.21428571428571427,
+    "rvol_success_q60": 4.367087326941575,
+    "spread_success_q90": 0.04805583852103383,
+    "score_success_q70": 0.65
+  },
+  "MAMK": {
+    "total_events": 8,
+    "success_events": 3,
+    "success_rate": 0.375,
+    "rvol_success_q60": 4.534747694336067,
+    "spread_success_q90": 0.06973415429192313,
+    "score_success_q70": 0.65
+  },
+  "MBOT": {
+    "total_events": 8,
+    "success_events": 1,
+    "success_rate": 0.125,
+    "rvol_success_q60": 1.8601141217697108,
+    "spread_success_q90": 0.05882352941176465,
+    "score_success_q70": 0.65
+  },
+  "MFH": {
+    "total_events": 17,
+    "success_events": 5,
+    "success_rate": 0.29411764705882354,
+    "rvol_success_q60": 3.2091240876843528,
+    "spread_success_q90": 0.07669128543717402,
+    "score_success_q70": 0.65
+  },
+  "MGX": {
+    "total_events": 17,
+    "success_events": 1,
+    "success_rate": 0.058823529411764705,
+    "rvol_success_q60": 3.3498254595764885,
+    "spread_success_q90": 0.062068965517241434,
+    "score_success_q70": 0.65
+  },
+  "MIMI": {
+    "total_events": 6,
+    "success_events": 3,
+    "success_rate": 0.5,
+    "rvol_success_q60": 6.22524145575889,
+    "spread_success_q90": 0.06723172189611394,
+    "score_success_q70": 0.65
+  },
+  "MIRA": {
+    "total_events": 5,
+    "success_events": 1,
+    "success_rate": 0.2,
+    "rvol_success_q60": 3.303855463880544,
+    "spread_success_q90": 0.05232558139534888,
+    "score_success_q70": 0.65
+  },
+  "MNMD": {
+    "total_events": 20,
+    "success_events": 2,
+    "success_rate": 0.1,
+    "rvol_success_q60": 2.2819275252660773,
+    "spread_success_q90": 0.04390625948637001,
+    "score_success_q70": 0.65
+  },
+  "MOB": {
+    "total_events": 21,
+    "success_events": 5,
+    "success_rate": 0.23809523809523808,
+    "rvol_success_q60": 1.9369291315660861,
+    "spread_success_q90": 0.06690271493212664,
+    "score_success_q70": 0.65
+  },
+  "MSAI": {
+    "total_events": 18,
+    "success_events": 2,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 3.617909851338606,
+    "spread_success_q90": 0.06442639091440695,
+    "score_success_q70": 0.65
+  },
+  "MST": {
+    "total_events": 11,
+    "success_events": 1,
+    "success_rate": 0.09090909090909091,
+    "rvol_success_q60": 8.763283700512803,
+    "spread_success_q90": 0.046466602129719134,
+    "score_success_q70": 0.65
+  },
+  "MSTX": {
+    "total_events": 10,
+    "success_events": 1,
+    "success_rate": 0.1,
+    "rvol_success_q60": 6.675974505658115,
+    "spread_success_q90": 0.06527196652719675,
+    "score_success_q70": 0.65
+  },
+  "NAKA": {
+    "total_events": 17,
+    "success_events": 5,
+    "success_rate": 0.29411764705882354,
+    "rvol_success_q60": 3.674093010507076,
+    "spread_success_q90": 0.06862432598362035,
+    "score_success_q70": 0.65
+  },
+  "NAUT": {
+    "total_events": 28,
+    "success_events": 6,
+    "success_rate": 0.21428571428571427,
+    "rvol_success_q60": 4.849991858996405,
+    "spread_success_q90": 0.07200116130905335,
+    "score_success_q70": 0.65
+  },
+  "NB": {
+    "total_events": 12,
+    "success_events": 1,
+    "success_rate": 0.08333333333333333,
+    "rvol_success_q60": 3.1728698812194733,
+    "spread_success_q90": 0.03645833333333333,
+    "score_success_q70": 0.65
+  },
+  "NEOV": {
+    "total_events": 15,
+    "success_events": 3,
+    "success_rate": 0.2,
+    "rvol_success_q60": 5.449340295921259,
+    "spread_success_q90": 0.06629249256351713,
+    "score_success_q70": 0.65
+  },
+  "NKLR": {
+    "total_events": 6,
+    "success_events": 3,
+    "success_rate": 0.5,
+    "rvol_success_q60": 3.429306119310499,
+    "spread_success_q90": 0.06279998666355488,
+    "score_success_q70": 0.65
+  },
+  "NMRA": {
+    "total_events": 19,
+    "success_events": 3,
+    "success_rate": 0.15789473684210525,
+    "rvol_success_q60": 2.792885584467463,
+    "spread_success_q90": 0.06013031655635939,
+    "score_success_q70": 0.65
+  },
+  "NNNN": {
+    "total_events": 22,
+    "success_events": 1,
+    "success_rate": 0.045454545454545456,
+    "rvol_success_q60": 3.617949354188004,
+    "spread_success_q90": 0.06711180759010706,
+    "score_success_q70": 0.65
+  },
+  "NOTV": {
+    "total_events": 14,
+    "success_events": 1,
+    "success_rate": 0.07142857142857142,
+    "rvol_success_q60": 6.4016474951617095,
+    "spread_success_q90": 0.04605263157894741,
+    "score_success_q70": 0.65
+  },
+  "NTLA": {
+    "total_events": 22,
+    "success_events": 4,
+    "success_rate": 0.18181818181818182,
+    "rvol_success_q60": 2.3630679179868674,
+    "spread_success_q90": 0.0744198875978346,
+    "score_success_q70": 0.65
+  },
+  "NUAI": {
+    "total_events": 3,
+    "success_events": 2,
+    "success_rate": 0.6666666666666666,
+    "rvol_success_q60": 2.544107451488139,
+    "spread_success_q90": 0.049917446340121116,
+    "score_success_q70": 0.65
+  },
+  "NUKK": {
+    "total_events": 23,
+    "success_events": 10,
+    "success_rate": 0.43478260869565216,
+    "rvol_success_q60": 3.146217653299801,
+    "spread_success_q90": 0.07010129256773545,
+    "score_success_q70": 0.65
+  },
+  "NVA": {
+    "total_events": 22,
+    "success_events": 4,
+    "success_rate": 0.18181818181818182,
+    "rvol_success_q60": 4.503505987279003,
+    "spread_success_q90": 0.07214898646949355,
+    "score_success_q70": 0.65
+  },
+  "NVX": {
+    "total_events": 16,
+    "success_events": 5,
+    "success_rate": 0.3125,
+    "rvol_success_q60": 2.0556629852685018,
+    "spread_success_q90": 0.06682758620689648,
+    "score_success_q70": 0.65
+  },
+  "NXTC": {
+    "total_events": 22,
+    "success_events": 5,
+    "success_rate": 0.22727272727272727,
+    "rvol_success_q60": 4.026276276795784,
+    "spread_success_q90": 0.07086183310533511,
+    "score_success_q70": 0.65
+  },
+  "NXXT": {
+    "total_events": 26,
+    "success_events": 5,
+    "success_rate": 0.19230769230769232,
+    "rvol_success_q60": 4.188841591307315,
+    "spread_success_q90": 0.06801986343885791,
+    "score_success_q70": 0.65
+  },
+  "OMEX": {
+    "total_events": 25,
+    "success_events": 4,
+    "success_rate": 0.16,
+    "rvol_success_q60": 2.8944064063592276,
+    "spread_success_q90": 0.05504374678332474,
+    "score_success_q70": 0.65
+  },
+  "ONMD": {
+    "total_events": 15,
+    "success_events": 3,
+    "success_rate": 0.2,
+    "rvol_success_q60": 2.3947009515690554,
+    "spread_success_q90": 0.052757549523858076,
+    "score_success_q70": 0.65
+  },
+  "OPAL": {
+    "total_events": 19,
+    "success_events": 2,
+    "success_rate": 0.10526315789473684,
+    "rvol_success_q60": 2.5643719384209014,
+    "spread_success_q90": 0.0642918454935622,
+    "score_success_q70": 0.65
+  },
+  "PACB": {
+    "total_events": 15,
+    "success_events": 1,
+    "success_rate": 0.06666666666666667,
+    "rvol_success_q60": 8.920318726029175,
+    "spread_success_q90": 0.041958041958041994,
+    "score_success_q70": 0.65
+  },
+  "PAL": {
+    "total_events": 13,
+    "success_events": 2,
+    "success_rate": 0.15384615384615385,
+    "rvol_success_q60": 2.9711170283606987,
+    "spread_success_q90": 0.05554750362336941,
+    "score_success_q70": 0.65
+  },
+  "PDYN": {
+    "total_events": 20,
+    "success_events": 4,
+    "success_rate": 0.2,
+    "rvol_success_q60": 5.79610747263147,
+    "spread_success_q90": 0.0672298582127394,
+    "score_success_q70": 0.65
+  },
+  "PLCE": {
+    "total_events": 28,
+    "success_events": 4,
+    "success_rate": 0.14285714285714285,
+    "rvol_success_q60": 2.9605326826369414,
+    "spread_success_q90": 0.06216469428007897,
+    "score_success_q70": 0.65
+  },
+  "PLTZ": {
+    "total_events": 17,
+    "success_events": 4,
+    "success_rate": 0.23529411764705882,
+    "rvol_success_q60": 2.3304233992442245,
+    "spread_success_q90": 0.06563779745434424,
+    "score_success_q70": 0.65
+  },
+  "POET": {
+    "total_events": 19,
+    "success_events": 5,
+    "success_rate": 0.2631578947368421,
+    "rvol_success_q60": 2.98545334472924,
+    "spread_success_q90": 0.07049921802443623,
+    "score_success_q70": 0.65
+  },
+  "PRME": {
+    "total_events": 13,
+    "success_events": 4,
+    "success_rate": 0.3076923076923077,
+    "rvol_success_q60": 4.382053128373089,
+    "spread_success_q90": 0.061726197732536965,
+    "score_success_q70": 0.65
+  },
+  "PSNL": {
+    "total_events": 11,
+    "success_events": 1,
+    "success_rate": 0.09090909090909091,
+    "rvol_success_q60": 3.0005560794403316,
+    "spread_success_q90": 0.056094929881337796,
+    "score_success_q70": 0.65
+  },
+  "PSTV": {
+    "total_events": 9,
+    "success_events": 1,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 1.8376918497949055,
+    "spread_success_q90": 0.06839945280437762,
+    "score_success_q70": 0.65
+  },
+  "PXLW": {
+    "total_events": 16,
+    "success_events": 2,
+    "success_rate": 0.125,
+    "rvol_success_q60": 2.0271997325902973,
+    "spread_success_q90": 0.07658702777298601,
+    "score_success_q70": 0.65
+  },
+  "PYXS": {
+    "total_events": 26,
+    "success_events": 7,
+    "success_rate": 0.2692307692307692,
+    "rvol_success_q60": 3.29258941388929,
+    "spread_success_q90": 0.07206709471902842,
+    "score_success_q70": 0.65
+  },
+  "QH": {
+    "total_events": 28,
+    "success_events": 7,
+    "success_rate": 0.25,
+    "rvol_success_q60": 2.786240697225261,
+    "spread_success_q90": 0.06279813146479818,
+    "score_success_q70": 0.65
+  },
+  "QNTM": {
+    "total_events": 18,
+    "success_events": 2,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 3.0901986765228147,
+    "spread_success_q90": 0.06871061504476227,
+    "score_success_q70": 0.65
+  },
+  "QSI": {
+    "total_events": 18,
+    "success_events": 2,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 3.373299625451952,
+    "spread_success_q90": 0.05661981039555415,
+    "score_success_q70": 0.65
+  },
+  "RANI": {
+    "total_events": 11,
+    "success_events": 2,
+    "success_rate": 0.18181818181818182,
+    "rvol_success_q60": 3.357881040189554,
+    "spread_success_q90": 0.06708132457991259,
+    "score_success_q70": 0.65
+  },
+  "RCAT": {
+    "total_events": 14,
+    "success_events": 3,
+    "success_rate": 0.21428571428571427,
+    "rvol_success_q60": 1.8220675473746057,
+    "spread_success_q90": 0.06572916606632044,
+    "score_success_q70": 0.65
+  },
+  "RCKT": {
+    "total_events": 10,
+    "success_events": 1,
+    "success_rate": 0.1,
+    "rvol_success_q60": 4.195002735372229,
+    "spread_success_q90": 0.04819277108433726,
+    "score_success_q70": 0.65
+  },
+  "REKR": {
+    "total_events": 20,
+    "success_events": 4,
+    "success_rate": 0.2,
+    "rvol_success_q60": 3.6619925596476546,
+    "spread_success_q90": 0.0699941280093953,
+    "score_success_q70": 0.65
+  },
+  "RITR": {
+    "total_events": 17,
+    "success_events": 2,
+    "success_rate": 0.11764705882352941,
+    "rvol_success_q60": 10.827905474973035,
+    "spread_success_q90": 0.06049556941253686,
+    "score_success_q70": 0.65
+  },
+  "RLMD": {
+    "total_events": 37,
+    "success_events": 7,
+    "success_rate": 0.1891891891891892,
+    "rvol_success_q60": 2.9741999826771774,
+    "spread_success_q90": 0.055742436305732536,
+    "score_success_q70": 0.65
+  },
+  "RNTX": {
+    "total_events": 16,
+    "success_events": 2,
+    "success_rate": 0.125,
+    "rvol_success_q60": 4.471158157234849,
+    "spread_success_q90": 0.055488850771869686,
+    "score_success_q70": 0.65
+  },
+  "RR": {
+    "total_events": 20,
+    "success_events": 5,
+    "success_rate": 0.25,
+    "rvol_success_q60": 2.982899565795905,
+    "spread_success_q90": 0.07312651057113875,
+    "score_success_q70": 0.65
+  },
+  "RVPH": {
+    "total_events": 17,
+    "success_events": 3,
+    "success_rate": 0.17647058823529413,
+    "rvol_success_q60": 3.096601849592212,
+    "spread_success_q90": 0.060811192479170405,
+    "score_success_q70": 0.65
+  },
+  "RXT": {
+    "total_events": 13,
+    "success_events": 2,
+    "success_rate": 0.15384615384615385,
+    "rvol_success_q60": 6.729970466632595,
+    "spread_success_q90": 0.04496170805291253,
+    "score_success_q70": 0.65
+  },
+  "SANA": {
+    "total_events": 19,
+    "success_events": 2,
+    "success_rate": 0.10526315789473684,
+    "rvol_success_q60": 15.776913387302388,
+    "spread_success_q90": 0.07001256281407042,
+    "score_success_q70": 0.65
+  },
+  "SATL": {
+    "total_events": 15,
+    "success_events": 2,
+    "success_rate": 0.13333333333333333,
+    "rvol_success_q60": 3.3859216547724413,
+    "spread_success_q90": 0.038035355564483814,
+    "score_success_q70": 0.65
+  },
+  "SCWO": {
+    "total_events": 11,
+    "success_events": 1,
+    "success_rate": 0.09090909090909091,
+    "rvol_success_q60": 2.6941270562389743,
+    "spread_success_q90": 0.05016447368421048,
+    "score_success_q70": 0.65
+  },
+  "SDST": {
+    "total_events": 25,
+    "success_events": 8,
+    "success_rate": 0.32,
+    "rvol_success_q60": 4.121470943903124,
+    "spread_success_q90": 0.0638526279628993,
+    "score_success_q70": 0.65
+  },
+  "SERV": {
+    "total_events": 17,
+    "success_events": 2,
+    "success_rate": 0.11764705882352941,
+    "rvol_success_q60": 3.415591805183142,
+    "spread_success_q90": 0.07694345025053693,
+    "score_success_q70": 0.65
+  },
+  "SGML": {
+    "total_events": 11,
+    "success_events": 5,
+    "success_rate": 0.45454545454545453,
+    "rvol_success_q60": 2.675667371832627,
+    "spread_success_q90": 0.07507324364723472,
+    "score_success_q70": 0.65
+  },
+  "SGMT": {
+    "total_events": 11,
+    "success_events": 2,
+    "success_rate": 0.18181818181818182,
+    "rvol_success_q60": 5.7852686795274435,
+    "spread_success_q90": 0.06165512923087634,
+    "score_success_q70": 0.65
+  },
+  "SKBL": {
+    "total_events": 24,
+    "success_events": 4,
+    "success_rate": 0.16666666666666666,
+    "rvol_success_q60": 2.9973525711403903,
+    "spread_success_q90": 0.06988858695652173,
+    "score_success_q70": 0.65
+  },
+  "SKYT": {
+    "total_events": 21,
+    "success_events": 3,
+    "success_rate": 0.14285714285714285,
+    "rvol_success_q60": 2.249531910134335,
+    "spread_success_q90": 0.0670544278017336,
+    "score_success_q70": 0.65
+  },
+  "SKYX": {
+    "total_events": 25,
+    "success_events": 7,
+    "success_rate": 0.28,
+    "rvol_success_q60": 4.260336069363838,
+    "spread_success_q90": 0.07230499561787898,
+    "score_success_q70": 0.65
+  },
+  "SLDB": {
+    "total_events": 11,
+    "success_events": 2,
+    "success_rate": 0.18181818181818182,
+    "rvol_success_q60": 3.557250232557232,
+    "spread_success_q90": 0.06679215292592126,
+    "score_success_q70": 0.65
+  },
+  "SLDP": {
+    "total_events": 15,
+    "success_events": 2,
+    "success_rate": 0.13333333333333333,
+    "rvol_success_q60": 1.7851097332027253,
+    "spread_success_q90": 0.07298425410614913,
+    "score_success_q70": 0.65
+  },
+  "SLMT": {
+    "total_events": 12,
+    "success_events": 1,
+    "success_rate": 0.08333333333333333,
+    "rvol_success_q60": 1.8338635939833194,
+    "spread_success_q90": 0.03929899097185335,
+    "score_success_q70": 0.65
+  },
+  "SLNH": {
+    "total_events": 4,
+    "success_events": 1,
+    "success_rate": 0.25,
+    "rvol_success_q60": 2.4010044755575293,
+    "spread_success_q90": 0.07084468664850131,
+    "score_success_q70": 0.65
+  },
+  "SLS": {
+    "total_events": 17,
+    "success_events": 3,
+    "success_rate": 0.17647058823529413,
+    "rvol_success_q60": 6.505502415975159,
+    "spread_success_q90": 0.06432604455394728,
+    "score_success_q70": 0.65
+  },
+  "SONN": {
+    "total_events": 20,
+    "success_events": 4,
+    "success_rate": 0.2,
+    "rvol_success_q60": 1.7041930544856878,
+    "spread_success_q90": 0.06588328460038982,
+    "score_success_q70": 0.65
+  },
+  "SPAI": {
+    "total_events": 26,
+    "success_events": 2,
+    "success_rate": 0.07692307692307693,
+    "rvol_success_q60": 2.3484560194140705,
+    "spread_success_q90": 0.06840240972839953,
+    "score_success_q70": 0.65
+  },
+  "STEX": {
+    "total_events": 20,
+    "success_events": 5,
+    "success_rate": 0.25,
+    "rvol_success_q60": 2.2745907514463077,
+    "spread_success_q90": 0.07308220480425921,
+    "score_success_q70": 0.65
+  },
+  "STI": {
+    "total_events": 11,
+    "success_events": 1,
+    "success_rate": 0.09090909090909091,
+    "rvol_success_q60": 8.333143535351562,
+    "spread_success_q90": 0.03839430894308949,
+    "score_success_q70": 0.65
+  },
+  "STRO": {
+    "total_events": 15,
+    "success_events": 2,
+    "success_rate": 0.13333333333333333,
+    "rvol_success_q60": 1.67769087834617,
+    "spread_success_q90": 0.06806464024624843,
+    "score_success_q70": 0.65
+  },
+  "SUIG": {
+    "total_events": 7,
+    "success_events": 1,
+    "success_rate": 0.14285714285714285,
+    "rvol_success_q60": 1.8837797388927713,
+    "spread_success_q90": 0.04675324675324668,
+    "score_success_q70": 0.65
+  },
+  "SWIN": {
+    "total_events": 10,
+    "success_events": 2,
+    "success_rate": 0.2,
+    "rvol_success_q60": 3.0843045548802634,
+    "spread_success_q90": 0.06491803278688518,
+    "score_success_q70": 0.65
+  },
+  "SY": {
+    "total_events": 10,
+    "success_events": 1,
+    "success_rate": 0.1,
+    "rvol_success_q60": 6.5525711472641905,
+    "spread_success_q90": 0.0708215297450425,
+    "score_success_q70": 0.65
+  },
+  "TAOX": {
+    "total_events": 4,
+    "success_events": 3,
+    "success_rate": 0.75,
+    "rvol_success_q60": 2.7807525411904988,
+    "spread_success_q90": 0.06591824985607364,
+    "score_success_q70": 0.65
+  },
+  "TARA": {
+    "total_events": 16,
+    "success_events": 3,
+    "success_rate": 0.1875,
+    "rvol_success_q60": 3.6200876750160553,
+    "spread_success_q90": 0.06928960572190633,
+    "score_success_q70": 0.65
+  },
+  "TCRX": {
+    "total_events": 21,
+    "success_events": 5,
+    "success_rate": 0.23809523809523808,
+    "rvol_success_q60": 4.771723862723627,
+    "spread_success_q90": 0.06666666666666665,
+    "score_success_q70": 0.65
+  },
+  "TEAD": {
+    "total_events": 7,
+    "success_events": 2,
+    "success_rate": 0.2857142857142857,
+    "rvol_success_q60": 7.585696103747785,
+    "spread_success_q90": 0.06308377896613183,
+    "score_success_q70": 0.65
+  },
+  "TLRY": {
+    "total_events": 13,
+    "success_events": 3,
+    "success_rate": 0.23076923076923078,
+    "rvol_success_q60": 7.296410359968856,
+    "spread_success_q90": 0.06919104991394152,
+    "score_success_q70": 0.65
+  },
+  "TNYA": {
+    "total_events": 18,
+    "success_events": 3,
+    "success_rate": 0.16666666666666666,
+    "rvol_success_q60": 7.793834658958632,
+    "spread_success_q90": 0.06948409020698172,
+    "score_success_q70": 0.65
+  },
+  "TRON": {
+    "total_events": 18,
+    "success_events": 8,
+    "success_rate": 0.4444444444444444,
+    "rvol_success_q60": 3.260975756936332,
+    "spread_success_q90": 0.06449651046859418,
+    "score_success_q70": 0.65
+  },
+  "TSDD": {
+    "total_events": 10,
+    "success_events": 1,
+    "success_rate": 0.1,
+    "rvol_success_q60": 3.3482359252052976,
+    "spread_success_q90": 0.072829131652661,
+    "score_success_q70": 0.65
+  },
+  "TSHA": {
+    "total_events": 6,
+    "success_events": 1,
+    "success_rate": 0.16666666666666666,
+    "rvol_success_q60": 5.241741306621823,
+    "spread_success_q90": 0.028213166144200583,
+    "score_success_q70": 0.65
+  },
+  "TYGO": {
+    "total_events": 26,
+    "success_events": 4,
+    "success_rate": 0.15384615384615385,
+    "rvol_success_q60": 2.2723216638318715,
+    "spread_success_q90": 0.0629478515874028,
+    "score_success_q70": 0.65
+  },
+  "UPXI": {
+    "total_events": 12,
+    "success_events": 4,
+    "success_rate": 0.3333333333333333,
+    "rvol_success_q60": 1.7859532746401199,
+    "spread_success_q90": 0.05087747420245883,
+    "score_success_q70": 0.65
+  },
+  "UROY": {
+    "total_events": 20,
+    "success_events": 3,
+    "success_rate": 0.15,
+    "rvol_success_q60": 4.769148802148436,
+    "spread_success_q90": 0.07477467452987639,
+    "score_success_q70": 0.65
+  },
+  "VANI": {
+    "total_events": 27,
+    "success_events": 5,
+    "success_rate": 0.18518518518518517,
+    "rvol_success_q60": 6.609271762524121,
+    "spread_success_q90": 0.06085416666666672,
+    "score_success_q70": 0.65
+  },
+  "VELO": {
+    "total_events": 18,
+    "success_events": 6,
+    "success_rate": 0.3333333333333333,
+    "rvol_success_q60": 3.1070868824086504,
+    "spread_success_q90": 0.07515069609799009,
+    "score_success_q70": 0.65
+  },
+  "VERI": {
+    "total_events": 22,
+    "success_events": 10,
+    "success_rate": 0.45454545454545453,
+    "rvol_success_q60": 3.333432433731813,
+    "spread_success_q90": 0.07115495569750672,
+    "score_success_q70": 0.65
+  },
+  "VERU": {
+    "total_events": 9,
+    "success_events": 1,
+    "success_rate": 0.1111111111111111,
+    "rvol_success_q60": 4.62437243860647,
+    "spread_success_q90": 0.03431372549019611,
+    "score_success_q70": 0.65
+  },
+  "VTGN": {
+    "total_events": 19,
+    "success_events": 2,
+    "success_rate": 0.10526315789473684,
+    "rvol_success_q60": 6.258885894263932,
+    "spread_success_q90": 0.05840875243441412,
+    "score_success_q70": 0.65
+  },
+  "VTYX": {
+    "total_events": 21,
+    "success_events": 7,
+    "success_rate": 0.3333333333333333,
+    "rvol_success_q60": 3.6839869533093608,
+    "spread_success_q90": 0.06824922958397535,
+    "score_success_q70": 0.65
+  },
+  "VVPR": {
+    "total_events": 22,
+    "success_events": 3,
+    "success_rate": 0.13636363636363635,
+    "rvol_success_q60": 2.5021417349092765,
+    "spread_success_q90": 0.057856622335580254,
+    "score_success_q70": 0.65
+  },
+  "WGRX": {
+    "total_events": 10,
+    "success_events": 3,
+    "success_rate": 0.3,
+    "rvol_success_q60": 2.797291042248925,
+    "spread_success_q90": 0.06616087125766922,
+    "score_success_q70": 0.65
+  },
+  "WHWK": {
+    "total_events": 14,
+    "success_events": 1,
+    "success_rate": 0.07142857142857142,
+    "rvol_success_q60": 2.670246060455858,
+    "spread_success_q90": 0.03208556149732623,
+    "score_success_q70": 0.65
+  },
+  "WKEY": {
+    "total_events": 31,
+    "success_events": 8,
+    "success_rate": 0.25806451612903225,
+    "rvol_success_q60": 4.783658101243807,
+    "spread_success_q90": 0.07752374994049768,
+    "score_success_q70": 0.65
+  },
+  "WRAP": {
+    "total_events": 30,
+    "success_events": 3,
+    "success_rate": 0.1,
+    "rvol_success_q60": 3.3322255096161855,
+    "spread_success_q90": 0.045952380952380883,
+    "score_success_q70": 0.65
+  },
+  "WVE": {
+    "total_events": 10,
+    "success_events": 3,
+    "success_rate": 0.3,
+    "rvol_success_q60": 5.563753458025884,
+    "spread_success_q90": 0.06406498038319926,
+    "score_success_q70": 0.65
+  },
+  "XFOR": {
+    "total_events": 19,
+    "success_events": 1,
+    "success_rate": 0.05263157894736842,
+    "rvol_success_q60": 3.1370089758140267,
+    "spread_success_q90": 0.052896725440805925,
+    "score_success_q70": 0.65
+  },
+  "XNCR": {
+    "total_events": 7,
+    "success_events": 4,
+    "success_rate": 0.5714285714285714,
+    "rvol_success_q60": 1.5598451538907303,
+    "spread_success_q90": 0.061930639725681025,
+    "score_success_q70": 0.65
+  },
+  "XRX": {
+    "total_events": 10,
+    "success_events": 1,
+    "success_rate": 0.1,
+    "rvol_success_q60": 1.9637877272459703,
+    "spread_success_q90": 0.045045045045045015,
+    "score_success_q70": 0.65
+  },
+  "ZNTL": {
+    "total_events": 17,
+    "success_events": 1,
+    "success_rate": 0.058823529411764705,
+    "rvol_success_q60": 2.672948395729291,
+    "spread_success_q90": 0.03105590062111804,
+    "score_success_q70": 0.65
+  }
+}

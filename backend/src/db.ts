@@ -135,19 +135,20 @@ export async function watchNewsDB(callback: (news: NewsFromDB[]) => void, interv
 
 // 매매 기록 인터페이스
 export interface TradingRecord {
-  t_ticker: string
-  t_account_type: 'REAL' | 'VIRTUAL' // 계정 타입 추가
-  t_type: 'BUY' | 'SELL'
-  t_price: number
-  t_quantity: number
-  t_total_amount: number
-  t_order_id?: string
-  t_status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
-  t_reason?: string
-  t_news_idx?: number
-  t_profit_loss?: number
-  t_profit_loss_rate?: number
-  t_executed_at?: Date
+  th_ticker: string
+  th_account_type: 'REAL' // 실전투자만 지원
+  th_type: 'BUY' | 'SELL'
+  th_price: number
+  th_quantity: number
+  th_amount: number
+  th_order_no?: string // 🔥 KIS 주문번호
+  th_execution_time?: string // 🔥 실제 체결시간
+  th_status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
+  th_reason?: string
+  th_news_idx?: number
+  th_profit_loss?: number
+  th_profit_loss_percent?: number
+  th_timestamp?: Date
 }
 
 // 매매 기록 저장
@@ -156,24 +157,26 @@ export async function saveTradingRecord(record: TradingRecord): Promise<number> 
     const [result] = await pool.query(
       `INSERT INTO _TRADING_HISTORY 
        (th_account_type, th_ticker, th_type, th_price, th_quantity, th_amount, 
-        th_profit_loss, th_profit_loss_percent, th_reason, th_news, th_timestamp)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        th_order_no, th_execution_time, th_status, th_profit_loss, th_profit_loss_percent, th_reason, th_timestamp)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        record.t_account_type, // 🆕 계정 타입 추가!
-        record.t_ticker,
-        record.t_type,
-        record.t_price,
-        record.t_quantity,
-        record.t_total_amount,
-        record.t_profit_loss || null,
-        record.t_profit_loss_rate || null,
-        record.t_reason || null,
-        null, // th_news (사용 안 함)
-        record.t_executed_at || new Date()
+        record.th_account_type, // 🆕 계정 타입 추가!
+        record.th_ticker,
+        record.th_type,
+        record.th_price,
+        record.th_quantity,
+        record.th_amount,
+        record.th_order_no || null, // 🔥 KIS 주문번호
+        record.th_execution_time || null, // 🔥 실제 체결시간
+        record.th_status || 'COMPLETED',
+        record.th_profit_loss || null,
+        record.th_profit_loss_percent || null,
+        record.th_reason || null,
+        record.th_timestamp || new Date()
       ]
     )
     const insertId = (result as any).insertId
-    console.log(`💾 매매 기록 저장: [${record.t_account_type}] ${record.t_type} ${record.t_ticker} x${record.t_quantity} @ $${record.t_price}`)
+    console.log(`💾 매매 기록 저장: [${record.th_account_type}] ${record.th_type} ${record.th_ticker} x${record.th_quantity} @ $${record.th_price} (주문번호: ${record.th_order_no || 'N/A'})`)
     return insertId
   } catch (error) {
     console.error('❌ 매매 기록 저장 실패:', error)
@@ -185,7 +188,7 @@ export async function saveTradingRecord(record: TradingRecord): Promise<number> 
 export interface PendingOrder {
   po_id?: number
   po_ticker: string
-  po_account_type: 'REAL' | 'VIRTUAL' // 계정 타입 추가
+  po_account_type: 'REAL' // 실전투자만 지원
   po_order_type: 'buy' | 'sell'
   po_quantity: number
   po_price_type: 'market' | 'limit'
@@ -206,7 +209,7 @@ export interface PendingOrder {
 export interface DBPosition {
   p_id?: number
   p_ticker: string
-  p_account_type: 'REAL' | 'VIRTUAL' // 계정 타입 추가
+  p_account_type: 'REAL' // 실전투자만 지원
   p_quantity: number
   p_buy_price: number
   p_current_price: number
@@ -255,7 +258,7 @@ export async function savePendingOrder(order: PendingOrder): Promise<number> {
 }
 
 // 예약 주문 조회 (pending 상태만)
-export async function getPendingOrders(accountType?: 'REAL' | 'VIRTUAL'): Promise<PendingOrder[]> {
+export async function getPendingOrders(accountType: 'REAL' = 'REAL'): Promise<PendingOrder[]> {
   try {
     let query = `SELECT * FROM _PENDING_ORDERS 
        WHERE po_status = 'pending' 
@@ -301,11 +304,10 @@ export async function updatePendingOrderStatus(
 export async function saveDBPosition(position: DBPosition): Promise<number> {
   try {
     // 기존 포지션 확인 (계정 타입별로)
-    // TODO: DB 스키마 업데이트 후 p_account_type 조건 추가
     const [existing] = await pool.query(
       `SELECT p_id, p_quantity, p_buy_price FROM _POSITIONS 
-       WHERE p_ticker = ?`,
-      [position.p_ticker]
+       WHERE p_ticker = ? AND p_account_type = ?`,
+      [position.p_ticker, position.p_account_type]
     )
     
     if ((existing as any[]).length > 0) {
@@ -314,13 +316,12 @@ export async function saveDBPosition(position: DBPosition): Promise<number> {
       const newQuantity = existingPos.p_quantity + position.p_quantity
       const avgBuyPrice = ((existingPos.p_quantity * existingPos.p_buy_price) + (position.p_quantity * position.p_buy_price)) / newQuantity
       
-      // TODO: DB 스키마 업데이트 후 p_account_type 조건 추가
       await pool.query(
         `UPDATE _POSITIONS 
          SET p_quantity = ?, p_buy_price = ?, p_current_price = ?,
              p_take_profit_enabled = ?, p_take_profit_percent = ?,
              p_stop_loss_enabled = ?, p_stop_loss_percent = ?
-         WHERE p_ticker = ?`,
+         WHERE p_ticker = ? AND p_account_type = ?`,
         [
           newQuantity,
           avgBuyPrice,
@@ -329,23 +330,24 @@ export async function saveDBPosition(position: DBPosition): Promise<number> {
           position.p_take_profit_percent || null,
           position.p_stop_loss_enabled,
           position.p_stop_loss_percent || null,
-          position.p_ticker
+          position.p_ticker,
+          position.p_account_type
         ]
       )
       console.log(`✅ 포지션 업데이트: ${position.p_ticker} (수량: ${newQuantity})`)
       return existingPos.p_id
     } else {
       // 신규 포지션 추가
-      // TODO: DB 스키마 업데이트 후 p_account_type 컬럼 추가
       const [result] = await pool.query(
         `INSERT INTO _POSITIONS (
-          p_ticker, p_quantity, p_buy_price, p_current_price,
+          p_ticker, p_account_type, p_quantity, p_buy_price, p_current_price,
           p_profit_loss, p_profit_loss_percent,
           p_take_profit_enabled, p_take_profit_percent,
           p_stop_loss_enabled, p_stop_loss_percent
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           position.p_ticker,
+          position.p_account_type,
           position.p_quantity,
           position.p_buy_price,
           position.p_current_price,
@@ -368,16 +370,15 @@ export async function saveDBPosition(position: DBPosition): Promise<number> {
 }
 
 // 포지션 조회 (계정 타입별)
-export async function getDBPositions(accountType?: 'REAL' | 'VIRTUAL'): Promise<DBPosition[]> {
+export async function getDBPositions(accountType: 'REAL' = 'REAL'): Promise<DBPosition[]> {
   try {
     let query = `SELECT * FROM _POSITIONS`
     const params: any[] = []
     
-    // TODO: DB 스키마 업데이트 후 활성화
-    // if (accountType) {
-    //   query += ` WHERE p_account_type = ?`
-    //   params.push(accountType)
-    // }
+    if (accountType) {
+      query += ` WHERE p_account_type = ?`
+      params.push(accountType)
+    }
     
     query += ` ORDER BY p_buy_time DESC`
     
@@ -392,7 +393,7 @@ export async function getDBPositions(accountType?: 'REAL' | 'VIRTUAL'): Promise<
 }
 
 // 포지션 현재가 업데이트 (계정 타입별)
-export async function updatePositionPrice(ticker: string, currentPrice: number, accountType?: 'REAL' | 'VIRTUAL'): Promise<void> {
+export async function updatePositionPrice(ticker: string, currentPrice: number, accountType: 'REAL' = 'REAL'): Promise<void> {
   try {
     let query = `UPDATE _POSITIONS 
        SET p_current_price = ?,
@@ -413,12 +414,11 @@ export async function updatePositionPrice(ticker: string, currentPrice: number, 
 }
 
 // 포지션 수량 감소 (부분 매도) - 계정 타입별
-export async function reducePositionQuantity(ticker: string, quantity: number, accountType: 'REAL' | 'VIRTUAL'): Promise<void> {
+export async function reducePositionQuantity(ticker: string, quantity: number, accountType: 'REAL' = 'REAL'): Promise<void> {
   try {
-    // TODO: DB 스키마 업데이트 후 p_account_type 조건 추가
     const [rows] = await pool.query(
-      `SELECT p_quantity FROM _POSITIONS WHERE p_ticker = ?`,
-      [ticker]
+      `SELECT p_quantity FROM _POSITIONS WHERE p_ticker = ? AND p_account_type = ?`,
+      [ticker, accountType]
     )
     
     if ((rows as any[]).length === 0) {
@@ -433,10 +433,9 @@ export async function reducePositionQuantity(ticker: string, quantity: number, a
       await deleteDBPosition(ticker, accountType)
     } else {
       // 부분 매도 - 수량 감소
-      // TODO: DB 스키마 업데이트 후 p_account_type 조건 추가
       await pool.query(
-        `UPDATE _POSITIONS SET p_quantity = ? WHERE p_ticker = ?`,
-        [newQty, ticker]
+        `UPDATE _POSITIONS SET p_quantity = ? WHERE p_ticker = ? AND p_account_type = ?`,
+        [newQty, ticker, accountType]
       )
       console.log(`✅ 포지션 수량 감소: ${ticker} (${currentQty} -> ${newQty})`)
     }
@@ -447,12 +446,11 @@ export async function reducePositionQuantity(ticker: string, quantity: number, a
 }
 
 // 포지션 삭제 (전량 매도 시) - 계정 타입별
-export async function deleteDBPosition(ticker: string, accountType: 'REAL' | 'VIRTUAL'): Promise<void> {
+export async function deleteDBPosition(ticker: string, accountType: 'REAL' = 'REAL'): Promise<void> {
   try {
-    // TODO: DB 스키마 업데이트 후 p_account_type 조건 추가
     await pool.query(
-      `DELETE FROM _POSITIONS WHERE p_ticker = ?`,
-      [ticker]
+      `DELETE FROM _POSITIONS WHERE p_ticker = ? AND p_account_type = ?`,
+      [ticker, accountType]
     )
     console.log(`✅ 포지션 삭제: ${ticker}`)
   } catch (error) {
@@ -462,7 +460,7 @@ export async function deleteDBPosition(ticker: string, accountType: 'REAL' | 'VI
 }
 
 // 익절/손절 감시 대상 포지션 조회 (계정 타입별)
-export async function getMonitoredPositions(accountType?: 'REAL' | 'VIRTUAL'): Promise<DBPosition[]> {
+export async function getMonitoredPositions(accountType: 'REAL' = 'REAL'): Promise<DBPosition[]> {
   try {
     let query = `SELECT * FROM _POSITIONS 
        WHERE (p_take_profit_enabled = TRUE OR p_stop_loss_enabled = TRUE)`
@@ -482,7 +480,7 @@ export async function getMonitoredPositions(accountType?: 'REAL' | 'VIRTUAL'): P
 }
 
 // 매매 기록 조회 (계정 타입별)
-export async function getTradingHistory(limit: number = 100, accountType?: 'REAL' | 'VIRTUAL'): Promise<any[]> {
+export async function getTradingHistory(limit: number = 100, accountType: 'REAL' = 'REAL'): Promise<any[]> {
   try {
     let query = `SELECT * FROM _TRADING_HISTORY`
     const params: any[] = []

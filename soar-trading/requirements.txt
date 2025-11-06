@@ -1,0 +1,52 @@
+# Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+websockets==12.0
+python-multipart==0.0.6
+
+# HTTP Requests
+requests==2.31.0
+httpx==0.25.2
+aiohttp==3.9.1
+
+# Database
+mysql-connector-python==8.2.0
+pymysql==1.1.0
+SQLAlchemy==2.0.23
+
+# Data Processing
+pandas==2.1.4
+numpy==1.26.2
+
+# Technical Analysis
+ta-lib==0.4.28  # Note: requires TA-Lib C library installation
+pandas-ta==0.3.14b0
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Logging
+loguru==0.7.2
+
+# Date/Time
+python-dateutil==2.8.2
+pytz==2023.3
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+
+# Code Quality
+black==23.12.1
+flake8==6.1.0
+mypy==1.7.1
+
+# Backtesting
+backtrader==1.9.78.123
+
+# Utilities
+pydantic==2.5.2
+pydantic-settings==2.1.0
+typing-extensions==4.9.0
+

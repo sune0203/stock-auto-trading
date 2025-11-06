@@ -1,0 +1,299 @@
+{
+  "symbols": [
+    "WGRX",
+    "WKEY",
+    "VELO",
+    "VERI",
+    "VNDA",
+    "VSTM",
+    "VTYX",
+    "WHWK",
+    "ZSPC",
+    "TVRD",
+    "UHG",
+    "TYGO",
+    "UPXI",
+    "UROY",
+    "VANI",
+    "VERU",
+    "VTGN",
+    "WRAP",
+    "WVE",
+    "XNCR",
+    "XRX",
+    "XTIA",
+    "ZNTL",
+    "VVPR",
+    "XFOR"
+  ],
+  "detail": [
+    {
+      "symbol": "WGRX",
+      "score": 100,
+      "price": 0.638,
+      "mcap": 44653832,
+      "atr5_pct": 17.3,
+      "big_move_cnt20": 4,
+      "rvol_peak": 10.27,
+      "spread_est_pct": 1.13
+    },
+    {
+      "symbol": "WKEY",
+      "score": 100,
+      "price": 12.4,
+      "mcap": 77232544,
+      "atr5_pct": 30.08,
+      "big_move_cnt20": 3,
+      "rvol_peak": 125.48,
+      "spread_est_pct": 0.73
+    },
+    {
+      "symbol": "VELO",
+      "score": 90,
+      "price": 4.28,
+      "mcap": 85175784,
+      "atr5_pct": 18.6,
+      "big_move_cnt20": 4,
+      "rvol_peak": 19.77,
+      "spread_est_pct": 1.29
+    },
+    {
+      "symbol": "VERI",
+      "score": 90,
+      "price": 6.17,
+      "mcap": 341692076,
+      "atr5_pct": 8.78,
+      "big_move_cnt20": 2,
+      "rvol_peak": 54.53,
+      "spread_est_pct": 0.58
+    },
+    {
+      "symbol": "VNDA",
+      "score": 90,
+      "price": 4.35,
+      "mcap": 257055159,
+      "atr5_pct": 10.21,
+      "big_move_cnt20": 1,
+      "rvol_peak": 106.38,
+      "spread_est_pct": 0.23
+    },
+    {
+      "symbol": "VSTM",
+      "score": 90,
+      "price": 7.91,
+      "mcap": 486823086,
+      "atr5_pct": 11.83,
+      "big_move_cnt20": 1,
+      "rvol_peak": 56.52,
+      "spread_est_pct": 1.01
+    },
+    {
+      "symbol": "VTYX",
+      "score": 90,
+      "price": 8.09,
+      "mcap": 576885911,
+      "atr5_pct": 11.37,
+      "big_move_cnt20": 1,
+      "rvol_peak": 35.05,
+      "spread_est_pct": 0.74
+    },
+    {
+      "symbol": "WHWK",
+      "score": 90,
+      "price": 2.26,
+      "mcap": 106510098,
+      "atr5_pct": 8.94,
+      "big_move_cnt20": 2,
+      "rvol_peak": 11.06,
+      "spread_est_pct": 0.88
+    },
+    {
+      "symbol": "ZSPC",
+      "score": 90,
+      "price": 0.874,
+      "mcap": 20945862,
+      "atr5_pct": 9.86,
+      "big_move_cnt20": 1,
+      "rvol_peak": 3.01,
+      "spread_est_pct": 0.41
+    },
+    {
+      "symbol": "TVRD",
+      "score": 80,
+      "price": 4.39,
+      "mcap": 41162774,
+      "atr5_pct": 7.61,
+      "big_move_cnt20": 1,
+      "rvol_peak": 18.49,
+      "spread_est_pct": 0.45
+    },
+    {
+      "symbol": "UHG",
+      "score": 80,
+      "price": 1.4,
+      "mcap": 82372303,
+      "atr5_pct": 8.29,
+      "big_move_cnt20": 1,
+      "rvol_peak": 12.12,
+      "spread_est_pct": 1.42
+    },
+    {
+      "symbol": "TYGO",
+      "score": 75,
+      "price": 2.24,
+      "mcap": 147257728,
+      "atr5_pct": 13.57,
+      "big_move_cnt20": 0,
+      "rvol_peak": 78.24,
+      "spread_est_pct": 0.89
+    },
+    {
+      "symbol": "UPXI",
+      "score": 75,
+      "price": 3.5,
+      "mcap": 206110646,
+      "atr5_pct": 10.69,
+      "big_move_cnt20": 0,
+      "rvol_peak": 70.63,
+      "spread_est_pct": 1.14
+    },
+    {
+      "symbol": "UROY",
+      "score": 75,
+      "price": 3.91,
+      "mcap": 522525045,
+      "atr5_pct": 9.16,
+      "big_move_cnt20": 0,
+      "rvol_peak": 41.64,
+      "spread_est_pct": 0.77
+    },
+    {
+      "symbol": "VANI",
+      "score": 75,
+      "price": 1.51,
+      "mcap": 88912781,
+      "atr5_pct": 9.14,
+      "big_move_cnt20": 0,
+      "rvol_peak": 32.7,
+      "spread_est_pct": 0.0
+    },
+    {
+      "symbol": "VERU",
+      "score": 75,
+      "price": 2.56,
+      "mcap": 37514537,
+      "atr5_pct": 14.22,
+      "big_move_cnt20": 0,
+      "rvol_peak": 77.32,
+      "spread_est_pct": 0.78
+    },
+    {
+      "symbol": "VTGN",
+      "score": 75,
+      "price": 4.07,
+      "mcap": 124869517,
+      "atr5_pct": 9.24,
+      "big_move_cnt20": 0,
+      "rvol_peak": 21.33,
+      "spread_est_pct": 0.37
+    },
+    {
+      "symbol": "WRAP",
+      "score": 75,
+      "price": 2.39,
+      "mcap": 121744267,
+      "atr5_pct": 9.96,
+      "big_move_cnt20": 0,
+      "rvol_peak": 56.86,
+      "spread_est_pct": 0.63
+    },
+    {
+      "symbol": "WVE",
+      "score": 75,
+      "price": 8.01,
+      "mcap": 1274757818,
+      "atr5_pct": 12.66,
+      "big_move_cnt20": 0,
+      "rvol_peak": 57.78,
+      "spread_est_pct": 0.81
+    },
+    {
+      "symbol": "XNCR",
+      "score": 75,
+      "price": 13.7,
+      "mcap": 977125730,
+      "atr5_pct": 8.19,
+      "big_move_cnt20": 0,
+      "rvol_peak": 17.63,
+      "spread_est_pct": 0.66
+    },
+    {
+      "symbol": "XRX",
+      "score": 75,
+      "price": 2.96,
+      "mcap": 371779558,
+      "atr5_pct": 10.07,
+      "big_move_cnt20": 0,
+      "rvol_peak": 181.13,
+      "spread_est_pct": 0.51
+    },
+    {
+      "symbol": "XTIA",
+      "score": 75,
+      "price": 1.47,
+      "mcap": 25225494,
+      "atr5_pct": 10.07,
+      "big_move_cnt20": 0,
+      "rvol_peak": 17.84,
+      "spread_est_pct": 0.68
+    },
+    {
+      "symbol": "ZNTL",
+      "score": 75,
+      "price": 1.32,
+      "mcap": 95218798,
+      "atr5_pct": 9.24,
+      "big_move_cnt20": 0,
+      "rvol_peak": 21.89,
+      "spread_est_pct": 0.38
+    },
+    {
+      "symbol": "VVPR",
+      "score": 70,
+      "price": 3.14,
+      "mcap": 27213331,
+      "atr5_pct": 23.38,
+      "big_move_cnt20": 1,
+      "rvol_peak": 74.61,
+      "spread_est_pct": 2.07
+    },
+    {
+      "symbol": "XFOR",
+      "score": 70,
+      "price": 3.97,
+      "mcap": 45290951,
+      "atr5_pct": 5.29,
+      "big_move_cnt20": 1,
+      "rvol_peak": 85.21,
+      "spread_est_pct": 1.64
+    }
+  ],
+  "total": 25,
+  "config": {
+    "price_min": 0.15,
+    "price_max": 15.0,
+    "mcap_min": 20000000,
+    "mcap_max": 1500000000,
+    "min_score": 70
+  },
+  "stats": {
+    "total": 485,
+    "no_profile": 13,
+    "mcap_filtered": 225,
+    "no_daily_data": 1,
+    "price_filtered": 102,
+    "no_1min_data": 53,
+    "score_low": 66,
+    "passed": 25
+  }
+}

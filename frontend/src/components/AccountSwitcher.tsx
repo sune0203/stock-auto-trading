@@ -5,7 +5,7 @@ import AccountManager from './AccountManager'
 
 interface Account {
   ka_id: number
-  ka_type: 'REAL' | 'VIRTUAL'
+  ka_type: 'REAL'
   ka_name: string
   ka_account_no: string
   ka_is_active: boolean
@@ -14,7 +14,7 @@ interface Account {
 
 interface CurrentAccount {
   ka_id: number
-  ka_type: 'REAL' | 'VIRTUAL'
+  ka_type: 'REAL'
   ka_name: string
   ka_account_no: string
 }
@@ -50,13 +50,13 @@ const AccountSwitcher: React.FC = () => {
     }
   }
 
-  // 계정 타입 전환 (실전/모의)
-  const switchAccountType = async (type: 'REAL' | 'VIRTUAL') => {
-    if (isLoading || currentAccount?.ka_type === type) return
+  // 실전투자 계정으로 전환 (모의투자 제거)
+  const switchAccountType = async () => {
+    if (isLoading || currentAccount?.ka_type === 'REAL') return
 
     setIsLoading(true)
     try {
-      const response = await axios.post('http://localhost:3001/api/accounts/switch-type', { type })
+      const response = await axios.post('http://localhost:3001/api/accounts/switch-type', {})
       if (response.data.success) {
         await loadCurrentAccount()
         alert(response.data.message)
@@ -97,21 +97,13 @@ const AccountSwitcher: React.FC = () => {
   return (
     <>
       <div className="account-switcher">
-        {/* 실전/모의 토글 */}
+        {/* 실전투자만 지원 */}
         <div className="account-type-toggle">
         <button
-          className={`toggle-btn ${currentAccount?.ka_type === 'REAL' ? 'active' : ''}`}
-          onClick={() => switchAccountType('REAL')}
-          disabled={isLoading}
+          className="toggle-btn active"
+          disabled={true}
         >
           실전투자
-        </button>
-        <button
-          className={`toggle-btn ${currentAccount?.ka_type === 'VIRTUAL' ? 'active' : ''}`}
-          onClick={() => switchAccountType('VIRTUAL')}
-          disabled={isLoading}
-        >
-          모의투자
         </button>
       </div>
 

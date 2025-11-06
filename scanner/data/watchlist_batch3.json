@@ -1,0 +1,321 @@
+{
+  "symbols": [
+    "CRML",
+    "DFLI",
+    "ESLA",
+    "CRBP",
+    "CURR",
+    "DENN",
+    "DGXX",
+    "DTCK",
+    "DVLT",
+    "ELDN",
+    "CRCG",
+    "CSAI",
+    "DCGO",
+    "DSGN",
+    "CPSH",
+    "CTMX",
+    "DFDV",
+    "DOMH",
+    "DPRO",
+    "DTIL",
+    "ECX",
+    "EDIT",
+    "EHTH",
+    "EOSEW",
+    "EU",
+    "EVAX",
+    "CRESY"
+  ],
+  "detail": [
+    {
+      "symbol": "CRML",
+      "score": 100,
+      "price": 10.99,
+      "mcap": 1026874454,
+      "atr5_pct": 14.63,
+      "big_move_cnt20": 4,
+      "rvol_peak": 3.72,
+      "spread_est_pct": 0.64
+    },
+    {
+      "symbol": "DFLI",
+      "score": 100,
+      "price": 1.05,
+      "mcap": 65219318,
+      "atr5_pct": 12.38,
+      "big_move_cnt20": 3,
+      "rvol_peak": 48.7,
+      "spread_est_pct": 0.0
+    },
+    {
+      "symbol": "ESLA",
+      "score": 100,
+      "price": 2.29,
+      "mcap": 84880199,
+      "atr5_pct": 23.58,
+      "big_move_cnt20": 3,
+      "rvol_peak": 138.61,
+      "spread_est_pct": 0.44
+    },
+    {
+      "symbol": "CRBP",
+      "score": 90,
+      "price": 11.25,
+      "mcap": 137871000,
+      "atr5_pct": 16.5,
+      "big_move_cnt20": 1,
+      "rvol_peak": 34.3,
+      "spread_est_pct": 0.62
+    },
+    {
+      "symbol": "CURR",
+      "score": 90,
+      "price": 2.46,
+      "mcap": 187168301,
+      "atr5_pct": 43.5,
+      "big_move_cnt20": 2,
+      "rvol_peak": 5.33,
+      "spread_est_pct": 0.81
+    },
+    {
+      "symbol": "DENN",
+      "score": 90,
+      "price": 6.18,
+      "mcap": 318263783,
+      "atr5_pct": 10.26,
+      "big_move_cnt20": 1,
+      "rvol_peak": 73.67,
+      "spread_est_pct": 0.16
+    },
+    {
+      "symbol": "DGXX",
+      "score": 90,
+      "price": 6.03,
+      "mcap": 269587093,
+      "atr5_pct": 15.85,
+      "big_move_cnt20": 1,
+      "rvol_peak": 67.34,
+      "spread_est_pct": 0.58
+    },
+    {
+      "symbol": "DTCK",
+      "score": 90,
+      "price": 5.1,
+      "mcap": 124953187,
+      "atr5_pct": 21.1,
+      "big_move_cnt20": 3,
+      "rvol_peak": 83.43,
+      "spread_est_pct": 1.57
+    },
+    {
+      "symbol": "DVLT",
+      "score": 90,
+      "price": 1.78,
+      "mcap": 516983227,
+      "atr5_pct": 27.87,
+      "big_move_cnt20": 3,
+      "rvol_peak": 3.5,
+      "spread_est_pct": 1.61
+    },
+    {
+      "symbol": "ELDN",
+      "score": 90,
+      "price": 4.16,
+      "mcap": 249108184,
+      "atr5_pct": 9.62,
+      "big_move_cnt20": 1,
+      "rvol_peak": 27.4,
+      "spread_est_pct": 0.96
+    },
+    {
+      "symbol": "CRCG",
+      "score": 80,
+      "price": 5.95,
+      "mcap": 25698443,
+      "atr5_pct": 16.67,
+      "big_move_cnt20": 1,
+      "rvol_peak": 2.19,
+      "spread_est_pct": 0.67
+    },
+    {
+      "symbol": "CSAI",
+      "score": 80,
+      "price": 1.93,
+      "mcap": 34789487,
+      "atr5_pct": 10.88,
+      "big_move_cnt20": 1,
+      "rvol_peak": 28.81,
+      "spread_est_pct": 1.55
+    },
+    {
+      "symbol": "DCGO",
+      "score": 80,
+      "price": 1.02,
+      "mcap": 99764300,
+      "atr5_pct": 7.65,
+      "big_move_cnt20": 1,
+      "rvol_peak": 34.07,
+      "spread_est_pct": 0.49
+    },
+    {
+      "symbol": "DSGN",
+      "score": 80,
+      "price": 6.24,
+      "mcap": 355356306,
+      "atr5_pct": 6.28,
+      "big_move_cnt20": 1,
+      "rvol_peak": 28.78,
+      "spread_est_pct": 0.96
+    },
+    {
+      "symbol": "CPSH",
+      "score": 75,
+      "price": 3.52,
+      "mcap": 51141292,
+      "atr5_pct": 13.52,
+      "big_move_cnt20": 0,
+      "rvol_peak": 3.45,
+      "spread_est_pct": 0.99
+    },
+    {
+      "symbol": "CTMX",
+      "score": 75,
+      "price": 4.09,
+      "mcap": 674493786,
+      "atr5_pct": 8.31,
+      "big_move_cnt20": 0,
+      "rvol_peak": 4.19,
+      "spread_est_pct": 0.98
+    },
+    {
+      "symbol": "DFDV",
+      "score": 75,
+      "price": 8.66,
+      "mcap": 181800679,
+      "atr5_pct": 14.16,
+      "big_move_cnt20": 0,
+      "rvol_peak": 209.1,
+      "spread_est_pct": 1.1
+    },
+    {
+      "symbol": "DOMH",
+      "score": 75,
+      "price": 4.51,
+      "mcap": 69102247,
+      "atr5_pct": 8.47,
+      "big_move_cnt20": 0,
+      "rvol_peak": 161.87,
+      "spread_est_pct": 0.67
+    },
+    {
+      "symbol": "DPRO",
+      "score": 75,
+      "price": 8.7,
+      "mcap": 45477841,
+      "atr5_pct": 16.05,
+      "big_move_cnt20": 0,
+      "rvol_peak": 54.96,
+      "spread_est_pct": 0.81
+    },
+    {
+      "symbol": "DTIL",
+      "score": 75,
+      "price": 6.69,
+      "mcap": 78855030,
+      "atr5_pct": 15.52,
+      "big_move_cnt20": 0,
+      "rvol_peak": 5.65,
+      "spread_est_pct": 0.13
+    },
+    {
+      "symbol": "ECX",
+      "score": 75,
+      "price": 2.22,
+      "mcap": 748118917,
+      "atr5_pct": 14.23,
+      "big_move_cnt20": 0,
+      "rvol_peak": 33.29,
+      "spread_est_pct": 0.89
+    },
+    {
+      "symbol": "EDIT",
+      "score": 75,
+      "price": 2.78,
+      "mcap": 249978056,
+      "atr5_pct": 8.92,
+      "big_move_cnt20": 0,
+      "rvol_peak": 182.1,
+      "spread_est_pct": 0.36
+    },
+    {
+      "symbol": "EHTH",
+      "score": 75,
+      "price": 4.93,
+      "mcap": 150646902,
+      "atr5_pct": 8.19,
+      "big_move_cnt20": 0,
+      "rvol_peak": 78.5,
+      "spread_est_pct": 0.41
+    },
+    {
+      "symbol": "EOSEW",
+      "score": 75,
+      "price": 2.79,
+      "mcap": 779007060,
+      "atr5_pct": 47.46,
+      "big_move_cnt20": 8,
+      "rvol_peak": 1.0,
+      "spread_est_pct": 0.72
+    },
+    {
+      "symbol": "EU",
+      "score": 75,
+      "price": 2.69,
+      "mcap": 503312450,
+      "atr5_pct": 8.25,
+      "big_move_cnt20": 0,
+      "rvol_peak": 95.57,
+      "spread_est_pct": 0.74
+    },
+    {
+      "symbol": "EVAX",
+      "score": 75,
+      "price": 5.6,
+      "mcap": 35372803,
+      "atr5_pct": 10.43,
+      "big_move_cnt20": 3,
+      "rvol_peak": 1.0,
+      "spread_est_pct": 0.53
+    },
+    {
+      "symbol": "CRESY",
+      "score": 70,
+      "price": 11.91,
+      "mcap": 718243090,
+      "atr5_pct": 5.07,
+      "big_move_cnt20": 1,
+      "rvol_peak": 201.05,
+      "spread_est_pct": 1.43
+    }
+  ],
+  "total": 27,
+  "config": {
+    "price_min": 0.15,
+    "price_max": 15.0,
+    "mcap_min": 20000000,
+    "mcap_max": 1500000000,
+    "min_score": 70
+  },
+  "stats": {
+    "total": 486,
+    "no_profile": 19,
+    "mcap_filtered": 190,
+    "no_daily_data": 0,
+    "price_filtered": 107,
+    "no_1min_data": 57,
+    "score_low": 86,
+    "passed": 27
+  }
+}

@@ -4,7 +4,7 @@ import './AccountManager.css'
 
 interface Account {
   ka_id: number
-  ka_type: 'REAL' | 'VIRTUAL'
+  ka_type: 'REAL'
   ka_name: string
   ka_account_no: string
   ka_is_active: boolean
@@ -15,7 +15,7 @@ const AccountManager: React.FC = () => {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [showAddForm, setShowAddForm] = useState(false)
   const [formData, setFormData] = useState({
-    ka_type: 'REAL' as 'REAL' | 'VIRTUAL',
+    ka_type: 'REAL' as 'REAL',
     ka_name: '',
     ka_account_no: '',
     ka_account_password: '',
@@ -86,14 +86,12 @@ const AccountManager: React.FC = () => {
         <form className="add-account-form" onSubmit={handleAddAccount}>
           <div className="form-group">
             <label>계정 타입</label>
-            <select
-              value={formData.ka_type}
-              onChange={(e) => setFormData({ ...formData, ka_type: e.target.value as 'REAL' | 'VIRTUAL' })}
-              required
-            >
-              <option value="REAL">실전투자</option>
-              <option value="VIRTUAL">모의투자</option>
-            </select>
+            <input
+              type="text"
+              value="실전투자"
+              disabled
+              style={{ backgroundColor: '#f5f5f5', color: '#666' }}
+            />
           </div>
 
           <div className="form-group">
